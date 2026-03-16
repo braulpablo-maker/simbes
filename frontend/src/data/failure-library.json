@@ -1,0 +1,223 @@
+{
+  "_comment": "Librería de patrones de falla DIFA. Codificación según API RP 11S1 (Electrical Submersible Pump Teardown Report). Cada patrón incluye symptom_weights para el motor de diagnóstico.",
+  "failure_patterns": [
+    {
+      "id": "f001",
+      "title": "Subcarga sostenida → Desgaste de cojinetes radiales",
+      "api_series": "3700",
+      "api_code": "3712",
+      "description": "Operación sostenida por debajo del 68% del BEP genera recirculación interna y carga hidráulica radial asimétrica que desgasta cojinetes.",
+      "symptoms": [
+        "Corriente por debajo del valor nominal",
+        "Caudal < 68% BEP por período extendido",
+        "Vibración radial > 3 mm/s RMS",
+        "Temperatura motor elevada"
+      ],
+      "root_cause": "Recirculación interna en zona de baja carga. Fuerzas hidráulicas asimétricas sobre impulsor.",
+      "prevention": [
+        "Ajustar frecuencia VSD para operar 80–110% del BEP",
+        "Instalar sensor de vibración con alarma a 4 mm/s",
+        "Revisar IPR y ajustar IP si el yacimiento declinó"
+      ],
+      "severity": "high",
+      "typical_MTBF_impact": "Reduce MTBF en 30–50% si persiste > 6 meses",
+      "symptom_weights": {
+        "lowCurrent":    0.90,
+        "gradualFlow":   0.60,
+        "highVibration": 0.50,
+        "highMotorTemp": 0.30
+      },
+      "contradicts": ["highCurrent", "lowIR", "abruptFlow"]
+    },
+    {
+      "id": "f002",
+      "title": "Gas lock → Sobrecalentamiento del motor",
+      "api_series": "4900",
+      "api_code": "4910",
+      "description": "GVF > 15% en succión colapsa la columna de fluido. La bomba pierde carga y el motor se sobrecalienta sin fluido de refrigeración.",
+      "symptoms": [
+        "Caída abrupta de caudal (< 20% del nominal)",
+        "Corriente errática o caída a valores de placa vacía",
+        "Temperatura del motor sube > T_rated",
+        "Posible disparo por subcarga"
+      ],
+      "root_cause": "GVF > 15% en succión. Sin separador o separador saturado. Ps << Pb.",
+      "prevention": [
+        "Instalar AGS pasivo o gas handler activo",
+        "Reducir drawdown para mantener Pwf cerca de Pb",
+        "Monitorear GOR superficial como indicador temprano"
+      ],
+      "severity": "critical",
+      "typical_MTBF_impact": "Puede causar falla catastrófica en horas si no se interviene",
+      "symptom_weights": {
+        "erraticCurrent":  0.85,
+        "abruptFlow":      0.90,
+        "lowDischPress":   0.80,
+        "highMotorTemp":   0.60,
+        "lowCurrent":      0.40
+      },
+      "contradicts": ["highCurrent", "lowIR", "gradualFlow", "highDischPress"]
+    },
+    {
+      "id": "f003",
+      "title": "Incrustación de escala → Bloqueo de etapas",
+      "api_series": "3700",
+      "api_code": "3720",
+      "description": "Deposición de carbonato de calcio o sulfato de bario en impulsores reduce el área de paso y aumenta el TDH requerido.",
+      "symptoms": [
+        "Reducción gradual del caudal (semanas a meses)",
+        "Aumento progresivo de la corriente",
+        "Presión de descarga mayor de lo esperado"
+      ],
+      "root_cause": "Agua de formación supersaturada con CaCO₃ o BaSO₄ a condiciones de presión/temperatura de la bomba.",
+      "prevention": [
+        "Inyección de inhibidor de escala downhole",
+        "Monitoreo de índice de saturación de Langelier",
+        "Análisis de agua de producción periódico"
+      ],
+      "severity": "medium",
+      "typical_MTBF_impact": "Reduce MTBF en 15–25% si no hay inhibición química",
+      "symptom_weights": {
+        "gradualFlow":      0.90,
+        "highCurrent":      0.70,
+        "highDischPress":   0.75
+      },
+      "contradicts": ["abruptFlow", "lowIR", "highVibration", "erraticCurrent"]
+    },
+    {
+      "id": "f004",
+      "title": "Falla de sello primario → Invasión de fluido al motor",
+      "api_series": "4900",
+      "api_code": "4930",
+      "description": "Falla del elastómero del sello primario permite ingreso de fluido de pozo al aceite dieléctrico del motor.",
+      "symptoms": [
+        "Resistencia de aislamiento (IR) < 1 MΩ",
+        "Corriente desequilibrada en las 3 fases",
+        "Disparo por falla a tierra"
+      ],
+      "root_cause": "Elastómero NBR degradado por temperatura (> 140°C) o presencia de H₂S.",
+      "prevention": [
+        "Seleccionar EPDM o PEEK si T > 140°C (NACE MR0175)",
+        "Medir IR antes de bajar a pozo y mensualmente",
+        "Verificar diseño térmico del sello"
+      ],
+      "severity": "high",
+      "typical_MTBF_impact": "Causa pérdida total del equipo si no se interviene",
+      "symptom_weights": {
+        "lowIR":           0.95,
+        "erraticCurrent":  0.60,
+        "highMotorTemp":   0.50
+      },
+      "contradicts": ["gradualFlow", "highDischPress", "highVibration"]
+    },
+    {
+      "id": "f005",
+      "title": "Surging → Operación sobre el BEP",
+      "api_series": "5400",
+      "api_code": "5410",
+      "description": "Operación sostenida sobre el 132% del BEP genera recirculación en la descarga, cavitación intermitente y vibración. La corriente oscila en sincronía con el ciclo hidráulico.",
+      "symptoms": [
+        "Corriente oscilante con picos > 132% del nominal",
+        "Vibración elevada en frecuencias medias (30–80 Hz)",
+        "Presión de descarga fluctuante",
+        "Caudal intermitente"
+      ],
+      "root_cause": "Punto de operación excede el BEP. Puede deberse a TDH insuficiente (pozo poco profundo) o frecuencia VSD demasiado alta.",
+      "prevention": [
+        "Reducir frecuencia VSD al rango 80–110% del BEP",
+        "Verificar diseño de TDH — pozo puede requerir menos etapas",
+        "Instalar restricción de descarga si el TDH no se puede ajustar"
+      ],
+      "severity": "high",
+      "typical_MTBF_impact": "Reduce MTBF en 40–60% por fatiga hidráulica y cavitación",
+      "symptom_weights": {
+        "erraticCurrent":  0.85,
+        "highVibration":   0.70,
+        "highCurrent":     0.65,
+        "abruptFlow":      0.30
+      },
+      "contradicts": ["lowIR", "lowCurrent", "gradualFlow", "lowDischPress"]
+    },
+    {
+      "id": "f006",
+      "title": "Caída de voltaje en cable → Subcarga y baja producción",
+      "api_series": "5900",
+      "api_code": "5910",
+      "description": "Calibre de cable insuficiente o resistencia elevada por temperatura genera caída de voltaje en el cable. El motor recibe menos voltaje del nominal, opera con torque reducido y el caudal cae.",
+      "symptoms": [
+        "Corriente levemente baja (70–85% nominal)",
+        "Caudal reducido gradualmente",
+        "Temperatura de motor elevada (compensación de torque)",
+        "Presión de descarga baja"
+      ],
+      "root_cause": "V_drop = I × R_T excesivo. Calibre AWG insuficiente para la profundidad/corriente. R aumenta con temperatura (Arrhenius).",
+      "prevention": [
+        "Verificar caída de voltaje: debe ser < 5% del voltaje nominal",
+        "Seleccionar calibre de cable por tabla de profundidad/corriente",
+        "Medir resistencia de cable antes de bajar a pozo"
+      ],
+      "severity": "medium",
+      "typical_MTBF_impact": "Reduce producción 10–25%. No causa falla mecánica directa.",
+      "symptom_weights": {
+        "lowCurrent":      0.60,
+        "gradualFlow":     0.70,
+        "highMotorTemp":   0.50,
+        "lowDischPress":   0.55
+      },
+      "contradicts": ["highCurrent", "lowIR", "highVibration", "abruptFlow", "highDischPress"]
+    },
+    {
+      "id": "f007",
+      "title": "Corrosión por H₂S → Falla de aislamiento eléctrico",
+      "api_series": "3700",
+      "api_code": "3730",
+      "description": "El gas sulfhídrico (H₂S) ataca el aislamiento de plomo del cable y los materiales de elastómero del sello/motor. Produce sulfuración del cobre y degradación dieléctrica.",
+      "symptoms": [
+        "IR bajo (< 1 MΩ) sin historial de sobrecalentamiento",
+        "Corriente errática por fallas de aislamiento parciales",
+        "Falla en pozo con producción de gas ácido (H₂S > 0 ppm)"
+      ],
+      "root_cause": "Material de cable no especificado para servicio amargo (H₂S). Requiere Lead Sheath + Monel 400 según NACE MR0175.",
+      "prevention": [
+        "Especificar cable con Lead Sheath para pozos con H₂S",
+        "Seleccionar conectores y terminales Monel 400",
+        "Realizar análisis de gas antes de seleccionar material"
+      ],
+      "severity": "high",
+      "typical_MTBF_impact": "Falla típica en 6–18 meses en pozos amargos con material incorrecto",
+      "symptom_weights": {
+        "lowIR":           0.90,
+        "erraticCurrent":  0.70
+      },
+      "contradicts": ["highDischPress", "gradualFlow", "highVibration"]
+    },
+    {
+      "id": "f008",
+      "title": "Falla de rodamiento → Vibración alta y daño mecánico progresivo",
+      "api_series": "5400",
+      "api_code": "5430",
+      "description": "Desgaste de rodamiento radial o de empuje. Genera vibración de alta frecuencia con patrón de impacto periódico (BPFO/BPFI). Sin atención, deriva en falla catastrófica.",
+      "symptoms": [
+        "Vibración elevada > 4 mm/s RMS con picos periódicos de alta frecuencia",
+        "Corriente levemente errática",
+        "Reducción gradual del caudal (desalineamiento del rotor)",
+        "Temperatura motor moderadamente elevada"
+      ],
+      "root_cause": "Fatiga de contacto en pistas del rodamiento. Causas: subcarga prolongada, contaminación del lubricante, desbalanceo de rotor, exceso de empuje axial.",
+      "prevention": [
+        "Operar siempre en rango 80–110% del BEP",
+        "Verificar empuje axial en diseño de la bomba",
+        "Analizar espectro de vibración periódicamente"
+      ],
+      "severity": "high",
+      "typical_MTBF_impact": "Sin intervención: falla catastrófica en 2–6 meses",
+      "symptom_weights": {
+        "highVibration":   0.95,
+        "erraticCurrent":  0.30,
+        "gradualFlow":     0.35,
+        "highMotorTemp":   0.25
+      },
+      "contradicts": ["lowIR", "lowCurrent", "abruptFlow", "highDischPress"]
+    }
+  ]
+}

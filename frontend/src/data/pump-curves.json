@@ -1,0 +1,44 @@
+{
+  "_comment": "Curvas H-Q representativas por rango de caudal. GENÉRICAS — no corresponden a ningún fabricante. Para diseño real usar curvas certificadas.",
+  "curves": [
+    {
+      "id": "generic_low_rate",
+      "name": "BES Caudal Bajo (genérica)",
+      "range_m3d": [10, 60],
+      "range_stbd": [63, 378],
+      "H0_ft": 9500,
+      "Qmax_stbd": 1800,
+      "BEP_stbd": 900,
+      "BEP_H_ft": 7200,
+      "exp": 1.85,
+      "Ns_approx": 1200,
+      "impeller_type": "Radial"
+    },
+    {
+      "id": "generic_medium_rate",
+      "name": "BES Caudal Medio (genérica)",
+      "range_m3d": [60, 250],
+      "range_stbd": [378, 1572],
+      "H0_ft": 8500,
+      "Qmax_stbd": 4200,
+      "BEP_stbd": 2100,
+      "BEP_H_ft": 6000,
+      "exp": 1.85,
+      "Ns_approx": 2800,
+      "impeller_type": "Flujo Mixto"
+    },
+    {
+      "id": "generic_high_rate",
+      "name": "BES Caudal Alto (genérica)",
+      "range_m3d": [250, 600],
+      "range_stbd": [1572, 3774],
+      "H0_ft": 6000,
+      "Qmax_stbd": 9000,
+      "BEP_stbd": 4500,
+      "BEP_H_ft": 4500,
+      "exp": 1.75,
+      "Ns_approx": 4000,
+      "impeller_type": "Flujo Mixto / Axial"
+    }
+  ]
+}

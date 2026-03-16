@@ -1,0 +1,47 @@
+{
+  "_comment": "MTBF de referencia por ambiente operativo. Fuente: datos de industria agregados (no atribuibles a un campo específico). Usar como referencia pedagógica.",
+  "_units": { "MTBF_days": "días", "MTBF_years": "años" },
+  "benchmarks": [
+    {
+      "id": "env_benign",
+      "environment": "Ambiente benigno",
+      "description": "Petróleo limpio, sin gas, sin corrosión, temperatura < 120°C",
+      "MTBF_days": 1825,
+      "MTBF_years": 5.0,
+      "typical_failure_modes": ["Desgaste normal de cojinetes", "Fatiga de impulsores"],
+      "notes": "Mejores prácticas: diseño hidráulico correcto, VSD calibrado, monitoreo continuo"
+    },
+    {
+      "id": "env_moderate",
+      "environment": "Ambiente moderado",
+      "description": "Agua de corte media (50–80%), GOR < 500, temperatura 120–150°C",
+      "MTBF_days": 913,
+      "MTBF_years": 2.5,
+      "typical_failure_modes": ["Corrosión parcial", "Escala", "Desgaste acelerado"],
+      "notes": "Inhibición química recomendada. Monitoreo IR mensual."
+    },
+    {
+      "id": "env_severe",
+      "environment": "Ambiente severo",
+      "description": "Alto GOR (> 1000), alta temperatura (> 150°C), presencia de H₂S o CO₂",
+      "MTBF_days": 365,
+      "MTBF_years": 1.0,
+      "typical_failure_modes": ["Falla de sellos", "Gas lock", "Corrosión acelerada", "Degradación del aislamiento"],
+      "notes": "Requerir materiales NACE. AGS o gas handler mandatorio. IR semanal."
+    },
+    {
+      "id": "env_sandy",
+      "environment": "Producción de arena",
+      "description": "Arena > 50 ppm en producción",
+      "MTBF_days": 180,
+      "MTBF_years": 0.5,
+      "typical_failure_modes": ["Erosión de impulsores", "Desgaste de difusores", "Bloqueo mecánico"],
+      "notes": "Controlar drawdown < 60%. Bombas de arena resistente. Inspección frecuente."
+    }
+  ],
+  "survival_reference": {
+    "note": "R(MTBF) = e⁻¹ ≈ 36.77%: solo el 36.77% de los equipos alcanza el MTBF nominal.",
+    "R_at_MTBF": 0.3679,
+    "interpretation": "El MTBF NO es el tiempo en que falla la mitad de los equipos (eso es la mediana ≈ 0.693 × MTBF)"
+  }
+}

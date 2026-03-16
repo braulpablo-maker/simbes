@@ -1,0 +1,28 @@
+{
+  "_comment": "Resistencia de cable eléctrico de cobre para BES. Fuente: tablas estándar Southwire / API RP 11S6.",
+  "_units": {
+    "R_ohm_per_1000ft": "Ω / 1000 ft por conductor a 20°C",
+    "R_ohm_per_km": "Ω / km por conductor a 20°C",
+    "ampacity_A": "Corriente máxima en aire libre (A)"
+  },
+  "copper_conductors": [
+    { "awg": 1,  "R_ohm_per_1000ft": 0.1239, "R_ohm_per_km": 0.4064, "ampacity_A": 130 },
+    { "awg": 2,  "R_ohm_per_1000ft": 0.1563, "R_ohm_per_km": 0.5128, "ampacity_A": 110 },
+    { "awg": 4,  "R_ohm_per_1000ft": 0.2485, "R_ohm_per_km": 0.8153, "ampacity_A": 85  },
+    { "awg": 6,  "R_ohm_per_1000ft": 0.3951, "R_ohm_per_km": 1.2959, "ampacity_A": 65  },
+    { "awg": 8,  "R_ohm_per_1000ft": 0.6282, "R_ohm_per_km": 2.0604, "ampacity_A": 50  },
+    { "awg": 10, "R_ohm_per_1000ft": 0.9989, "R_ohm_per_km": 3.2769, "ampacity_A": 35  },
+    { "awg": 12, "R_ohm_per_1000ft": 1.5880, "R_ohm_per_km": 5.2100, "ampacity_A": 25  },
+    { "awg": 14, "R_ohm_per_1000ft": 2.5250, "R_ohm_per_km": 8.2841, "ampacity_A": 20  }
+  ],
+  "temperature_coefficient": {
+    "copper_alpha_per_C": 0.00393,
+    "note": "R_T = R_20 × (1 + α × (T − 20))"
+  },
+  "jacket_materials": [
+    { "id": "epdm_std",   "name": "EPDM estándar",        "max_T_C": 150, "H2S_resistant": false },
+    { "id": "epdm_ht",    "name": "EPDM alta temperatura", "max_T_C": 175, "H2S_resistant": false },
+    { "id": "peek",       "name": "PEEK",                  "max_T_C": 250, "H2S_resistant": true  },
+    { "id": "lead_monel", "name": "Lead Sheath + Monel 400","max_T_C": 180, "H2S_resistant": true  }
+  ]
+}
