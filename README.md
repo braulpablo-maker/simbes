@@ -145,6 +145,12 @@ jupyter lab
 
 ---
 
+## Demo en vivo
+
+**[https://simbes.vercel.app](https://simbes.vercel.app)**
+
+---
+
 ## Estado actual — MVP completado (8/8 módulos)
 
 | Módulo | Estado | Física cubierta |

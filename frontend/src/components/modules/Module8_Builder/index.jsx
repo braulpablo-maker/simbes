@@ -474,7 +474,7 @@ function TabSimulador() {
     { label: "HIDRÁULICA", color: "#34D399",
       items: [
         <SliderParam label="Profundidad (m)" min={500} max={4500} step={50} value={p.depth_m} onChange={v=>set("depth_m",v)} color="#34D399" fmt={v=>`${v} m`} />,
-        <SliderParam label="Pwh — Presión cabeza (psi)" min={50} max={800} step={25} value={p.Pwh} onChange={v=>set("Pwh",v)} color="#34D399" fmt={v=>`${v} psi`} />,
+        <SliderParam label="Pwh — Presión cabezal (psi)" min={50} max={800} step={25} value={p.Pwh} onChange={v=>set("Pwh",v)} color="#34D399" fmt={v=>`${v} psi`} />,
         <SliderParam label="Frecuencia VSD (Hz)" min={35} max={70} step={1} value={p.freq} onChange={v=>set("freq",v)} color="#F472B6" fmt={v=>`${v} Hz`} />,
         <SliderParam label="Densidad fluido (kg/L)" min={0.75} max={1.10} step={0.005} value={p.rho_kgL} onChange={v=>set("rho_kgL",v)} color="#34D399" fmt={v=>`${v} kg/L`} />,
       ]
