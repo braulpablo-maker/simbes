@@ -9,6 +9,10 @@ venv/
 
 # Claude Code
 .claude/
+CLAUDE.md
+SimBES - Claude.md
+mejoras.md
+propuesta_mejoras_simbes_v2.md
 
 # Node
 node_modules/
