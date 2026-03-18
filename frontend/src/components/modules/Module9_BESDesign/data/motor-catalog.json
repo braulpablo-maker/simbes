@@ -1,0 +1,60 @@
+{
+  "_comment": "Catálogo representativo de motores BES por tier HP. GENÉRICO — no corresponde a ningún fabricante. Para diseño real usar datos de fabricante.",
+  "tiers": [
+    {
+      "id": "tier_100",
+      "hp_max": 100,
+      "label": "≤ 100 HP",
+      "V_typical": 2000,
+      "OD_in": 4.00,
+      "T_rated_C": 150,
+      "eta_motor": 0.88,
+      "FP": 0.82,
+      "note": "Motor 4\" — casing mínimo 5.5\""
+    },
+    {
+      "id": "tier_300",
+      "hp_max": 300,
+      "label": "101–300 HP",
+      "V_typical": 3300,
+      "OD_in": 5.62,
+      "T_rated_C": 150,
+      "eta_motor": 0.90,
+      "FP": 0.83,
+      "note": "Motor 5.62\" — casing mínimo 7\""
+    },
+    {
+      "id": "tier_500",
+      "hp_max": 500,
+      "label": "301–500 HP",
+      "V_typical": 4200,
+      "OD_in": 7.38,
+      "T_rated_C": 160,
+      "eta_motor": 0.91,
+      "FP": 0.84,
+      "note": "Motor 7.38\" — casing mínimo 9.625\""
+    },
+    {
+      "id": "tier_1000",
+      "hp_max": 1000,
+      "label": "501–1000 HP",
+      "V_typical": 5000,
+      "OD_in": 9.63,
+      "T_rated_C": 160,
+      "eta_motor": 0.92,
+      "FP": 0.85,
+      "note": "Motor 9.63\" — casing mínimo 11.75\""
+    },
+    {
+      "id": "tier_xl",
+      "hp_max": 9999,
+      "label": "> 1000 HP",
+      "V_typical": 6600,
+      "OD_in": 9.63,
+      "T_rated_C": 180,
+      "eta_motor": 0.93,
+      "FP": 0.86,
+      "note": "Motor XL — requiere casing grande y análisis específico"
+    }
+  ]
+}

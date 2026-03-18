@@ -43,7 +43,12 @@ simbes/
 │       │   │   ├── Module5_Sensors/    ← ✅ Funcional
 │       │   │   ├── Module6_DIFA/       ← ✅ Funcional
 │       │   │   ├── Module7_Reliability/← ✅ Funcional
-│       │   │   └── Module8_Builder/    ← ✅ Funcional
+│       │   │   ├── Module8_Builder/    ← ✅ Funcional
+│       │   │   └── Module9_BESDesign/  ← 🧪 Beta (pasos 0–7)
+│       │   │       ├── steps/          ← Step0_DataEntry … Step7_Mechanical
+│       │   │       ├── physics/        ← candidacy, pip, pump_volume, pump_selector, motor, mechanical
+│       │   │       ├── hooks/          ← useBESDesign.js (useReducer, CICLO A–E)
+│       │   │       └── data/           ← pump-series.json, motor-catalog.json
 │       │   ├── ui/             ← Átomos: Param, Metric, AlertPanel, ControlGroup
 │       │   └── charts/         ← Wrappers Recharts: NodalChart
 │       ├── data/
@@ -73,7 +78,8 @@ simbes/
 │   ├── 05_sensors_monitoring.ipynb
 │   ├── 06_difa_diagnostics.ipynb
 │   ├── 07_reliability_mtbf.ipynb
-│   └── 08_scenario_builder.ipynb
+│   ├── 08_scenario_builder.ipynb
+│   └── 09_bes_design.ipynb
 │
 └── docs/
     └── SIMBES_Arquitectura_v1.0.docx
@@ -151,11 +157,11 @@ jupyter lab
 
 ---
 
-## Estado actual — MVP completado (8/8 módulos)
+## Estado actual — 9 módulos
 
 | Módulo | Estado | Física cubierta |
 |---|---|---|
-| Hub Principal | ✅ Funcional | Mapa de 8 módulos · navegación · barra de progreso |
+| Hub Principal | ✅ Funcional | Mapa de 9 módulos · navegación · barra de progreso |
 | M1 — IPR / Análisis Nodal | ✅ Funcional | Darcy · Vogel · Leyes de Afinidad · 4 sub-pantallas (Teoría / Simulador / Caso Práctico / Evaluación) |
 | M2 — Diseño Hidráulico | ✅ Funcional | TDH · Colebrook-White · Velocidad Específica Ns · N° etapas |
 | M3 — Gas y Multifásico | ✅ Funcional | GVF · gas lock · separadores AGS · degradación H-Q · corrección viscosidad |
@@ -163,7 +169,8 @@ jupyter lab
 | M5 — Sensores y Monitoreo | ✅ Funcional | Cartas amperimétricas · P/T downhole · vibración (mm/s RMS) |
 | M6 — Diagnóstico DIFA | ✅ Funcional | API RP 11S1 · árbol de diagnóstico · códigos 3700/4900/5400/5900 |
 | M7 — Confiabilidad / MTBF | ✅ Funcional | R(t) exponencial · MLE con censurados · intervalos Chi² |
-| M8 — Constructor de Escenarios | ✅ Funcional | Integración M1–M7 · análisis IPR+Hidráulica+Gas+Eléctrico+Confiabilidad · comparación de escenarios |
+| M8 — Constructor de Escenarios | ✅ Funcional | Integración M1–M7 · Arps decline · análisis de plan temporal · comparación de escenarios |
+| M9 — Diseño BES (Wizard) | 🧪 Beta (pasos 0–7) | Candidatura 7 criterios · IPR inversa (Pwf estratégico) · PIP · volumen real bomba · TDH + selección serie · motor HP/corriente/T° · cable AWG + Arrhenius + THD · chequeo mecánico OD/dogleg |
 
 ### Mejoras de UX implementadas
 

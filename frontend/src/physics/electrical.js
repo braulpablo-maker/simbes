@@ -95,7 +95,9 @@ export function arrheniusLifeFactor(T_operating_C, T_rated_C) {
 const VSD_THD = {
   standard_6pulse: { THD_pct: 30.0, desc: 'VSD estándar 6 pulsos' },
   '12pulse':       { THD_pct: 17.5, desc: 'Multipulso 12 pulsos'  },
+  multipulse_12:   { THD_pct: 17.5, desc: 'Multipulso 12 pulsos'  },
   '18pulse':       { THD_pct:  4.0, desc: 'Multipulso 18 pulsos'  },
+  multipulse_18:   { THD_pct:  4.0, desc: 'Multipulso 18 pulsos'  },
   afe:             { THD_pct:  2.5, desc: 'Active Front End (AFE)' },
   active_filter:   { THD_pct:  1.5, desc: 'Filtro Activo'         },
 };

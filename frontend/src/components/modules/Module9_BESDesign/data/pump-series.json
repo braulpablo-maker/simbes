@@ -1,0 +1,53 @@
+{
+  "_comment": "Series BES representativas con OD y altura por etapa. GENÉRICAS — no corresponden a ningún fabricante. Para diseño real usar curvas certificadas.",
+  "series": [
+    {
+      "id": "generic_low_rate",
+      "name": "BES Caudal Bajo (genérica)",
+      "range_m3d": [10, 60],
+      "range_stbd": [63, 378],
+      "H0_ft": 9500,
+      "Qmax_stbd": 1800,
+      "BEP_stbd": 900,
+      "BEP_H_ft": 7200,
+      "H_stage_bep_ft": 30,
+      "exp": 1.85,
+      "Ns_approx": 1200,
+      "impeller_type": "Radial",
+      "OD_in": 3.75,
+      "note": "Series 400 (aprox). Casing mínimo 5.5\""
+    },
+    {
+      "id": "generic_medium_rate",
+      "name": "BES Caudal Medio (genérica)",
+      "range_m3d": [60, 250],
+      "range_stbd": [378, 1572],
+      "H0_ft": 8500,
+      "Qmax_stbd": 4200,
+      "BEP_stbd": 2100,
+      "BEP_H_ft": 6000,
+      "H_stage_bep_ft": 22,
+      "exp": 1.85,
+      "Ns_approx": 2800,
+      "impeller_type": "Flujo Mixto",
+      "OD_in": 4.00,
+      "note": "Series 513/538 (aprox). Casing mínimo 5.5\""
+    },
+    {
+      "id": "generic_high_rate",
+      "name": "BES Caudal Alto (genérica)",
+      "range_m3d": [250, 600],
+      "range_stbd": [1572, 3774],
+      "H0_ft": 6000,
+      "Qmax_stbd": 9000,
+      "BEP_stbd": 4500,
+      "BEP_H_ft": 4500,
+      "H_stage_bep_ft": 15,
+      "exp": 1.75,
+      "Ns_approx": 4000,
+      "impeller_type": "Flujo Mixto / Axial",
+      "OD_in": 5.50,
+      "note": "Series 675/725 (aprox). Casing mínimo 7\""
+    }
+  ]
+}

@@ -9,15 +9,17 @@ import M5  from "./components/modules/Module5_Sensors/index.jsx";
 import M6  from "./components/modules/Module6_DIFA/index.jsx";
 import M7  from "./components/modules/Module7_Reliability/index.jsx";
 import M8  from "./components/modules/Module8_Builder/index.jsx";
+import M9  from "./components/modules/Module9_BESDesign/index.jsx";
 
-const MODULES = { m1: M1, m2: M2, m3: M3, m4: M4, m5: M5, m6: M6, m7: M7, m8: M8 };
-const MODULE_ORDER = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8'];
+const MODULES = { m1: M1, m2: M2, m3: M3, m4: M4, m5: M5, m6: M6, m7: M7, m8: M8, m9: M9 };
+const MODULE_ORDER = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'];
 
 const MODULE_LABELS = {
   m1: "M1 · Análisis Nodal",   m2: "M2 · Diseño Hidráulico",
   m3: "M3 · Gas y Multifásico", m4: "M4 · Eléctrico · VSD",
   m5: "M5 · Sensores",         m6: "M6 · Diagnóstico DIFA",
   m7: "M7 · Confiabilidad",    m8: "M8 · Constructor",
+  m9: "M9 · Diseño BES",
 };
 
 const BTN = {

@@ -84,8 +84,90 @@
 ### ⏳ Pendiente
 - [ ] **M4-bug**: `sim.nace.applicable_standards.join` → TypeError en Tab Simulador de M4
 - [ ] **Sprint E** — M1: contenido teoría VLP, ecuación BEP, detalle Leyes de Afinidad, caso 45 m³/d
-- [ ] **Sprint F** — M2: gráfica 3 tipos de impulsor (radial / mixto / axial) en tab Teoría
-- [ ] **Sprint G** — Reemplazo global "cabeza" → "altura" en toda la app
+- [x] **Sprint G** — CERRADO: "cabeza/cabezal" es terminología técnica correcta para wellhead (Pwh). No hay reemplazo necesario.
+
+---
+
+## Sprint M9-beta — Flujo de Diseño BES (pasos 3–7) ✅ COMPLETADO
+
+### Física nueva (Module9_BESDesign/physics/)
+- [x] `pip.js` — `calcPIP(Pwf, gamma, D_total, D_bomba)` + alertas
+- [x] `pump_volume.js` — `realPumpVolume(Q, BSW, GOR, PIP, Pb, T)` — volumen real en bomba
+- [x] `pump_selector.js` — `selectPumpSeries`, `calcStages`, `checkBEPRatio`, frecuencia óptima
+- [x] `motor.js` — HP hidráulico, corriente, velocidad anular, T° motor, shroud, OD
+- [x] `mechanical.js` — OD string, holgura, dogleg check
+
+### Datos
+- [x] `data/pump-series.json` — 3 series genéricas con OD_in y H_stage_bep_ft
+- [x] `data/motor-catalog.json` — 5 tiers HP → V, OD_in, T_rated, η, FP
+
+### Reducer (useBESDesign.js)
+- [x] Extender `initialState` con step3–step7
+- [x] Agregar `computeStep3` a `computeStep7` (funciones puras)
+- [x] Agregar actions: `ADVANCE_TO_STEP_3..7`, `CICLO_A..E`, `COMPLETE_STEP_3..7`
+
+### UI (steps/)
+- [x] `Step3_PumpConditions.jsx` — PIP, GVF, separador, corrección viscosidad
+- [x] `Step4_TDH_Pump.jsx` — TDH breakdown, selección serie, BEP ratio
+- [x] `Step5_Motor.jsx` — HP, voltaje, corriente, velocidad anular, shroud
+- [x] `Step6_Cable.jsx` — AWG, caída de voltaje, aislamiento, THD
+- [x] `Step7_Mechanical.jsx` — OD string vs casing, holgura, dogleg
+
+### Integración
+- [x] `index.jsx` — activar steps 3–7, render cases, badge "BETA"
+
+### Bugfixes M9-beta
+- [x] `electrical.js`: agregar claves `multipulse_18` y `multipulse_12` a `VSD_THD`
+- [x] `useBESDesign.js`: `arrheniusLifeFactor(...).life_factor` — extrae número del objeto
+- [x] `initialState.inputs.IP` default → `4` (m³/d/psi)
+
+### Decisiones técnicas confirmadas M9-beta
+
+| Decisión | Elección |
+|---|---|
+| GOR conversión | m³/m³ × 178.107 = scf/STB — en `computeStep3`, no en gas.js |
+| TDH estática | `H_static = D_bomba - (PIP/gamma)` — override en `computeStep4`, no modifica hydraulics.js |
+| V_drop % | `V_drop_V / V_motor × 100` — corregido en `computeStep6` (no usa base 1000V simplificada) |
+| Frecuencia óptima CICLO B | `f = 60 × Q_total / Q_bep_60Hz` — fórmula directa sin circularidad |
+| OD motor | Lookup table en motor.js por tier HP (no JSON externo, marcado [SIMPLIFIED]) |
+| CICLO E | Invalida step4–step7, escribe `OD_max_constraint` en step4, navega a paso 4 |
+
+---
+
+## Sprint M9-alpha — Flujo de Diseño BES (pasos 0–2) ✅ COMPLETADO
+
+> Módulo wizard secuencial. Pwf es INPUT estratégico (no resultado). Color acento: #818CF8 (índigo)
+
+- [x] **M9-1** `candidacy.js` — 7 criterios → veredicto `approved | conditional | rejected`
+- [x] **M9-2** `useBESDesign.js` — `useReducer` con acciones UPDATE_INPUT, VALIDATE_STEP_0, ADVANCE_TO_STEP_1..2
+- [x] **M9-3** `Step0_DataEntry.jsx` — formulario 4 secciones colapsables, validación inline
+- [x] **M9-4** `Step1_Candidacy.jsx` — tabla 7 criterios (✅/⚠️/❌), sistemas alternativos
+- [x] **M9-5** `Step2_IPR.jsx` — gráfica IPR + Pwf como ReferenceLine, Q_resultante vertical
+- [x] **M9-6** `index.jsx` — wizard shell: sticky steps bar 0–7, breadcrumb, badge BETA
+- [x] **M9-7** `App.jsx` + `Hub.jsx` — M9 registrado en rutas, grilla Hub badge BETA
+
+### Decisiones técnicas confirmadas
+
+| Decisión | Elección |
+|---|---|
+| UI inputs PASO 0 | `<input type="number">` (no sliders) — datos de diseño requieren precisión |
+| Pwf | Dato de entrada del usuario (decisión de yacimientos), NO calculado |
+| Q_resultante | `iprPwfToQ(Pwf, Pr, Pb, IP)` de `ipr.js`, convertido a m³/d |
+| IP en UI | m³/d/psi → convierte a STB/d/psi al llamar a `ipr.js` (`× 6.28981`) |
+| GOR en UI | m³/m³ → convierte a scf/STB al llamar a `gas.js` (`× 5.6146`) |
+| Estado global | `useReducer` (no múltiples `useState`) — auditable para ciclos A–F futuros |
+| Candidacy lógica | Se computa en `ADVANCE_TO_STEP_1` (Q ya disponible de los inputs) |
+| Bloqueo duro | `Pwf < 0.10 × Pr` → impide completar PASO 2, usuario debe volver a PASO 0 |
+
+### Criterios de aceptación M9-alpha
+
+- [ ] PASO 0: no se puede avanzar con inputs inválidos (errores inline por campo)
+- [ ] PASO 1: criterio ❌ bloquea avance y muestra sistemas alternativos
+- [ ] PASO 2: Pwf aparece como línea horizontal en gráfica IPR (no como resultado)
+- [ ] PASO 2: Q_resultante y drawdown calculados y mostrados correctamente
+- [ ] Tabs bloqueados visualmente para pasos futuros (beta/final)
+- [ ] Hub muestra M9 con badge "✅ Disponible"
+- [ ] La conversión IP m³/d/psi → STB/d/psi no rompe la física de `ipr.js`
 
 ## Criterios de aceptación por ítem
 

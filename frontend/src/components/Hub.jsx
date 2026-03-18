@@ -127,6 +127,21 @@ const MODULES = [
     badge: "✅ Disponible",
     badgeColor: "#22C55E",
   },
+  {
+    id: "m9", number: 9, color: "#818CF8",
+    title: "Flujo de Diseño BES",
+    subtitle: "Wizard secuencial · 12 pasos · Pwf estratégico",
+    status: "available",
+    topics: [
+      "Pwf como decisión estratégica de yacimientos (no resultado)",
+      "Candidatura BES: 7 criterios ✅/⚠️/❌",
+      "IPR, PIP, GVF · TDH + selección serie · Motor · Cable",
+      "Análisis de riesgos (9 indicadores) · Set points · MTBF",
+      "Hoja de selección BES completa — Pasos 0–11",
+    ],
+    badge: "✅ Disponible · Pasos 0–11",
+    badgeColor: "#22C55E",
+  },
 ];
 
 function ModuleCard({ mod, onEnter, hovered, onHover }) {
@@ -261,29 +276,14 @@ export default function Hub({ onNavigate }) {
           Mapa de Módulos
         </h1>
         <p style={{ margin: 0, fontSize: 12, color: "#64748B" }}>
-          8 módulos de simulación · Física trazable a fuentes publicadas · Unidades operativas
+          9 módulos de simulación · Física trazable a fuentes publicadas · Unidades operativas
         </p>
-      </div>
-
-      {/* ── PROGRESS BAR ── */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: 16,
-        background: "#111827", border: "1px solid #1E293B",
-        borderRadius: 8, padding: "12px 20px", marginBottom: 32,
-      }}>
-        <div style={{ fontSize: 10, color: "#64748B", letterSpacing: 1 }}>PROGRESO MVP</div>
-        <div style={{ flex: 1, background: "#1E293B", borderRadius: 4, height: 4, overflow: "hidden" }}>
-          <div style={{ width: "100%", height: "100%", background: "#38BDF8", borderRadius: 4, transition: "width 0.5s" }} />
-        </div>
-        <div style={{ fontSize: 10, color: "#38BDF8", fontWeight: 700 }}>8 / 8 módulos</div>
-        <div style={{ width: 1, height: 16, background: "#1E293B" }} />
-        <div style={{ fontSize: 10, color: "#64748B" }}>Fase 1 · MVP</div>
       </div>
 
       {/* ── MODULE GRID ── */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        gridTemplateColumns: "repeat(3, 1fr)",
         gap: 14,
       }}>
         {MODULES.map(mod => (
