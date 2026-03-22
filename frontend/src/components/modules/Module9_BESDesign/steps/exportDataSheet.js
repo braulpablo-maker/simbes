@@ -18,11 +18,11 @@ export function exportToPDF(elementId = 'step11-sheet') {
   <meta charset="UTF-8" />
   <title>Hoja de Selección BES — SIMBES M9</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
       background: #fff; color: #1a1a2e;
       padding: 24px; font-size: 11px; line-height: 1.5;
     }

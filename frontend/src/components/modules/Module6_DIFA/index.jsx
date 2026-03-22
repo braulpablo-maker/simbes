@@ -17,14 +17,12 @@ import {
   confidenceLabel,
 } from "../../../physics/diagnostics";
 import { M6_QUESTIONS, gradeM6 } from "../../../pedagogy/evaluations/m6";
+import TheoryLayout from '../../ui/TheoryLayout';
+import { TEORIA_M6 } from './teoria-data';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const ACCENT = "#FB923C";
-const C = {
-  bg: "#0B0F1A", surface: "#111827", surfAlt: "#0D1424",
-  border: "#1E293B", text: "#CBD5E1", muted: "#64748B",
-  ok: "#22C55E", warn: "#F59E0B", danger: "#EF4444",
-};
+import { C } from '../../../theme';
 
 const SEVERITY_COLOR = {
   critical: "#DC2626",
@@ -42,7 +40,7 @@ const SEVERITY_LABEL = {
 
 const TOOLTIP_STYLE = {
   background: "#0D1424", border: "1px solid #1E293B",
-  fontSize: 10, color: "#CBD5E1", fontFamily: "IBM Plex Mono, monospace",
+  fontSize: 10, color: "#CBD5E1", fontFamily: "JetBrains Mono, monospace",
 };
 
 // ─── Micro-componentes ────────────────────────────────────────────────────────
@@ -54,7 +52,7 @@ function ConfidenceBar({ value, color }) {
       <div style={{ flex: 1, height: 8, borderRadius: 4, background: "#1E293B", overflow: "hidden" }}>
         <div style={{ width: `${pct}%`, height: "100%", background: col, borderRadius: 4, transition: "width 0.35s" }} />
       </div>
-      <span style={{ fontSize: 9, color: col, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, minWidth: 32 }}>
+      <span style={{ fontSize: 9, color: col, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, minWidth: 32 }}>
         {pct}%
       </span>
     </div>
@@ -65,7 +63,7 @@ function ApiSeriesBadge({ series }) {
   const info = API_SERIES[series] || { label: `Serie ${series}`, color: C.muted };
   return (
     <span style={{
-      fontSize: 8, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700,
+      fontSize: 8, fontFamily: "JetBrains Mono, monospace", fontWeight: 700,
       color: info.color, background: info.color + "18",
       border: `1px solid ${info.color}40`, borderRadius: 4, padding: "2px 7px",
     }}>
@@ -221,31 +219,7 @@ BPFO — Ball Pass Frequency Outer race: frecuencia de falla de rodamiento`,
 ];
 
 function TabTeoria() {
-  const [active, setActive] = useState("difa");
-  const sec = TEORIA_SECTIONS.find(s => s.id === active);
-  return (
-    <div style={{ display: "flex", gap: 20, minHeight: 520 }}>
-      <div style={{ width: 180, display: "flex", flexDirection: "column", gap: 4 }}>
-        {TEORIA_SECTIONS.map(s => (
-          <button key={s.id} onClick={() => setActive(s.id)} style={{
-            background: active === s.id ? ACCENT + "18" : "transparent",
-            border: `1px solid ${active === s.id ? ACCENT + "60" : C.border}`,
-            borderRadius: 6, padding: "7px 10px", cursor: "pointer",
-            fontSize: 9, color: active === s.id ? ACCENT : C.muted,
-            textAlign: "left", fontFamily: "IBM Plex Mono, monospace",
-          }}>
-            {s.title.split("—")[0].trim()}
-          </button>
-        ))}
-      </div>
-      <div style={{ flex: 1, background: C.surface, borderRadius: 8, padding: 24, border: `1px solid ${C.border}` }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 14 }}>{sec.title}</div>
-        <pre style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", whiteSpace: "pre-wrap", lineHeight: 1.85, margin: 0 }}>
-          {sec.body}
-        </pre>
-      </div>
-    </div>
-  );
+  return <TheoryLayout sections={TEORIA_M6} accentColor="#EF4444" />;
 }
 
 // ─── Tab B: Simulador (motor de diagnóstico) ──────────────────────────────────
@@ -258,7 +232,7 @@ function SymptomCheck({ symptom, active, onToggle }) {
       background: active ? grp.color + "15" : "transparent",
       border: `1px solid ${active ? grp.color + "70" : C.border}`,
       color: active ? grp.color : C.muted,
-      fontFamily: "IBM Plex Mono, monospace", fontSize: 9, width: "100%",
+      fontFamily: "JetBrains Mono, monospace", fontSize: 9, width: "100%",
     }}>
       <span style={{
         width: 12, height: 12, borderRadius: 2,
@@ -289,25 +263,25 @@ function PatternCard({ pattern, rank }) {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
         <div style={{ flex: 1, marginRight: 12 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginBottom: 4, lineHeight: 1.4 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: C.text, fontFamily: "JetBrains Mono, monospace", marginBottom: 4, lineHeight: 1.4 }}>
             <span style={{ color: C.muted, marginRight: 6 }}>#{rank}</span>
             {pattern.title}
           </div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             <ApiSeriesBadge series={pattern.api_series} />
-            <span style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace", padding: "2px 7px", border: `1px solid ${C.border}`, borderRadius: 4 }}>
+            <span style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", padding: "2px 7px", border: `1px solid ${C.border}`, borderRadius: 4 }}>
               {pattern.api_code}
             </span>
-            <span style={{ fontSize: 8, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, color: sevCol, padding: "2px 7px", background: sevCol + "15", border: `1px solid ${sevCol}40`, borderRadius: 4 }}>
+            <span style={{ fontSize: 8, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, color: sevCol, padding: "2px 7px", background: sevCol + "15", border: `1px solid ${sevCol}40`, borderRadius: 4 }}>
               {SEVERITY_LABEL[pattern.severity] || pattern.severity}
             </span>
           </div>
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: 22, fontWeight: 800, color: pct >= 75 ? C.ok : pct >= 45 ? C.warn : C.danger, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: pct >= 75 ? C.ok : pct >= 45 ? C.warn : C.danger, fontFamily: "JetBrains Mono, monospace", lineHeight: 1 }}>
             {pct}%
           </div>
-          <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+          <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
             {confidenceLabel(pattern.confidence)}
           </div>
         </div>
@@ -316,7 +290,7 @@ function PatternCard({ pattern, rank }) {
       <ConfidenceBar value={pattern.confidence} />
 
       {/* Causa raíz siempre visible */}
-      <div style={{ marginTop: 10, fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.6 }}>
+      <div style={{ marginTop: 10, fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6 }}>
         <span style={{ color: ACCENT, fontWeight: 700 }}>Causa raíz: </span>
         {pattern.root_cause}
       </div>
@@ -325,7 +299,7 @@ function PatternCard({ pattern, rank }) {
       <button onClick={() => setExpanded(e => !e)} style={{
         marginTop: 10, background: "transparent", border: `1px solid ${C.border}`,
         borderRadius: 4, padding: "3px 10px", fontSize: 8, color: C.muted,
-        cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+        cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
       }}>
         {expanded ? "▲ Ocultar detalle" : "▼ Ver prevención + MTBF"}
       </button>
@@ -333,19 +307,19 @@ function PatternCard({ pattern, rank }) {
       {expanded && (
         <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
           <div>
-            <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>Acciones de Prevención</div>
+            <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>Acciones de Prevención</div>
             {pattern.prevention.map((p, i) => (
-              <div key={i} style={{ fontSize: 9, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.6, paddingLeft: 8 }}>
+              <div key={i} style={{ fontSize: 9, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6, paddingLeft: 8 }}>
                 • {p}
               </div>
             ))}
           </div>
           {pattern.typical_MTBF_impact && (
             <div style={{ background: sevCol + "08", border: `1px solid ${sevCol}25`, borderRadius: 6, padding: "8px 12px" }}>
-              <div style={{ fontSize: 8, color: sevCol, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 2 }}>
+              <div style={{ fontSize: 8, color: sevCol, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 2 }}>
                 Impacto en MTBF
               </div>
-              <div style={{ fontSize: 9, color: C.text, fontFamily: "IBM Plex Mono, monospace" }}>
+              <div style={{ fontSize: 9, color: C.text, fontFamily: "JetBrains Mono, monospace" }}>
                 {pattern.typical_MTBF_impact}
               </div>
             </div>
@@ -394,19 +368,19 @@ function TabSimulador() {
       {/* ── Panel de síntomas ── */}
       <div style={{ width: 250, display: "flex", flexDirection: "column", gap: 14 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>SÍNTOMAS OBSERVADOS</div>
+          <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>SÍNTOMAS OBSERVADOS</div>
           {active.size > 0 && (
             <button onClick={clear} style={{
               fontSize: 8, color: C.muted, background: "transparent",
               border: `1px solid ${C.border}`, borderRadius: 4, padding: "2px 8px",
-              cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+              cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
             }}>Limpiar</button>
           )}
         </div>
 
         {groupedSymptoms.map(grp => (
           <div key={grp.key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <div style={{ fontSize: 8, color: grp.color, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>
+            <div style={{ fontSize: 8, color: grp.color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>
               — {grp.label}
             </div>
             {grp.symptoms.map(sym => (
@@ -416,7 +390,7 @@ function TabSimulador() {
         ))}
 
         {/* Contador */}
-        <div style={{ background: C.surface, borderRadius: 6, padding: "8px 12px", border: `1px solid ${C.border}`, fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+        <div style={{ background: C.surface, borderRadius: 6, padding: "8px 12px", border: `1px solid ${C.border}`, fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
           {active.size === 0
             ? "Selecciona síntomas para iniciar el diagnóstico"
             : `${active.size} síntoma${active.size > 1 ? "s" : ""} seleccionado${active.size > 1 ? "s" : ""} · ${results.length} patrón${results.length !== 1 ? "es" : ""} encontrado${results.length !== 1 ? "s" : ""}`
@@ -433,7 +407,7 @@ function TabSimulador() {
             background: C.surface, borderRadius: 8, border: `1px solid ${C.border}`, padding: 48, gap: 16, minHeight: 400,
           }}>
             <div style={{ fontSize: 32 }}>🔍</div>
-            <div style={{ fontSize: 13, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textAlign: "center", lineHeight: 1.7 }}>
+            <div style={{ fontSize: 13, color: C.muted, fontFamily: "JetBrains Mono, monospace", textAlign: "center", lineHeight: 1.7 }}>
               Motor de Diagnóstico DIFA<br />
               <span style={{ fontSize: 10 }}>Seleccioná los síntomas observados en el panel izquierdo.<br />El sistema identificará los patrones de falla más probables según API RP 11S1.</span>
             </div>
@@ -445,7 +419,7 @@ function TabSimulador() {
             background: C.surface, borderRadius: 8, border: `1px solid ${C.border}`,
             padding: 32, textAlign: "center",
           }}>
-            <div style={{ fontSize: 11, color: C.muted, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
               Combinación de síntomas no coincide con patrones conocidos.<br />
               <span style={{ fontSize: 10 }}>Revisá la selección o consultá con el equipo técnico de campo.</span>
             </div>
@@ -456,18 +430,18 @@ function TabSimulador() {
           <>
             {/* Gráfica de confianza */}
             <div style={{ background: C.surfAlt, borderRadius: 8, padding: 16, border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>
                 Confianza por patrón (Top {chartData.length}) — {results.length} patrón{results.length > 1 ? "es" : ""} total
               </div>
               <ResponsiveContainer width="100%" height={120}>
                 <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} horizontal={false} />
-                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                     tickFormatter={v => `${v}%`} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 9, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} width={55} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 9, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} width={55} />
                   <Tooltip contentStyle={TOOLTIP_STYLE} formatter={v => [`${v}%`, "Confianza"]} />
                   <Bar dataKey="Confianza" radius={[0, 4, 4, 0]} fill={ACCENT}
-                    label={{ position: "right", fontSize: 9, fill: C.muted, fontFamily: "IBM Plex Mono, monospace", formatter: v => `${v}%` }} />
+                    label={{ position: "right", fontSize: 9, fill: C.muted, fontFamily: "JetBrains Mono, monospace", formatter: v => `${v}%` }} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -479,7 +453,7 @@ function TabSimulador() {
                   const info = API_SERIES[serie] || { label: `Serie ${serie}`, color: C.muted };
                   return (
                     <div key={serie} style={{
-                      fontSize: 9, fontFamily: "IBM Plex Mono, monospace",
+                      fontSize: 9, fontFamily: "JetBrains Mono, monospace",
                       color: info.color, background: info.color + "12",
                       border: `1px solid ${info.color}40`, borderRadius: 6,
                       padding: "5px 12px",
@@ -563,11 +537,11 @@ function TabCaso() {
             background: step === i ? ACCENT + "22" : "transparent",
             border: `1px solid ${step === i ? ACCENT : C.border}`,
             color: step === i ? ACCENT : C.muted,
-            fontFamily: "IBM Plex Mono, monospace",
+            fontFamily: "JetBrains Mono, monospace",
           }}>Paso {i + 1}</button>
         ))}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-          <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>POZO DELFÍN-3 · Caso DIFA M6</div>
+          <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>POZO DELFÍN-3 · Caso DIFA M6</div>
         </div>
       </div>
 
@@ -575,19 +549,19 @@ function TabCaso() {
         {/* Panel izquierdo: contexto */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>{s.title}</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
-            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>{s.title}</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
+            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>
               📋 {s.task}
             </div>
           </div>
           <div style={{ background: "#0D1424", borderRadius: 6, padding: 12, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>💡 PISTA</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginTop: 4, lineHeight: 1.6 }}>{s.hint}</div>
+            <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>💡 PISTA</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", marginTop: 4, lineHeight: 1.6 }}>{s.hint}</div>
           </div>
           <div style={{ background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 8, padding: 14 }}>
-            <div style={{ fontSize: 9, color: C.ok, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
+            <div style={{ fontSize: 9, color: C.ok, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
           </div>
         </div>
 
@@ -596,14 +570,14 @@ function TabCaso() {
           {step === 0 && step1Result && (
             <>
               <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 9, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 10 }}>
+                <div style={{ fontSize: 9, color: ACCENT, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 10 }}>
                   Síntomas seleccionados → Resultado del motor DIFA
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
                   {s.symptoms.map(symId => {
                     const sym = SYMPTOMS.find(s => s.id === symId);
                     return sym ? (
-                      <div key={symId} style={{ fontSize: 9, color: SYMPTOM_GROUPS[sym.group]?.color || C.text, fontFamily: "IBM Plex Mono, monospace" }}>
+                      <div key={symId} style={{ fontSize: 9, color: SYMPTOM_GROUPS[sym.group]?.color || C.text, fontFamily: "JetBrains Mono, monospace" }}>
                         ✓ {sym.label}
                       </div>
                     ) : null;
@@ -618,10 +592,10 @@ function TabCaso() {
                         border: `1px solid ${r.id === s.expectedPattern ? C.ok + "50" : C.border}`,
                       }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <div style={{ fontSize: 9, color: r.id === s.expectedPattern ? C.ok : C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+                          <div style={{ fontSize: 9, color: r.id === s.expectedPattern ? C.ok : C.muted, fontFamily: "JetBrains Mono, monospace" }}>
                             #{i + 1} {r.api_code} — {r.title.split("→")[0].trim()}
                           </div>
-                          <span style={{ fontSize: 10, fontWeight: 700, color: C.ok, fontFamily: "IBM Plex Mono, monospace" }}>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: C.ok, fontFamily: "JetBrains Mono, monospace" }}>
                             {Math.round(r.confidence * 100)}%
                           </span>
                         </div>
@@ -638,7 +612,7 @@ function TabCaso() {
 
           {step === 1 && (
             <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 14 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "JetBrains Mono, monospace", marginBottom: 14 }}>
                 Hallazgos del Teardown — Delfín-3
               </div>
               {[
@@ -653,21 +627,21 @@ function TabCaso() {
                   gap: 8, padding: "6px 0", borderBottom: `1px solid ${C.border}`,
                   alignItems: "center",
                 }}>
-                  <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>{row.component}</div>
-                  <div style={{ fontSize: 9, color: row.ok ? C.text : C.warn, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.4 }}>{row.finding}</div>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: row.ok ? C.ok : C.warn, fontFamily: "IBM Plex Mono, monospace", textAlign: "right" }}>{row.code}</div>
+                  <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{row.component}</div>
+                  <div style={{ fontSize: 9, color: row.ok ? C.text : C.warn, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.4 }}>{row.finding}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: row.ok ? C.ok : C.warn, fontFamily: "JetBrains Mono, monospace", textAlign: "right" }}>{row.code}</div>
                 </div>
               ))}
               <div style={{ marginTop: 14, background: C.warn + "10", border: `1px solid ${C.warn}30`, borderRadius: 6, padding: "8px 12px" }}>
-                <div style={{ fontSize: 9, color: C.warn, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>Código API principal: 3720</div>
-                <div style={{ fontSize: 9, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginTop: 2 }}>Causa raíz: Incrustación de escala en conjunto de bomba</div>
+                <div style={{ fontSize: 9, color: C.warn, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>Código API principal: 3720</div>
+                <div style={{ fontSize: 9, color: C.text, fontFamily: "JetBrains Mono, monospace", marginTop: 2 }}>Causa raíz: Incrustación de escala en conjunto de bomba</div>
               </div>
             </div>
           )}
 
           {step === 2 && (
             <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 14 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "JetBrains Mono, monospace", marginBottom: 14 }}>
                 Seleccioná las acciones correctas para código 3720
               </div>
               {["A", "B", "C", "D", "E"].map(a => {
@@ -690,14 +664,14 @@ function TabCaso() {
                     background: isSelected ? (isCorrect ? C.ok + "10" : C.danger + "10") : "transparent",
                     border: `1px solid ${col}`,
                     color: isSelected ? (isCorrect ? C.ok : C.danger) : C.muted,
-                    cursor: "pointer", fontSize: 9, fontFamily: "IBM Plex Mono, monospace",
+                    cursor: "pointer", fontSize: 9, fontFamily: "JetBrains Mono, monospace",
                   }}>
                     <span style={{ fontWeight: 700, marginRight: 6 }}>{a})</span>{labels[a]}
                   </button>
                 );
               })}
               {selectedActions.size > 0 && (
-                <div style={{ marginTop: 10, fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+                <div style={{ marginTop: 10, fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
                   Correctas seleccionadas: {s.correctActions.filter(a => selectedActions.has(a)).length}/{s.correctActions.length}
                 </div>
               )}
@@ -711,13 +685,13 @@ function TabCaso() {
         <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${C.border}`,
           background: "transparent", color: C.muted, cursor: step === 0 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>← Anterior</button>
         <button onClick={() => setStep(s => Math.min(CASO_STEPS.length - 1, s + 1))} disabled={step === CASO_STEPS.length - 1} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${ACCENT}`,
           background: ACCENT + "22", color: ACCENT,
           cursor: step === CASO_STEPS.length - 1 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>Siguiente →</button>
       </div>
     </div>
@@ -742,10 +716,10 @@ function TabEvaluacion() {
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "JetBrains Mono, monospace" }}>
               {result.score}/{result.total} — {result.pct}%
             </div>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               {result.pct >= 80
                 ? "Excelente. Dominas la metodología DIFA y la codificación API RP 11S1."
                 : result.pct >= 60
@@ -753,7 +727,7 @@ function TabEvaluacion() {
                 : "Revisá el árbol de diagnóstico y la lógica de causa raíz del DIFA."}
             </div>
           </div>
-          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>Reintentar</button>
+          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}>Reintentar</button>
         </div>
       )}
 
@@ -761,7 +735,7 @@ function TabEvaluacion() {
         const res = result?.results.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 11, color: C.text, fontFamily: "JetBrains Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
               <span style={{ color: ACCENT, fontWeight: 700 }}>{qi + 1}. </span>{q.text}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -777,7 +751,7 @@ function TabEvaluacion() {
                     border: `1px solid ${color}`,
                     color: selected ? color : C.muted,
                     cursor: result ? "default" : "pointer",
-                    fontSize: 10, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.5,
+                    fontSize: 10, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5,
                   }}>
                     <span style={{ fontWeight: 700 }}>{opt.id.toUpperCase()})</span> {opt.text}
                   </button>
@@ -785,7 +759,7 @@ function TabEvaluacion() {
               })}
             </div>
             {res && (
-              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>
+              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
                 💡 {q.explanation}
               </div>
             )}
@@ -799,7 +773,7 @@ function TabEvaluacion() {
           border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT,
           cursor: Object.keys(answers).length < M6_QUESTIONS.length ? "not-allowed" : "pointer",
           opacity: Object.keys(answers).length < M6_QUESTIONS.length ? 0.5 : 1,
-          fontFamily: "IBM Plex Mono, monospace", letterSpacing: 1,
+          fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
         }}>
           CALIFICAR ({Object.keys(answers).length}/{M6_QUESTIONS.length} respondidas)
         </button>
@@ -819,17 +793,17 @@ const TABS = [
 export default function Module6({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: "IBM Plex Mono, 'Courier New', monospace", background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>← Hub</button>
+        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800 }}>M06</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9" }}>Diagnóstico DIFA</span>
+            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M06</span>
+            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Diagnóstico DIFA</span>
           </div>
           <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1 }}>API RP 11S1 · Árbol de Fallas · Teardown Report · Prevención</div>
         </div>
-        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: "IBM Plex Mono, monospace" }}>✅ Disponible</span>
+        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: C.fontUI }}>✅ Disponible</span>
       </div>
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 40, zIndex: 100, background: C.bg, paddingTop: 8 }}>
@@ -839,7 +813,7 @@ export default function Module6({ onBack }) {
             background: tab === t.id ? ACCENT + "18" : "transparent",
             borderBottom: tab === t.id ? `2px solid ${ACCENT}` : "2px solid transparent",
             color: tab === t.id ? ACCENT : C.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
             fontWeight: tab === t.id ? 700 : 400,
           }}>{t.label}</button>
         ))}

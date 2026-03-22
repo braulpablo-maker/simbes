@@ -5,18 +5,7 @@
  * Si hay ❌, muestra sistemas alternativos y bloquea el avance.
  */
 
-const C = {
-  bg:        '#0B0F1A',
-  surface:   '#111827',
-  surfaceAlt:'#0D1424',
-  border:    '#1E293B',
-  text:      '#CBD5E1',
-  muted:     '#64748B',
-  indigo:    '#818CF8',
-  ok:        '#22C55E',
-  warning:   '#F59E0B',
-  danger:    '#EF4444',
-};
+import { C } from '../../../../theme';
 
 const STATUS_CONFIG = {
   ok:      { icon: '✅', color: C.ok,      label: 'FAVORABLE' },
@@ -40,7 +29,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 1 — Candidatura BES</span>
         <br />
@@ -58,7 +47,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
           display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 3fr',
           background: C.surfaceAlt, padding: '8px 16px',
           borderBottom: `1px solid ${C.border}`,
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
           color: C.muted, letterSpacing: 1, fontWeight: 700,
         }}>
           <span>CRITERIO</span>
@@ -79,20 +68,20 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
                         : c.status === 'warning' ? `${C.warning}06` : 'transparent',
               alignItems: 'center',
             }}>
-              <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.text }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.text }}>
                 {c.nombre}
               </span>
-              <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: sc.color, fontWeight: 700 }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: sc.color, fontWeight: 700 }}>
                 {c.valor}{c.unidad ? ` ${c.unidad}` : ''}
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontSize: 14 }}>{sc.icon}</span>
                 <span style={{
-                  fontSize: 8, color: sc.color, fontFamily: 'IBM Plex Mono, monospace',
+                  fontSize: 8, color: sc.color, fontFamily: 'JetBrains Mono, monospace',
                   letterSpacing: 1, fontWeight: 700,
                 }}>{sc.label}</span>
               </div>
-              <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.5 }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.5 }}>
                 {c.msg}
               </span>
             </div>
@@ -104,7 +93,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
       <div style={{
         background: `${vc.color}12`, border: `1px solid ${vc.color}40`,
         borderRadius: 8, padding: '14px 18px', marginBottom: 20,
-        fontFamily: 'IBM Plex Mono, monospace',
+        fontFamily: 'JetBrains Mono, monospace',
       }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: vc.color, marginBottom: 4 }}>
           {vc.icon} {vc.label}
@@ -120,7 +109,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
         }}>
           <div style={{
             fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 2,
-            fontFamily: 'IBM Plex Mono, monospace', marginBottom: 12,
+            fontFamily: 'JetBrains Mono, monospace', marginBottom: 12,
           }}>
             SISTEMAS ALTERNATIVOS RECOMENDADOS
           </div>
@@ -131,12 +120,12 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
               background: C.surface, borderRadius: 6,
               border: `1px solid ${C.border}`,
             }}>
-              <span style={{ color: C.warning, fontFamily: 'IBM Plex Mono, monospace', fontSize: 13, flexShrink: 0 }}>▸</span>
+              <span style={{ color: C.warning, fontFamily: 'JetBrains Mono, monospace', fontSize: 13, flexShrink: 0 }}>▸</span>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: C.text, fontFamily: 'IBM Plex Mono, monospace' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: C.text, fontFamily: 'JetBrains Mono, monospace' }}>
                   {s.nombre}
                 </div>
-                <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>
+                <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>
                   {s.razon}
                 </div>
               </div>
@@ -151,7 +140,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
           onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
             letterSpacing: 1,
           }}>
@@ -163,7 +152,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
             onClick={onAdvance}
             style={{
               background: `${C.indigo}22`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700, letterSpacing: 1,
             }}>
@@ -175,7 +164,7 @@ export default function Step1_Candidacy({ criterios, verdict, sistemasAlternativ
           <div style={{
             background: `${C.danger}10`, border: `1px solid ${C.danger}30`,
             borderRadius: 6, padding: '10px 16px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.danger,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.danger,
           }}>
             ❌ Pozo no candidato. Ajustá los datos en PASO 0 o considerá sistemas alternativos.
           </div>

@@ -7,21 +7,7 @@
  */
 import { useState } from 'react';
 
-const C = {
-  bg:        '#0B0F1A',
-  surface:   '#111827',
-  surfaceAlt:'#0D1424',
-  border:    '#1E293B',
-  text:      '#CBD5E1',
-  muted:     '#64748B',
-  indigo:    '#818CF8',  // acento M9
-  green:     '#34D399',
-  purple:    '#A78BFA',
-  pink:      '#F472B6',
-  ok:        '#22C55E',
-  warning:   '#F59E0B',
-  danger:    '#EF4444',
-};
+import { C } from '../../../../theme';
 
 // ── Sección colapsable ──────────────────────────────────────────
 function Section({ title, color, defaultOpen = true, children }) {
@@ -33,7 +19,7 @@ function Section({ title, color, defaultOpen = true, children }) {
         style={{
           width: '100%', background: C.surface,
           border: `1px solid ${color}40`, borderLeft: `3px solid ${color}`,
-          color: C.text, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+          color: C.text, fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
           padding: '9px 14px', cursor: 'pointer', textAlign: 'left',
           borderRadius: open ? '6px 6px 0 0' : 6,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -61,7 +47,7 @@ function Field({ label, field, value, unit, min, max, step = 1, tooltip,
   const err = errors?.[field];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
         letterSpacing: 0.5 }} title={tooltip}>
         {label} {unit && <span style={{ color: C.muted, opacity: 0.6 }}>({unit})</span>}
         {tooltip && <span style={{ opacity: 0.5, marginLeft: 4 }}>ⓘ</span>}
@@ -75,12 +61,12 @@ function Field({ label, field, value, unit, min, max, step = 1, tooltip,
           background: C.bg, border: `1px solid ${err ? C.danger : C.border}`,
           borderRadius: 4, padding: '6px 10px',
           color: err ? C.danger : C.text,
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 12,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 12,
           width: '100%', boxSizing: 'border-box',
           outline: 'none',
         }}
       />
-      {err && <span style={{ fontSize: 10, color: C.danger, fontFamily: 'IBM Plex Mono, monospace' }}>{err}</span>}
+      {err && <span style={{ fontSize: 10, color: C.danger, fontFamily: 'JetBrains Mono, monospace' }}>{err}</span>}
     </div>
   );
 }
@@ -89,7 +75,7 @@ function Field({ label, field, value, unit, min, max, step = 1, tooltip,
 function Toggle({ label, field, value, onChange }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', letterSpacing: 0.5 }}>
+      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', letterSpacing: 0.5 }}>
         {label}
       </label>
       <button
@@ -99,7 +85,7 @@ function Toggle({ label, field, value, onChange }) {
           border: `1px solid ${value ? C.danger : C.border}`,
           borderRadius: 4, padding: '6px 10px',
           color: value ? C.danger : C.muted,
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 12,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 12,
           cursor: 'pointer', textAlign: 'left',
         }}>
         {value ? '✓ Sí — Presente' : '✗ No — Ausente'}
@@ -112,7 +98,7 @@ function Toggle({ label, field, value, onChange }) {
 function SelectField({ label, field, value, options, onChange }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', letterSpacing: 0.5 }}>
+      <label style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', letterSpacing: 0.5 }}>
         {label}
       </label>
       <select
@@ -121,7 +107,7 @@ function SelectField({ label, field, value, options, onChange }) {
         style={{
           background: C.bg, border: `1px solid ${C.border}`,
           borderRadius: 4, padding: '6px 10px',
-          color: C.text, fontFamily: 'IBM Plex Mono, monospace', fontSize: 12,
+          color: C.text, fontFamily: 'JetBrains Mono, monospace', fontSize: 12,
           width: '100%', cursor: 'pointer',
         }}>
         {options.map(([val, lab]) => <option key={val} value={val}>{lab}</option>)}
@@ -139,7 +125,7 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 0 — Ingreso de datos del sistema</span>
         <br />
@@ -238,7 +224,7 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
         <div style={{
           background: `${C.danger}10`, border: `1px solid ${C.danger}30`,
           borderRadius: 8, padding: '10px 14px', marginBottom: 16,
-          fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.danger,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.danger,
         }}>
           ✖ {Object.keys(errors).length} campo(s) con error. Corregí antes de continuar.
         </div>
@@ -250,7 +236,7 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
           onClick={onValidate}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
             letterSpacing: 1,
           }}>
@@ -263,7 +249,7 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
             background: step0Valid ? `${C.indigo}22` : C.surface,
             border: `1px solid ${step0Valid ? C.indigo : C.border}`,
             color: step0Valid ? C.indigo : C.muted,
-            fontFamily: 'IBM Plex Mono, monospace',
+            fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 24px', borderRadius: 6,
             cursor: step0Valid ? 'pointer' : 'not-allowed',
             fontWeight: 700, letterSpacing: 1, opacity: step0Valid ? 1 : 0.5,

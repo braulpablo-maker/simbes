@@ -9,15 +9,7 @@
 
 import React from 'react';
 
-const C = {
-  ok:      '#22C55E',
-  warning: '#F59E0B',
-  danger:  '#EF4444',
-  text:    '#CBD5E1',
-  muted:   '#64748B',
-  surface: '#111827',
-  border:  '#1E293B',
-};
+import { C } from '../../theme';
 
 // ─── Param ───────────────────────────────────────────────────────
 
@@ -42,11 +34,11 @@ export function Param({ label, value, min, max, step, unit, color = C.text,
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 11, color: C.muted, fontFamily: 'IBM Plex Mono' }}
+        <span style={{ fontSize: 11, color: C.muted, fontFamily: 'JetBrains Mono' }}
           title={tooltip}>
           {label} {tooltip && <span style={{ opacity: 0.5 }}>ⓘ</span>}
         </span>
-        <span style={{ fontSize: 13, color, fontFamily: 'IBM Plex Mono', fontWeight: 700 }}>
+        <span style={{ fontSize: 13, color, fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
           {display} <span style={{ fontSize: 10, color: C.muted }}>{unit}</span>
         </span>
       </div>
@@ -77,9 +69,9 @@ export function Metric({ label, value, unit = '', color = C.text, tooltip }) {
       background: '#0D1424', borderRadius: 6, padding: '8px 12px',
       border: `1px solid ${C.border}`, marginBottom: 8,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono' }}
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono' }}
         title={tooltip}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono', fontWeight: 700 }}>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
     </div>
@@ -107,7 +99,7 @@ export function AlertPanel({ alerts = [] }) {
           background: `${colors[a.type]}12`,
           border: `1px solid ${colors[a.type]}40`,
           borderRadius: 6, padding: '8px 12px',
-          fontFamily: 'IBM Plex Mono', fontSize: 11, color: colors[a.type],
+          fontFamily: 'JetBrains Mono', fontSize: 11, color: colors[a.type],
         }}>
           <span style={{ marginTop: 1 }}>{icons[a.type]}</span>
           <span style={{ color: C.text }}>{a.msg}</span>
@@ -135,7 +127,7 @@ export function ControlGroup({ title, color = C.text, children }) {
     }}>
       <div style={{
         fontSize: 10, fontWeight: 700, letterSpacing: 2,
-        color, fontFamily: 'IBM Plex Mono', textTransform: 'uppercase',
+        color, fontFamily: 'JetBrains Mono', textTransform: 'uppercase',
         marginBottom: 10,
       }}>
         {title}
@@ -163,7 +155,7 @@ export function SectionToggle({ title, children, defaultOpen = false }) {
         onClick={() => setOpen(o => !o)}
         style={{
           width: '100%', background: '#1E293B', border: 'none',
-          color: C.text, fontFamily: 'IBM Plex Mono', fontSize: 11,
+          color: C.text, fontFamily: 'JetBrains Mono', fontSize: 11,
           padding: '8px 12px', cursor: 'pointer', textAlign: 'left',
           borderRadius: open ? '6px 6px 0 0' : 6,
           display: 'flex', justifyContent: 'space-between',

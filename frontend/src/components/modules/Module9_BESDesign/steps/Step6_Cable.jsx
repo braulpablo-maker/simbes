@@ -8,12 +8,7 @@
  */
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 const AWG_OPTIONS = [1, 2, 4, 6, 8, 10, 12, 14];
 
@@ -37,11 +32,11 @@ function Metric({ label, value, unit, color = C.text, sub }) {
       background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
       border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700 }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -53,7 +48,7 @@ function VDropBar({ pct }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted }}>
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted }}>
         <span>Caída de voltaje</span>
         <span style={{ color, fontWeight: 700 }}>{pct?.toFixed(2)}%</span>
       </div>
@@ -63,7 +58,7 @@ function VDropBar({ pct }) {
         <div style={{ width: `${w}%`, height: '100%', borderRadius: 4, background: color }} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 9, color: C.muted }}>
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 9, color: C.muted }}>
         <span>0%</span><span style={{ color: C.warning }}>5%</span>
         <span style={{ color: C.danger }}>10%</span><span>15%</span>
       </div>
@@ -78,7 +73,7 @@ function LifeBar({ factor }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted }}>
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted }}>
         <span>Factor vida útil Arrhenius</span>
         <span style={{ color, fontWeight: 700 }}>{pct?.toFixed(0)}% de vida nominal</span>
       </div>
@@ -104,7 +99,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 6 — Selección y verificación del cable</span>
         <br />
@@ -122,7 +117,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12 }}>CABLE SELECCIONADO</div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, marginBottom: 16 }}>
@@ -146,12 +141,12 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
             border: `1px solid ${V_drop_pct > 10 ? C.danger : C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 8 }}>
               CICLO D — Cambio de AWG
               {iteraciones_cicloD > 0 && <span style={{ color: C.muted, marginLeft: 8 }}>({iteraciones_cicloD} iter.)</span>}
             </div>
-            <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted,
+            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted,
               marginBottom: 10 }}>
               AWG menor (nro más bajo) → conductor más grueso → menor resistencia → menor caída de voltaje.
             </div>
@@ -163,7 +158,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
                     background: AWG === awg ? `${C.yellow}22` : C.surfaceAlt,
                     border: `1px solid ${AWG === awg ? C.yellow : C.border}`,
                     color: AWG === awg ? C.yellow : C.text,
-                    fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+                    fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
                     padding: '6px 16px', borderRadius: 6, cursor: 'pointer',
                     fontWeight: AWG === awg ? 700 : 400,
                   }}>
@@ -178,14 +173,14 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12 }}>VIDA ÚTIL Y ARMÓNICAS</div>
 
             <LifeBar factor={life_factor} />
 
             <div style={{ marginTop: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4,
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted }}>
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted }}>
                 <span>THD voltaje — VSD: {VSD_LABELS[inputs.VSD] ?? inputs.VSD}</span>
                 <span style={{ color: cumple_ieee519 ? C.ok : C.warning, fontWeight: 700 }}>
                   {THD_pct?.toFixed(0)}% {cumple_ieee519 ? '✓ IEEE 519' : '✗ excede IEEE 519'}
@@ -197,7 +192,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
                   background: cumple_ieee519 ? C.ok : C.warning,
                 }} />
               </div>
-              <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 9,
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 9,
                 color: C.muted, marginTop: 3 }}>
                 Límite IEEE 519-2014: THDv {'<'} 5% en PCC · VSD actual: {inputs.VSD}
               </div>
@@ -207,7 +202,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
               <div style={{
                 marginTop: 10, background: `${C.warning}0A`, border: `1px solid ${C.warning}30`,
                 borderRadius: 6, padding: '8px 12px',
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.warning,
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.warning,
               }}>
                 Para cumplir IEEE 519-2014: cambiar VSD en PASO 0 a "Multipulso 18 pulsos" (THD ~5%) o "AFE" (THD ~3%).
               </div>
@@ -217,14 +212,14 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
 
         {/* Panel derecho — alertas */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+          <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, marginBottom: 4 }}>DIAGNÓSTICO</div>
           <AlertPanel alerts={alerts ?? []} />
 
           <div style={{
             background: C.surfaceAlt, border: `1px solid ${C.border}`,
             borderRadius: 6, padding: '10px 12px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.6,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.6,
           }}>
             <span style={{ color: C.indigo, fontWeight: 700 }}>NACE MR0175</span><br />
             T° {'>'} 140°C → EPDM/PEEK (no NBR). H₂S presente → Lead Sheath + Monel 400.
@@ -240,7 +235,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
         <button onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
           }}>
           ← VOLVER A PASO 5
@@ -250,7 +245,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
           <button onClick={onComplete}
             style={{
               background: `${C.ok}18`, border: `1px solid ${C.ok}`,
-              color: C.ok, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.ok, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
@@ -262,7 +257,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
           <div style={{
             background: `${C.danger}10`, border: `1px solid ${C.danger}30`,
             borderRadius: 6, padding: '10px 16px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.danger,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.danger,
           }}>
             ❌ Caída {V_drop_pct?.toFixed(1)}% {'>'} 10%. CICLO D: cambiar a AWG menor.
           </div>
@@ -272,7 +267,7 @@ export default function Step6_Cable({ inputs, step6, onCicloD, onComplete, onAdv
           <button onClick={onAdvance}
             style={{
               background: `${C.indigo}22`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700, letterSpacing: 1,
             }}>

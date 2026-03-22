@@ -8,12 +8,7 @@
  */
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 function Metric({ label, value, unit, color = C.text, sub }) {
   return (
@@ -21,11 +16,11 @@ function Metric({ label, value, unit, color = C.text, sub }) {
       background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
       border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700 }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -53,7 +48,7 @@ function AnnularDiagram({ ID_cas_in, OD_string_in, holgura_mm }) {
         <circle cx={cx} cy={cy} r={r_cas} fill="none"
           stroke={C.border} strokeWidth={6} />
         <text x={cx} y={cy - r_cas - 10} textAnchor="middle"
-          fill={C.muted} fontSize={9} fontFamily="IBM Plex Mono, monospace">
+          fill={C.muted} fontSize={9} fontFamily="JetBrains Mono, monospace">
           ID casing {ID_cas_in}"
         </text>
 
@@ -61,7 +56,7 @@ function AnnularDiagram({ ID_cas_in, OD_string_in, holgura_mm }) {
         <circle cx={cx} cy={cy} r={Math.min(r_string, r_cas - 2)} fill={`${C.indigo}30`}
           stroke={r_string > r_cas ? C.danger : C.indigo} strokeWidth={2} />
         <text x={cx} y={cy + 4} textAnchor="middle"
-          fill={C.indigo} fontSize={9} fontFamily="IBM Plex Mono, monospace" fontWeight="bold">
+          fill={C.indigo} fontSize={9} fontFamily="JetBrains Mono, monospace" fontWeight="bold">
           OD {OD_string_in}"
         </text>
 
@@ -71,7 +66,7 @@ function AnnularDiagram({ ID_cas_in, OD_string_in, holgura_mm }) {
             <line x1={cx + r_string + 2} y1={cy} x2={cx + r_cas - 2} y2={cy}
               stroke={holguraColor} strokeWidth={2} markerEnd="url(#arrow)" />
             <text x={cx + r_string + (r_cas - r_string) / 2} y={cy - 6} textAnchor="middle"
-              fill={holguraColor} fontSize={9} fontFamily="IBM Plex Mono, monospace">
+              fill={holguraColor} fontSize={9} fontFamily="JetBrains Mono, monospace">
               {holgura_mm?.toFixed(0)} mm
             </text>
           </>
@@ -103,7 +98,7 @@ export default function Step7_Mechanical({
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 7 — Verificación mecánica del string BES</span>
         <br />
@@ -124,11 +119,11 @@ export default function Step7_Mechanical({
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12 }}>COMPONENTES DEL STRING BES</div>
 
             <table style={{ width: '100%', borderCollapse: 'collapse',
-              fontFamily: 'IBM Plex Mono, monospace', fontSize: 11 }}>
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
               <thead>
                 <tr>
                   {['Componente', 'OD (pulg)', 'Estado'].map(h => (
@@ -170,7 +165,7 @@ export default function Step7_Mechanical({
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12 }}>CLEARANCE ANULAR</div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignItems: 'center' }}>
@@ -194,7 +189,7 @@ export default function Step7_Mechanical({
             background: C.surface, border: `1px solid ${C.border}`,
             borderRadius: 8, padding: '16px',
           }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12 }}>VERIFICACIÓN DE DOGLEG (DESVIACIÓN DEL POZO)</div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
@@ -213,11 +208,11 @@ export default function Step7_Mechanical({
               background: `${C.danger}0A`, border: `1px solid ${C.danger}50`,
               borderRadius: 8, padding: '16px',
             }}>
-              <div style={{ fontSize: 10, color: C.danger, fontFamily: 'IBM Plex Mono, monospace',
+              <div style={{ fontSize: 10, color: C.danger, fontFamily: 'JetBrains Mono, monospace',
                 letterSpacing: 1, fontWeight: 700, marginBottom: 8 }}>
                 CICLO E — String no cabe en el casing
               </div>
-              <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.text,
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.text,
                 marginBottom: 12, lineHeight: 1.7 }}>
                 Holgura actual: <strong style={{ color: C.danger }}>{holgura_mm?.toFixed(1)} mm</strong> (mínimo 6 mm).
                 <br />
@@ -227,7 +222,7 @@ export default function Step7_Mechanical({
               <button onClick={onCicloE}
                 style={{
                   background: `${C.danger}22`, border: `1px solid ${C.danger}`,
-                  color: C.danger, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+                  color: C.danger, fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
                   padding: '10px 20px', borderRadius: 6, cursor: 'pointer', fontWeight: 700,
                 }}>
                 ↺ CICLO E — Reducir OD y volver a PASO 4
@@ -238,14 +233,14 @@ export default function Step7_Mechanical({
 
         {/* Panel derecho — alertas */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+          <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, marginBottom: 4 }}>DIAGNÓSTICO</div>
           <AlertPanel alerts={alerts ?? []} />
 
           <div style={{
             background: C.surfaceAlt, border: `1px solid ${C.border}`,
             borderRadius: 6, padding: '10px 12px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.6,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.6,
           }}>
             <span style={{ color: C.indigo, fontWeight: 700 }}>Holgura mínima API</span><br />
             6 mm mínimo por lado para garantizar bajada sin atasco.
@@ -262,7 +257,7 @@ export default function Step7_Mechanical({
         <button onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
           }}>
           ← VOLVER A PASO 6
@@ -272,7 +267,7 @@ export default function Step7_Mechanical({
           <button onClick={onComplete}
             style={{
               background: `${statusColor}18`, border: `1px solid ${statusColor}`,
-              color: statusColor, fontFamily: 'IBM Plex Mono, monospace',
+              color: statusColor, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
@@ -290,7 +285,7 @@ export default function Step7_Mechanical({
             onClick={onAdvance}
             style={{
               background: `${C.indigo}22`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700, letterSpacing: 1,
             }}>

@@ -17,14 +17,12 @@ import {
   integratedDiagnosis,
 } from "../../../physics/sensors";
 import { M5_QUESTIONS, gradeM5 } from "../../../pedagogy/evaluations/m5";
+import TheoryLayout from '../../ui/TheoryLayout';
+import { TEORIA_M5 } from './teoria-data';
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
 const ACCENT = "#FBBF24";
-const C = {
-  bg: "#0B0F1A", surface: "#111827", surfAlt: "#0D1424",
-  border: "#1E293B", text: "#CBD5E1", muted: "#64748B",
-  ok: "#22C55E", warn: "#F59E0B", danger: "#EF4444",
-};
+import { C } from '../../../theme';
 
 const CURRENT_CONDITIONS = [
   { key: "normal",    label: "Normal",    color: C.ok },
@@ -49,16 +47,16 @@ const INSULATION_CLASSES = [
 
 const TOOLTIP_STYLE = {
   background: "#0D1424", border: "1px solid #1E293B",
-  fontSize: 10, color: "#CBD5E1", fontFamily: "IBM Plex Mono, monospace",
+  fontSize: 10, color: "#CBD5E1", fontFamily: "JetBrains Mono, monospace",
 };
 
 // ─── Micro-componentes ───────────────────────────────────────────────────────
 function Param({ label, hint, children }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>{label}</div>
       {children}
-      {hint && <div style={{ fontSize: 9, color: "#475569", fontFamily: "IBM Plex Mono, monospace" }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 9, color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>{hint}</div>}
     </div>
   );
 }
@@ -71,10 +69,10 @@ function SeverityBadge({ severity, title, desc }) {
       background: col + "10", border: `1px solid ${col}35`,
       borderRadius: 6, padding: "8px 12px",
     }}>
-      <div style={{ fontSize: 10, color: col, fontWeight: 700, fontFamily: "IBM Plex Mono, monospace", marginBottom: 2 }}>
+      <div style={{ fontSize: 10, color: col, fontWeight: 700, fontFamily: "JetBrains Mono, monospace", marginBottom: 2 }}>
         {icon} {title}
       </div>
-      <div style={{ fontSize: 9, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.6 }}>{desc}</div>
+      <div style={{ fontSize: 9, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6 }}>{desc}</div>
     </div>
   );
 }
@@ -89,7 +87,7 @@ function VibeMeter({ rms }) {
   const col = rms > 6.3 ? C.danger : rms > 4.0 ? C.warn : C.ok;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
         <span>RMS Vibración</span>
         <span style={{ color: col, fontWeight: 700 }}>{rms} mm/s</span>
       </div>
@@ -108,7 +106,7 @@ function VibeMeter({ rms }) {
           background: col, borderRadius: 6, transition: "width 0.3s",
         }} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
         <span>0</span><span>4 mm/s</span><span>6.3 mm/s</span><span>10 mm/s</span>
       </div>
     </div>
@@ -221,31 +219,7 @@ Gradiente geotérmico — variación de temperatura con la profundidad (°C/100m
 ];
 
 function TabTeoria() {
-  const [active, setActive] = useState("cartas");
-  const sec = TEORIA_SECTIONS.find(s => s.id === active);
-  return (
-    <div style={{ display: "flex", gap: 20, minHeight: 520 }}>
-      <div style={{ width: 180, display: "flex", flexDirection: "column", gap: 4 }}>
-        {TEORIA_SECTIONS.map(s => (
-          <button key={s.id} onClick={() => setActive(s.id)} style={{
-            background: active === s.id ? ACCENT + "18" : "transparent",
-            border: `1px solid ${active === s.id ? ACCENT + "60" : C.border}`,
-            borderRadius: 6, padding: "7px 10px", cursor: "pointer",
-            fontSize: 9, color: active === s.id ? ACCENT : C.muted,
-            textAlign: "left", fontFamily: "IBM Plex Mono, monospace",
-          }}>
-            {s.title.split("—")[0].trim()}
-          </button>
-        ))}
-      </div>
-      <div style={{ flex: 1, background: C.surface, borderRadius: 8, padding: 24, border: `1px solid ${C.border}` }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 14 }}>{sec.title}</div>
-        <pre style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", whiteSpace: "pre-wrap", lineHeight: 1.85, margin: 0 }}>
-          {sec.body}
-        </pre>
-      </div>
-    </div>
-  );
+  return <TheoryLayout sections={TEORIA_M5} accentColor="#FB923C" />;
 }
 
 // ─── Tab B: Simulador ────────────────────────────────────────────────────────
@@ -293,7 +267,7 @@ function TabSimulador() {
 
         {/* Carta amperimérica */}
         <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>CARTA AMPERIMÉRICA</div>
+          <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>CARTA AMPERIMÉRICA</div>
           <Param label="Condición operativa">
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {CURRENT_CONDITIONS.map(c => (
@@ -302,7 +276,7 @@ function TabSimulador() {
                   background: currentCond === c.key ? c.color + "22" : "transparent",
                   border: `1px solid ${currentCond === c.key ? c.color : C.border}`,
                   color: currentCond === c.key ? c.color : C.muted,
-                  cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+                  cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
                 }}>{c.label}</button>
               ))}
             </div>
@@ -310,13 +284,13 @@ function TabSimulador() {
           <Param label="Corriente nominal (A)">
             <input type="range" min={30} max={200} step={5} value={I_rated} onChange={e => setIRated(+e.target.value)}
               style={{ accentColor: ACCENT, width: "100%" }} />
-            <div style={{ fontSize: 11, color: ACCENT, fontFamily: "IBM Plex Mono, monospace" }}>{I_rated} A</div>
+            <div style={{ fontSize: 11, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>{I_rated} A</div>
           </Param>
         </div>
 
         {/* Vibración */}
         <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ fontSize: 9, color: "#A78BFA", letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>VIBRACIÓN</div>
+          <div style={{ fontSize: 9, color: "#A78BFA", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>VIBRACIÓN</div>
           <Param label="Condición de vibración">
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               {VIBE_CONDITIONS.map(v => (
@@ -325,7 +299,7 @@ function TabSimulador() {
                   background: vibeCond === v.key ? v.color + "22" : "transparent",
                   border: `1px solid ${vibeCond === v.key ? v.color : C.border}`,
                   color: vibeCond === v.key ? v.color : C.muted,
-                  cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+                  cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
                 }}>{v.label}</button>
               ))}
             </div>
@@ -334,31 +308,31 @@ function TabSimulador() {
 
         {/* P/T Downhole */}
         <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ fontSize: 9, color: "#38BDF8", letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>P/T DOWNHOLE</div>
+          <div style={{ fontSize: 9, color: "#38BDF8", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>P/T DOWNHOLE</div>
           <Param label="Profundidad (m)">
             <input type="range" min={500} max={5000} step={50} value={depth_m} onChange={e => setDepth(+e.target.value)}
               style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace" }}>{depth_m.toLocaleString()} m</div>
+            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{depth_m.toLocaleString()} m</div>
           </Param>
           <Param label="T° superficie (°C)">
             <input type="range" min={10} max={50} step={1} value={T_surface} onChange={e => setTSurf(+e.target.value)}
               style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace" }}>{T_surface}°C</div>
+            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{T_surface}°C</div>
           </Param>
           <Param label="Gradiente geotérmico" hint="°C por cada 100 m">
             <input type="range" min={1.5} max={5.0} step={0.1} value={gradient} onChange={e => setGradient(+e.target.value)}
               style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace" }}>{gradient.toFixed(1)}°C/100m</div>
+            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{gradient.toFixed(1)}°C/100m</div>
           </Param>
           <Param label="Ps — Presión succión (psi)">
             <input type="range" min={100} max={3000} step={50} value={Ps_psi} onChange={e => setPs(+e.target.value)}
               style={{ accentColor: PsColor, width: "100%" }} />
-            <div style={{ fontSize: 11, color: PsColor, fontFamily: "IBM Plex Mono, monospace" }}>{Ps_psi} psi</div>
+            <div style={{ fontSize: 11, color: PsColor, fontFamily: "JetBrains Mono, monospace" }}>{Ps_psi} psi</div>
           </Param>
           <Param label="Pb — Presión de burbuja (psi)">
             <input type="range" min={200} max={4000} step={50} value={Pb_psi} onChange={e => setPb(+e.target.value)}
               style={{ accentColor: C.muted, width: "100%" }} />
-            <div style={{ fontSize: 11, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>{Pb_psi} psi</div>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{Pb_psi} psi</div>
           </Param>
           <Param label="Clase de aislamiento">
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -368,7 +342,7 @@ function TabSimulador() {
                   background: T_rated === c.T ? "#38BDF822" : "transparent",
                   border: `1px solid ${T_rated === c.T ? "#38BDF8" : C.border}`,
                   color: T_rated === c.T ? "#38BDF8" : C.muted,
-                  cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+                  cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
                 }}>{c.label}</button>
               ))}
             </div>
@@ -388,8 +362,8 @@ function TabSimulador() {
             { label: "T° Motor estimada",   value: sim.T_motor,                unit: "°C",    color: T_motorColor },
           ].map((m, i) => (
             <div key={i} style={{ background: C.surface, border: `1px solid ${m.color}30`, borderRadius: 8, padding: "10px 14px" }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>{m.label}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: m.color, fontFamily: "IBM Plex Mono, monospace" }}>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>{m.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: m.color, fontFamily: "JetBrains Mono, monospace" }}>
                 {m.value}<span style={{ fontSize: 11, fontWeight: 400, marginLeft: 3 }}>{m.unit}</span>
               </div>
             </div>
@@ -399,23 +373,23 @@ function TabSimulador() {
         {/* Carta amperimérica chart */}
         <div style={{ background: C.surfAlt, borderRadius: 8, padding: 16, border: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               Carta Amperimérica — {sim.currentMeta?.label} · I_rated={I_rated} A
             </div>
-            <div style={{ fontSize: 9, color: currentColor, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>
+            <div style={{ fontSize: 9, color: currentColor, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
               {sim.current.diagnosis.split(".")[0]}
             </div>
           </div>
           <ResponsiveContainer width="100%" height={160}>
             <LineChart data={sim.current.data} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                 label={{ value: "t [s]", position: "insideBottomRight", offset: -5, fill: C.muted, fontSize: 8 }} />
-              <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} domain={[0, I_rated * 1.5]} />
+              <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} domain={[0, I_rated * 1.5]} />
               <Tooltip contentStyle={TOOLTIP_STYLE} formatter={v => [`${v} A`, "Corriente"]} labelFormatter={v => `t=${v}s`} />
-              <ReferenceLine y={I_rated}         stroke={C.muted}   strokeDasharray="4 2" label={{ value: "I_rated", fill: C.muted,  fontSize: 8, fontFamily: "IBM Plex Mono, monospace" }} />
-              <ReferenceLine y={I_rated * 1.15}  stroke={C.warn}    strokeDasharray="3 2" label={{ value: "+15%",  fill: C.warn,    fontSize: 8, fontFamily: "IBM Plex Mono, monospace" }} />
-              <ReferenceLine y={I_rated * 0.70}  stroke="#60A5FA"   strokeDasharray="3 2" label={{ value: "−30%",  fill: "#60A5FA", fontSize: 8, fontFamily: "IBM Plex Mono, monospace" }} />
+              <ReferenceLine y={I_rated}         stroke={C.muted}   strokeDasharray="4 2" label={{ value: "I_rated", fill: C.muted,  fontSize: 8, fontFamily: "JetBrains Mono, monospace" }} />
+              <ReferenceLine y={I_rated * 1.15}  stroke={C.warn}    strokeDasharray="3 2" label={{ value: "+15%",  fill: C.warn,    fontSize: 8, fontFamily: "JetBrains Mono, monospace" }} />
+              <ReferenceLine y={I_rated * 0.70}  stroke="#60A5FA"   strokeDasharray="3 2" label={{ value: "−30%",  fill: "#60A5FA", fontSize: 8, fontFamily: "JetBrains Mono, monospace" }} />
               <Line type="monotone" dataKey="I" stroke={currentColor} strokeWidth={1.8} dot={false} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
@@ -424,19 +398,19 @@ function TabSimulador() {
         {/* Vibración chart */}
         <div style={{ background: C.surfAlt, borderRadius: 8, padding: 16, border: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               Señal de Vibración — {sim.vibeMeta?.label} · 3600 RPM
             </div>
-            <div style={{ fontSize: 9, color: vibeColor, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>
+            <div style={{ fontSize: 9, color: vibeColor, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
               RMS {sim.vibe.rms_mm_s} mm/s · Pico {sim.vibe.peak_mm_s} mm/s
             </div>
           </div>
           <ResponsiveContainer width="100%" height={120}>
             <LineChart data={sim.vibe.signal} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                 label={{ value: "t [s]", position: "insideBottomRight", offset: -5, fill: C.muted, fontSize: 8 }} />
-              <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} />
+              <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} />
               <Tooltip contentStyle={TOOLTIP_STYLE} formatter={v => [`${v} mm/s`, "Velocidad"]} />
               <Line type="monotone" dataKey="v" stroke={vibeColor} strokeWidth={1.5} dot={false} isAnimationActive={false} />
             </LineChart>
@@ -444,7 +418,7 @@ function TabSimulador() {
           <div style={{ marginTop: 10 }}>
             <VibeMeter rms={sim.vibe.rms_mm_s} />
           </div>
-          <div style={{ marginTop: 8, fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
             <span style={{ color: vibeColor }}>Causa probable: </span>{sim.vibe.cause} · {sim.vibe.recommendation}
           </div>
         </div>
@@ -452,7 +426,7 @@ function TabSimulador() {
         {/* P/T summary + Diagnóstico */}
         <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: 14 }}>
           <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 9, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 10 }}>P/T DOWNHOLE</div>
+            <div style={{ fontSize: 9, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 10 }}>P/T DOWNHOLE</div>
             {[
               { label: "T° fondo", value: `${sim.T_motor}°C`, color: T_motorColor },
               { label: "T° cable avg", value: `${sim.pt.T_cable_avg_C}°C`, color: C.text },
@@ -460,14 +434,14 @@ function TabSimulador() {
               { label: "Ps/Pb ratio", value: `${(Ps_psi / Pb_psi * 100).toFixed(0)}%`, color: PsColor },
             ].map((r, i) => (
               <div key={i} style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>{r.label}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: r.color, fontFamily: "IBM Plex Mono, monospace" }}>{r.value}</div>
+                <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>{r.label}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: r.color, fontFamily: "JetBrains Mono, monospace" }}>{r.value}</div>
               </div>
             ))}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ fontSize: 9, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>DIAGNÓSTICO INTEGRADO</div>
+            <div style={{ fontSize: 9, color: ACCENT, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>DIAGNÓSTICO INTEGRADO</div>
             {sim.diagnosis.map((d, i) => <SeverityBadge key={i} {...d} />)}
           </div>
         </div>
@@ -542,30 +516,30 @@ function TabCaso() {
             background: step === i ? ACCENT + "22" : "transparent",
             border: `1px solid ${step === i ? ACCENT : C.border}`,
             color: step === i ? ACCENT : C.muted,
-            fontFamily: "IBM Plex Mono, monospace",
+            fontFamily: "JetBrains Mono, monospace",
           }}>Paso {i + 1}</button>
         ))}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-          <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>POZO CÓNDOR-8 · Caso integrador M5</div>
+          <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>POZO CÓNDOR-8 · Caso integrador M5</div>
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>{s.title}</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
-            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>{s.title}</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
+            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>
               📋 {s.task}
             </div>
           </div>
           <div style={{ background: "#0D1424", borderRadius: 6, padding: 12, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>💡 PISTA</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginTop: 4, lineHeight: 1.6 }}>{s.hint}</div>
+            <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>💡 PISTA</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", marginTop: 4, lineHeight: 1.6 }}>{s.hint}</div>
           </div>
           <div style={{ background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 8, padding: 14 }}>
-            <div style={{ fontSize: 9, color: C.ok, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
+            <div style={{ fontSize: 9, color: C.ok, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
           </div>
         </div>
 
@@ -573,7 +547,7 @@ function TabCaso() {
           {step === 0 && result && (
             <>
               <div style={{ background: C.surfAlt, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 8 }}>Carta amperimérica — Surging</div>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 8 }}>Carta amperimérica — Surging</div>
                 <ResponsiveContainer width="100%" height={180}>
                   <LineChart data={result.data} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
@@ -591,7 +565,7 @@ function TabCaso() {
           {step === 1 && result && (
             <>
               <div style={{ background: C.surfAlt, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 8 }}>Señal de vibración — Rodamiento</div>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 8 }}>Señal de vibración — Rodamiento</div>
                 <ResponsiveContainer width="100%" height={140}>
                   <LineChart data={result.signal} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
@@ -609,15 +583,15 @@ function TabCaso() {
           {step === 2 && result && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-                <div style={{ fontSize: 9, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 8 }}>DPTS — Lecturas</div>
+                <div style={{ fontSize: 9, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 8 }}>DPTS — Lecturas</div>
                 {[
                   { label: "T° motor (fondo)", value: `${result.pt.T_bottomhole_C}°C`, color: result.pt.T_bottomhole_C > 180 ? C.danger : C.ok },
                   { label: "Ps / Pb", value: `${s.Ps_psi} / ${s.Pb_psi} psi`, color: C.danger },
                   { label: "Ps/Pb ratio", value: `${(s.Ps_psi / s.Pb_psi * 100).toFixed(0)}%`, color: C.danger },
                 ].map((r, i) => (
                   <div key={i} style={{ marginBottom: 8 }}>
-                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>{r.label}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: r.color, fontFamily: "IBM Plex Mono, monospace" }}>{r.value}</div>
+                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{r.label}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: r.color, fontFamily: "JetBrains Mono, monospace" }}>{r.value}</div>
                   </div>
                 ))}
               </div>
@@ -633,13 +607,13 @@ function TabCaso() {
         <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${C.border}`,
           background: "transparent", color: C.muted, cursor: step === 0 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>← Anterior</button>
         <button onClick={() => setStep(s => Math.min(CASO_STEPS.length - 1, s + 1))} disabled={step === CASO_STEPS.length - 1} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${ACCENT}`,
           background: ACCENT + "22", color: ACCENT,
           cursor: step === CASO_STEPS.length - 1 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>Siguiente →</button>
       </div>
     </div>
@@ -664,21 +638,21 @@ function TabEvaluacion() {
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "JetBrains Mono, monospace" }}>
               {result.score}/{result.total} — {result.pct}%
             </div>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               {result.pct >= 80 ? "Excelente. Dominás la interpretación de sensores BES." : result.pct >= 60 ? "Buena base. Revisá los patrones de corriente y vibración." : "Revisá los conceptos de cartas amperimétricas, vibración y diagnóstico integrado."}
             </div>
           </div>
-          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>Reintentar</button>
+          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}>Reintentar</button>
         </div>
       )}
       {M5_QUESTIONS.map((q, qi) => {
         const res = result?.results.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 11, color: C.text, fontFamily: "JetBrains Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
               <span style={{ color: ACCENT, fontWeight: 700 }}>{qi + 1}. </span>{q.text}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -694,7 +668,7 @@ function TabEvaluacion() {
                     border: `1px solid ${color}`,
                     color: selected ? color : C.muted,
                     cursor: result ? "default" : "pointer",
-                    fontSize: 10, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.5,
+                    fontSize: 10, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5,
                   }}>
                     <span style={{ fontWeight: 700 }}>{opt.id.toUpperCase()})</span> {opt.text}
                   </button>
@@ -702,7 +676,7 @@ function TabEvaluacion() {
               })}
             </div>
             {res && (
-              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>
+              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
                 💡 {q.explanation}
               </div>
             )}
@@ -715,7 +689,7 @@ function TabEvaluacion() {
           border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT,
           cursor: Object.keys(answers).length < M5_QUESTIONS.length ? "not-allowed" : "pointer",
           opacity: Object.keys(answers).length < M5_QUESTIONS.length ? 0.5 : 1,
-          fontFamily: "IBM Plex Mono, monospace", letterSpacing: 1,
+          fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
         }}>
           CALIFICAR ({Object.keys(answers).length}/{M5_QUESTIONS.length} respondidas)
         </button>
@@ -735,17 +709,17 @@ const TABS = [
 export default function Module5({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: "IBM Plex Mono, 'Courier New', monospace", background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>← Hub</button>
+        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800 }}>M05</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9" }}>Sensores y Monitoreo</span>
+            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M05</span>
+            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Sensores y Monitoreo</span>
           </div>
           <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1 }}>Cartas Amperimétricas · P/T Downhole · Vibración · Diagnóstico</div>
         </div>
-        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: "IBM Plex Mono, monospace" }}>✅ Disponible</span>
+        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: C.fontUI }}>✅ Disponible</span>
       </div>
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 40, zIndex: 100, background: C.bg, paddingTop: 8 }}>
@@ -755,7 +729,7 @@ export default function Module5({ onBack }) {
             background: tab === t.id ? ACCENT + "18" : "transparent",
             borderBottom: tab === t.id ? `2px solid ${ACCENT}` : "2px solid transparent",
             color: tab === t.id ? ACCENT : C.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
             fontWeight: tab === t.id ? 700 : 400,
           }}>{t.label}</button>
         ))}

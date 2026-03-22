@@ -6,12 +6,7 @@
  */
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 function Metric({ label, value, unit, color = C.text, sub }) {
   return (
@@ -19,11 +14,11 @@ function Metric({ label, value, unit, color = C.text, sub }) {
       background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
       border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700 }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -66,7 +61,7 @@ export default function Step10_Economics({
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 16,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 10 — Evaluación técnico-económica (orientativa)</span>
         <br />
@@ -78,7 +73,7 @@ export default function Step10_Economics({
       <div style={{
         background: `${C.yellow}0A`, border: `1px solid ${C.yellow}30`,
         borderRadius: 6, padding: '10px 14px', marginBottom: 20,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.yellow, lineHeight: 1.6,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.yellow, lineHeight: 1.6,
       }}>
         Los valores económicos son orientativos con fines educativos. No usar para decisiones de inversión real.
       </div>
@@ -91,7 +86,7 @@ export default function Step10_Economics({
           borderRadius: 8, padding: '16px',
         }}>
           <div style={{
-            fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, marginBottom: 12,
           }}>VIDA ÚTIL ESPERADA</div>
 
@@ -132,11 +127,11 @@ export default function Step10_Economics({
           borderRadius: 8, padding: '16px',
         }}>
           <div style={{
-            fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, marginBottom: 12,
           }}>FACTORES DE PENALIZACIÓN</div>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
             <thead>
               <tr>
                 {['Condición', 'Factor', 'Impacto'].map((h, i) => (
@@ -188,29 +183,29 @@ export default function Step10_Economics({
           borderRadius: 8, padding: '16px',
         }}>
           <div style={{
-            fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, marginBottom: 12,
           }}>CAPEX ORIENTATIVO</div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-            <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.muted }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.muted }}>
               Categoría estimada:
             </span>
             {capex_categoria ? (
               <span style={{
                 background: cs.bg, border: cs.border, color: cs.color,
-                fontFamily: 'IBM Plex Mono, monospace', fontSize: 13,
+                fontFamily: 'JetBrains Mono, monospace', fontSize: 13,
                 fontWeight: 700, padding: '4px 14px', borderRadius: 20,
               }}>
                 {capex_categoria}
               </span>
             ) : (
-              <span style={{ color: C.muted, fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>—</span>
+              <span style={{ color: C.muted, fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>—</span>
             )}
           </div>
 
           {(capex_extras ?? []).length > 0 && (
-            <ul style={{ margin: 0, paddingLeft: 16, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
+            <ul style={{ margin: 0, paddingLeft: 16, fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
               {capex_extras.map((item, i) => (
                 <li key={i} style={{ color: C.text }}>{item}</li>
               ))}
@@ -227,7 +222,7 @@ export default function Step10_Economics({
         <button onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
           }}>
           ← VOLVER A PASO 9
@@ -237,7 +232,7 @@ export default function Step10_Economics({
           <button onClick={onComplete}
             style={{
               background: `${C.indigo}18`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
@@ -252,7 +247,7 @@ export default function Step10_Economics({
           marginTop: 24,
           background: `${C.ok}12`, border: `1px solid ${C.ok}40`,
           borderRadius: 8, padding: '20px',
-          fontFamily: 'IBM Plex Mono, monospace',
+          fontFamily: 'JetBrains Mono, monospace',
         }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: C.ok, marginBottom: 8 }}>
             Paso 10 completado — Evaluación técnico-económica registrada
@@ -264,7 +259,7 @@ export default function Step10_Economics({
           <button onClick={onAdvance}
             style={{
               background: `${C.green}18`, border: `1px solid ${C.green}`,
-              color: C.green, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.green, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>

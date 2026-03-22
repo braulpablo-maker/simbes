@@ -25,7 +25,7 @@ const MODULE_LABELS = {
 const BTN = {
   background: "transparent", border: "1px solid #1E293B",
   color: "#64748B", fontSize: 10, padding: "4px 12px",
-  borderRadius: 4, cursor: "pointer", fontFamily: "IBM Plex Mono, monospace", letterSpacing: 1,
+  borderRadius: 4, cursor: "pointer", fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
 };
 
 function NavBar({ moduleId, onBack, onPrev, onNext }) {
@@ -33,7 +33,7 @@ function NavBar({ moduleId, onBack, onPrev, onNext }) {
     <div style={{
       background: "#0B0F1A", borderBottom: "1px solid #1E293B",
       padding: "8px 24px", display: "flex", alignItems: "center", gap: 12,
-      fontFamily: "IBM Plex Mono, monospace",
+      fontFamily: "JetBrains Mono, monospace",
       position: "sticky", top: 0, zIndex: 200,
     }}>
       <button onClick={onBack} style={BTN}>← HUB</button>

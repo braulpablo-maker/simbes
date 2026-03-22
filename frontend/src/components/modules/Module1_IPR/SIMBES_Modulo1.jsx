@@ -4,6 +4,9 @@ import {
   Tooltip, ReferenceDot, ReferenceLine, ResponsiveContainer
 } from "recharts";
 import { M1_EVALUATION, gradeM1 } from "../../../pedagogy/evaluations/m1.js";
+import TheoryLayout from '../../ui/TheoryLayout';
+import { TEORIA_M1 } from './teoria-data';
+import { C } from '../../../theme';
 
 // ═══════════════════════════════════════════════════════
 //  UNIT CONVERSIONS  (physics engine runs in STB/d + ft)
@@ -135,7 +138,7 @@ function computeSim(Pr, safePb, safeIP_m3dpsi, depth_m, Pwh, freq, densidad) {
 
 function ControlGroup({ title, accent, children }) {
   return (
-    <div style={{ background: "#111827", borderRadius: 10, border: `1px solid ${accent}33`, padding: "14px 16px" }}>
+    <div style={{ background: "#334155", borderRadius: 10, border: `1px solid ${accent}33`, padding: "14px 16px" }}>
       <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: accent, fontWeight: 700, marginBottom: 14 }}>{title}</div>
       <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>{children}</div>
     </div>
@@ -149,7 +152,7 @@ function Param({ label, unit, value, min, max, step, onChange, dec = 0, color = 
         <span style={{ fontSize: 11, color: "#94A3B8" }}>{label}</span>
         <span style={{ fontSize: 12, color: "#E2E8F0", fontWeight: 700 }}>
           {dec ? value.toFixed(dec) : value.toLocaleString()}
-          <span style={{ fontSize: 10, color: "#64748B", marginLeft: 4 }}>{unit}</span>
+          <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 4 }}>{unit}</span>
         </span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
@@ -163,8 +166,8 @@ function Param({ label, unit, value, min, max, step, onChange, dec = 0, color = 
 
 function Metric({ label, value, unit, color = "#E2E8F0", glow }) {
   return (
-    <div style={{ background: "#111827", borderRadius: 8, border: `1px solid ${glow ? color + "55" : "#1E293B"}`, padding: "10px 12px", flex: 1 }}>
-      <div style={{ fontSize: 9, color: "#64748B", letterSpacing: 2, textTransform: "uppercase", marginBottom: 5 }}>{label}</div>
+    <div style={{ background: "#334155", borderRadius: 8, border: `1px solid ${glow ? color + "55" : "#334155"}`, padding: "10px 12px", flex: 1 }}>
+      <div style={{ fontSize: 9, color: "#94A3B8", letterSpacing: 2, textTransform: "uppercase", marginBottom: 5 }}>{label}</div>
       <div style={{ fontSize: 20, fontWeight: 800, color, textShadow: glow ? `0 0 12px ${color}88` : "none", lineHeight: 1 }}>{value}</div>
       <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>{unit}</div>
     </div>
@@ -185,7 +188,7 @@ function Alert({ type, msg }) {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#1C2333", border: "1px solid #2D3748", borderRadius: 6, padding: "10px 14px", fontSize: 11, fontFamily: "'IBM Plex Mono', monospace" }}>
+    <div style={{ background: "#1C2333", border: "1px solid #2D3748", borderRadius: 6, padding: "10px 14px", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>
       <div style={{ color: "#718096", marginBottom: 6 }}>Q = {Number(label).toFixed(1)} m³/d</div>
       {payload.map(p => p.value != null && (
         <div key={p.name} style={{ color: p.color, marginBottom: 2 }}>
@@ -208,15 +211,15 @@ const TABS = [
 
 function TabBar({ active, onChange }) {
   return (
-    <div style={{ display: "flex", borderBottom: "1px solid #1E293B", marginBottom: 20, position: "sticky", top: 40, zIndex: 100, background: "#0B0F1A", paddingTop: 4 }}>
+    <div style={{ display: "flex", borderBottom: "1px solid #334155", marginBottom: 20, position: "sticky", top: 40, zIndex: 100, background: "#0F172A", paddingTop: 4 }}>
       {TABS.map(t => (
         <button key={t.id} onClick={() => onChange(t.id)} style={{
-          background: active === t.id ? "#111827" : "transparent",
+          background: active === t.id ? "#334155" : "transparent",
           border: "none",
           borderBottom: active === t.id ? `2px solid ${t.color}` : "2px solid transparent",
           color: active === t.id ? t.color : "#475569",
           fontSize: 11, padding: "10px 20px",
-          cursor: "pointer", fontFamily: "inherit",
+          cursor: "pointer", fontFamily: C.fontUI,
           letterSpacing: 1, fontWeight: active === t.id ? 700 : 400,
           transition: "all 0.15s",
         }}>{t.label}</button>
@@ -230,21 +233,21 @@ function TabBar({ active, onChange }) {
 // ═══════════════════════════════════════════════════════
 function NodalChart({ chartData, opPoint, safePb, bep_m3d, Pr }) {
   return (
-    <div style={{ background: "#0D1424", border: "1px solid #1E293B", borderRadius: 10, padding: "18px 16px 14px 8px" }}>
+    <div style={{ background: "#162032", border: "1px solid #334155", borderRadius: 10, padding: "18px 16px 14px 8px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 20, marginLeft: 16, marginBottom: 14, flexWrap: "wrap" }}>
         <span style={{ fontSize: 9, color: "#475569", letterSpacing: 2, textTransform: "uppercase" }}>GRÁFICA NODAL · IPR vs. VLP</span>
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           {[["#38BDF8","IPR (Yacimiento)"],["#34D399","VLP (Bomba)"],["#FBBF24","Presión de Burbuja Pb"],["#FB7185","Punto de Operación"]].map(([color, label]) => (
             <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
               <div style={{ width: 16, height: 2, background: color, borderRadius: 1 }} />
-              <span style={{ fontSize: 9, color: "#64748B" }}>{label}</span>
+              <span style={{ fontSize: 9, color: "#94A3B8" }}>{label}</span>
             </div>
           ))}
         </div>
       </div>
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={chartData} margin={{ top: 4, right: 30, bottom: 28, left: 24 }}>
-          <CartesianGrid strokeDasharray="2 4" stroke="#1E293B" />
+          <CartesianGrid strokeDasharray="2 4" stroke="#334155" />
           <XAxis dataKey="Q" type="number" domain={[0, "dataMax"]}
             tick={{ fill: "#475569", fontSize: 10 }}
             tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(1)}k` : Number(v).toFixed(0)}
@@ -267,7 +270,7 @@ function NodalChart({ chartData, opPoint, safePb, bep_m3d, Pr }) {
           <Line dataKey="IPR" stroke="#38BDF8" strokeWidth={2.5} dot={false} name="IPR" connectNulls={false} activeDot={{ r: 4, fill: "#38BDF8" }} />
           <Line dataKey="VLP" stroke="#34D399" strokeWidth={2.5} dot={false} name="VLP" strokeDasharray="10 4" activeDot={{ r: 4, fill: "#34D399" }} />
           {opPoint && (
-            <ReferenceDot x={opPoint.Q} y={opPoint.Pwf} r={8} fill="#FB7185" stroke="#0B0F1A" strokeWidth={2}
+            <ReferenceDot x={opPoint.Q} y={opPoint.Pwf} r={8} fill="#FB7185" stroke="#0F172A" strokeWidth={2}
               label={{ value: `(${opPoint.Q} m³/d, ${opPoint.Pwf.toLocaleString()} psi)`, fill: "#FB7185", fontSize: 10, position: "right", offset: 6 }}
             />
           )}
@@ -289,245 +292,8 @@ const TEORIA_SECTIONS = [
   { idx: 5, label: "⑥ Glosario",         color: "#FBBF24" },
 ];
 
-function TabTeoria({ section, setSection }) {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 20, minHeight: 480 }}>
-      {/* Sidebar */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        {TEORIA_SECTIONS.map(s => (
-          <button key={s.idx} onClick={() => setSection(s.idx)} style={{
-            background: section === s.idx ? `${s.color}18` : "transparent",
-            border: `1px solid ${section === s.idx ? s.color + "44" : "transparent"}`,
-            borderRadius: 6, color: section === s.idx ? s.color : "#475569",
-            fontSize: 10, padding: "9px 12px", cursor: "pointer",
-            fontFamily: "inherit", letterSpacing: 1, textAlign: "left",
-            fontWeight: section === s.idx ? 700 : 400,
-          }}>{s.label}</button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.9, background: "#111827", borderRadius: 10, padding: "20px 22px", border: "1px solid #1E293B" }}>
-
-        {section === 0 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            <div>
-              <div style={{ color: "#E2E8F0", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>¿Qué es el Análisis Nodal?</div>
-              <p style={{ margin: "0 0 10px" }}>
-                Técnica desarrollada por <strong style={{ color: "#CBD5E1" }}>Joe Mach (1979)</strong> que divide el sistema de producción en dos subsistemas que se equilibran en un nodo ubicado en el fondo del pozo.
-              </p>
-              <p style={{ margin: 0 }}>
-                El punto donde ambas curvas se cruzan es el <strong style={{ color: "#FB7185" }}>Punto de Operación</strong>: el caudal y la presión real a la que produce el pozo.
-              </p>
-            </div>
-            <div>
-              <div style={{ color: "#E2E8F0", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Los dos subsistemas</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ background: "#38BDF820", border: "1px solid #38BDF840", borderRadius: 6, padding: "10px 12px" }}>
-                  <div style={{ color: "#38BDF8", fontWeight: 700, marginBottom: 4 }}>IPR — Inflow Performance Relationship</div>
-                  Capacidad de entrega del <strong>yacimiento</strong>. A mayor drawdown (Pr − Pwf), mayor caudal. Depende de la roca, el fluido y la presión del reservorio.
-                </div>
-                <div style={{ background: "#34D39920", border: "1px solid #34D39940", borderRadius: 6, padding: "10px 12px" }}>
-                  <div style={{ color: "#34D399", fontWeight: 700, marginBottom: 4 }}>VLP — Vertical Lift Performance</div>
-                  Demanda energética de la <strong>infraestructura</strong>: columna de fluido, fricción en tubing y cabeza del pozo. La bomba BES reduce esta demanda.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === 1 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            <div>
-              <div style={{ color: "#60A5FA", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Modelo Darcy — Zona lineal</div>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 12, color: "#E2E8F0", fontSize: 14, letterSpacing: 1 }}>Q = IP × (Pr − Pwf)</div>
-              <p style={{ margin: "0 0 8px" }}>
-                Válido mientras <strong style={{ color: "#FBBF24" }}>Pwf ≥ Pb</strong>. Todo el gas permanece disuelto en el petróleo → fluido monofásico → relación caudal-presión lineal.
-              </p>
-              <p style={{ margin: 0, fontSize: 10, color: "#475569" }}>Ref: Darcy, 1856 — Ley de flujo en medios porosos</p>
-            </div>
-            <div>
-              <div style={{ color: "#E2E8F0", fontWeight: 700, marginBottom: 10, fontSize: 13 }}>Variables</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-                {[
-                  ["Q",   "m³/d",     "Caudal volumétrico en superficie"],
-                  ["IP",  "m³/d/psi", "Índice de Productividad: pendiente de la IPR. Mide la facilidad del yacimiento para entregar fluido."],
-                  ["Pr",  "psi",      "Presión estática del reservorio (yacimiento en reposo)"],
-                  ["Pwf", "psi",      "Presión fluyente de fondo: presión en la bomba cuando el pozo produce"],
-                  ["Pb",  "psi",      "Presión de burbuja: por debajo de ella el gas empieza a liberarse"],
-                ].map(([v, u, desc]) => (
-                  <div key={v} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ color: "#60A5FA", fontWeight: 700, minWidth: 30 }}>{v}</span>
-                    <span style={{ color: "#475569", minWidth: 76 }}>[{u}]</span>
-                    <span>{desc}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === 2 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            <div>
-              <div style={{ color: "#818CF8", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Modelo Vogel — Zona bifásica</div>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 10, color: "#E2E8F0", fontSize: 12, lineHeight: 2 }}>
-                Q / AOF = 1 − 0.2·(Pwf/Pb) − 0.8·(Pwf/Pb)²
-              </div>
-              <p style={{ margin: "0 0 8px" }}>
-                Activo cuando <strong style={{ color: "#FBBF24" }}>Pwf &lt; Pb</strong>. El gas liberado reduce la movilidad del petróleo → la curva pierde linealidad y se vuelve cóncava.
-              </p>
-              <p style={{ margin: 0, fontSize: 10, color: "#475569" }}>Ref: Vogel, 1968 — SPE 1476</p>
-            </div>
-            <div>
-              <div style={{ color: "#818CF8", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>AOF — Absolute Open Flow</div>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 10, color: "#E2E8F0", fontSize: 12, lineHeight: 2 }}>
-                Qb = IP × max(Pr − Pb, 0)<br />
-                AOF = Qb + (IP × Pb) / 1.8
-              </div>
-              <p style={{ margin: "0 0 8px" }}>
-                El <strong style={{ color: "#A5B4FC" }}>AOF</strong> es el caudal máximo teórico a Pwf = 0. Define el techo del yacimiento. No es alcanzable en operación real.
-              </p>
-              <div style={{ background: "#1E3A5F", borderRadius: 6, padding: "8px 12px", fontSize: 10, color: "#93C5FD" }}>
-                IPR compuesta = Darcy (Q ≤ Qb) + Vogel (Q &gt; Qb). Este simulador usa el modelo compuesto en todo momento.
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === 3 && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-            <div>
-              <div style={{ color: "#34D399", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>VLP — ¿Qué expresa?</div>
-              <p style={{ margin: "0 0 8px" }}>
-                La VLP es la <strong style={{ color: "#34D399" }}>presión mínima de fondo</strong> que necesita el yacimiento para sostener un caudal Q dado. A mayor caudal, mayor demanda energética del sistema.
-              </p>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 10, color: "#E2E8F0", fontSize: 12, lineHeight: 2.2 }}>
-                Pwf = Pwh + grad·prof − H_bomba + H_fricción
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
-                {[
-                  ["Pwh + grad·prof", "Altura estática. Presión que requiere el fluido para subir desde la profundidad de la bomba hasta la superficie."],
-                  ["− H_bomba",       "La bomba inyecta energía al fluido y reduce la presión que debe aportar el yacimiento. Mayor frecuencia = más aporte de la bomba."],
-                  ["+ H_fricción",    "Pérdidas por fricción en el tubing. Crecen con Q² → a mayor caudal, mayor penalización. [Simplificado: calibrado para tubing 2.875\"–3.5\"]"],
-                ].map(([term, desc]) => (
-                  <div key={term} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: "#34D399", fontWeight: 700, minWidth: 110, flexShrink: 0, fontSize: 10 }}>{term}</span>
-                    <span style={{ fontSize: 10 }}>{desc}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ background: "#0D2B1D", border: "1px solid #34D39940", borderRadius: 6, padding: "8px 12px", fontSize: 10, color: "#6EE7B7", lineHeight: 1.7 }}>
-                La curva VLP tiene forma de <strong>U</strong>: primero cae con Q (la bomba aporta más altura a mayor caudal) y luego sube (la fricción domina). El punto de operación es donde la IPR corta a la VLP.
-              </div>
-            </div>
-            <div>
-              <div style={{ color: "#34D399", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Curva H-Q de la bomba BES</div>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 10, color: "#E2E8F0", fontSize: 12, lineHeight: 2 }}>
-                H(Q) = H₀ · [1 − (Q/Qmax)^1.85] · (f/60)²
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
-                {[
-                  ["H₀",      "8.500 ft",  "Altura máxima a Q=0 y 60 Hz (bomba representativa)"],
-                  ["Qmax",    "667 m³/d",  "Caudal al que la altura cae a cero (60 Hz)"],
-                  ["BEP",     "334 m³/d",  "Best Efficiency Point a 60 Hz (≈ 50% de Qmax)"],
-                  ["(f/60)²", "—",         "Factor de escala de las Leyes de Afinidad: la altura varía con el cuadrado de la frecuencia"],
-                ].map(([v, val, desc]) => (
-                  <div key={v} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: "#34D399", fontWeight: 700, minWidth: 46, flexShrink: 0 }}>{v}</span>
-                    <span style={{ color: "#475569", minWidth: 64, flexShrink: 0 }}>{val}</span>
-                    <span style={{ fontSize: 10 }}>{desc}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ background: "#1E293B", borderRadius: 6, padding: "10px 12px", fontSize: 10, color: "#94A3B8", lineHeight: 1.7 }}>
-                <span style={{ color: "#34D399", fontWeight: 700 }}>Comportamiento: </span>
-                La curva H-Q es <strong style={{ color: "#E2E8F0" }}>descendente</strong>. A Q=0 la bomba entrega su máxima altura; a medida que Q crece la altura cae hasta cero en Qmax. Al aumentar la frecuencia (VSD), toda la curva sube y se desplaza a la derecha — el BEP se mueve al mismo ritmo que Q (linealmente con f).
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === 4 && (
-          <div>
-            {/* BEP banner */}
-            <div style={{ background: "#F472B618", border: "1px solid #F472B640", borderRadius: 8, padding: "12px 16px", marginBottom: 16 }}>
-              <div style={{ color: "#F472B6", fontWeight: 700, marginBottom: 6, fontSize: 12 }}>BEP — Best Efficiency Point (Punto de Máxima Eficiencia)</div>
-              <div style={{ fontSize: 11, color: "#CBD5E1", lineHeight: 1.8 }}>
-                El BEP es el caudal al que la bomba opera con su <strong style={{ color: "#F472B6" }}>mayor eficiencia hidráulica</strong>. En ese punto, la energía entregada al fluido es máxima respecto a la energía consumida. Fuera del BEP, la bomba convierte energía en vibración y calor en lugar de presión útil.
-                <br /><strong style={{ color: "#F472B6" }}>¿Por qué importa?</strong> Opera por debajo del 68% del BEP → recirculación interna y sobrecalentamiento. Por encima del 132% → surging (cavitación). Ambas condiciones deterioran la bomba aceleradamente y pueden causar fallas en días.
-                El BEP en SIMBES representa el 50% de Qmax. A 60 Hz: BEP ≈ 334 m³/d. El BEP <strong style={{ color: "#F472B6" }}>escala linealmente</strong> con la frecuencia: a 50 Hz → BEP ≈ 278 m³/d.
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-              <div>
-                <div style={{ color: "#F472B6", fontWeight: 700, marginBottom: 8, fontSize: 13 }}>Leyes de Afinidad — VSD</div>
-                <div style={{ background: "#1E293B", borderRadius: 6, padding: "12px 14px", marginBottom: 10, color: "#E2E8F0", fontSize: 13, lineHeight: 2.2 }}>
-                  Q₂/Q₁ = f₂/f₁<br />
-                  H₂/H₁ = (f₂/f₁)²<br />
-                  P₂/P₁ = (f₂/f₁)³
-                </div>
-                <div style={{ background: "#1E293B", borderRadius: 6, padding: "10px 12px", marginBottom: 10, fontSize: 10, color: "#94A3B8", lineHeight: 1.9 }}>
-                  <span style={{ color: "#F472B6", fontWeight: 700 }}>Ejemplo: 60 Hz → 50 Hz (ratio = 0.833)</span><br />
-                  Q: × 0.833 → BEP pasa de 334 a <span style={{ color: "#F472B6", fontWeight: 700 }}>278 m³/d</span><br />
-                  H: × 0.833² = × 0.694 → altura cae al <span style={{ color: "#FBBF24", fontWeight: 700 }}>69.4%</span><br />
-                  P: × 0.833³ = × 0.579 → potencia cae al <span style={{ color: "#34D399", fontWeight: 700 }}>57.9%</span>
-                </div>
-                <p style={{ margin: 0, fontSize: 10, color: "#475569", lineHeight: 1.7 }}>
-                  La ley cúbica de potencia es la clave del ahorro energético con VSD. Reducir la frecuencia un 17% recorta el consumo eléctrico casi a la mitad. Subir de 60 a 66 Hz aumenta la potencia un 33%.
-                </p>
-              </div>
-              <div>
-                <div style={{ color: "#E2E8F0", fontWeight: 700, marginBottom: 10, fontSize: 13 }}>Zonas de operación</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {[
-                    { color: "#EF4444", bg: "#EF444420", border: "#EF444440", range: "Q < 68% BEP", title: "Recirculación interna", text: "El fluido recircula dentro de los impulsores. Genera calor excesivo y desgaste acelerado. El amperímetro puede mostrar consumo bajo (señal engañosa)." },
-                    { color: "#22C55E", bg: "#22C55E20", border: "#22C55E40", range: "68%–132% BEP", title: "Zona óptima", text: "Operación estable y eficiente. La bomba trabaja cerca de su diseño. Mínima vibración y máxima vida útil. Objetivo de operación." },
-                    { color: "#F59E0B", bg: "#F59E0B20", border: "#F59E0B40", range: "Q > 132% BEP", title: "Surging / Cavitación", text: "La bomba trabaja sobre su límite hidráulico. La cavitación erosiona impulsores rápidamente. Reducir frecuencia o abrir choke de inmediato." },
-                  ].map(item => (
-                    <div key={item.range} style={{ background: item.bg, border: `1px solid ${item.border}`, borderRadius: 6, padding: "10px 12px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                        <span style={{ color: item.color, fontWeight: 700, fontSize: 10 }}>{item.title}</span>
-                        <span style={{ color: item.color, fontSize: 9, background: item.border, padding: "1px 6px", borderRadius: 10 }}>{item.range}</span>
-                      </div>
-                      <span style={{ fontSize: 10 }}>{item.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {section === 5 && (
-          <div style={{ columns: 2, gap: 20 }}>
-            {[
-              ["AOF",      "Absolute Open Flow. Caudal máximo teórico a Pwf = 0."],
-              ["BEP",      "Best Efficiency Point. Caudal de mayor eficiencia hidráulica de la bomba."],
-              ["Drawdown", "(Pr − Pwf) / Pr × 100%. Fracción de presión del reservorio consumida para producir."],
-              ["GVF",      "Gas Volume Fraction. Fracción de gas libre en la succión de la bomba."],
-              ["IP",       "Índice de Productividad [m³/d/psi]. Pendiente de la IPR lineal."],
-              ["Densidad", "Densidad del fluido [kg/L]. Agua = 1.0. Crudo 30°API ≈ 0.876. grad = densidad × 0.4335 psi/ft."],
-              ["IPR",      "Inflow Performance Relationship. Curva que relaciona Pwf con Q del yacimiento."],
-              ["Pb",       "Presión de Burbuja [psi]. Por debajo de ella el gas se libera del petróleo."],
-              ["Pr",       "Presión Estática del Reservorio [psi]. Presión sin producción."],
-              ["Pwf",      "Presión Fluyente de Fondo [psi]. Presión en la intake de la bomba durante producción."],
-              ["Pwh",      "Presión de Cabezal [psi]. Contrapresión en superficie (choke + flowline + separador)."],
-              ["Surging",  "Cavitación por operación sobre el BEP. Daña impulsores y rodamientos."],
-              ["TDH",      "Total Dynamic Head. Altura total dinámica que debe vencer la bomba."],
-              ["VLP",      "Vertical Lift Performance. Curva de demanda del sistema de levantamiento."],
-              ["VSD",      "Variable Speed Drive / Variador de Frecuencia. Controla RPM del motor BES."],
-            ].map(([term, def]) => (
-              <div key={term} style={{ breakInside: "avoid", marginBottom: 10, display: "flex", gap: 8 }}>
-                <span style={{ color: "#FBBF24", fontWeight: 700, minWidth: 64, flexShrink: 0 }}>{term}</span>
-                <span>{def}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+function TabTeoria() {
+  return <TheoryLayout sections={TEORIA_M1} accentColor="#38BDF8" />;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -585,7 +351,7 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
         </ControlGroup>
 
         {/* IPR composition */}
-        <div style={{ background: "#111827", border: "1px solid #1E293B", borderRadius: 8, padding: 12 }}>
+        <div style={{ background: "#334155", border: "1px solid #334155", borderRadius: 8, padding: 12 }}>
           <div style={{ fontSize: 9, color: "#475569", letterSpacing: 2, textTransform: "uppercase", marginBottom: 8 }}>Composición IPR</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11 }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -596,7 +362,7 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
               <span style={{ color: "#818CF8" }}>Zona Vogel (Q &gt; Qb)</span>
               <span style={{ color: "#E2E8F0" }}>{(aof - qb).toFixed(1)} m³/d</span>
             </div>
-            <div style={{ borderTop: "1px solid #1E293B", paddingTop: 6, marginTop: 4, display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+            <div style={{ borderTop: "1px solid #334155", paddingTop: 6, marginTop: 4, display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
               <span style={{ color: "#A5B4FC" }}>AOF Total</span>
               <span style={{ color: "#A5B4FC" }}>{aof.toFixed(1)} m³/d</span>
             </div>
@@ -618,7 +384,7 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
           <div style={{ fontSize: 9, color: "#475569", letterSpacing: 2, textTransform: "uppercase", marginBottom: 2 }}>▶ DIAGNÓSTICO OPERATIVO</div>
           {alerts.map((a, i) => <Alert key={i} {...a} />)}
         </div>
-        <div style={{ background: "#0F172A", border: "1px solid #1E293B33", borderLeft: "3px solid #0EA5E9", borderRadius: "0 8px 8px 0", padding: "10px 14px", fontSize: 11, color: "#64748B", lineHeight: 1.8 }}>
+        <div style={{ background: "#0F172A", border: "1px solid #33415533", borderLeft: "3px solid #0EA5E9", borderRadius: "0 8px 8px 0", padding: "10px 14px", fontSize: 11, color: "#94A3B8", lineHeight: 1.8 }}>
           <span style={{ color: "#38BDF8", fontWeight: 700 }}>PUNTO DE OPERACIÓN · </span>
           Intersección de la curva <span style={{ color: "#38BDF8" }}>IPR</span> y la curva <span style={{ color: "#34D399" }}>VLP</span>.
           Modifica la <span style={{ color: "#F472B6" }}>frecuencia del VSD</span> para mover el punto de operación.
@@ -671,23 +437,23 @@ function TabCaso() {
   return (
     <div>
       {/* Scenario header */}
-      <div style={{ background: "#111827", border: "1px solid #34D39940", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
+      <div style={{ background: "#334155", border: "1px solid #34D39940", borderRadius: 10, padding: "16px 20px", marginBottom: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
           <div>
             <div style={{ fontSize: 9, color: "#34D399", letterSpacing: 3, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>
               ESCENARIO — CAMPO OPERATIVO
             </div>
             <div style={{ fontSize: 16, fontWeight: 800, color: "#F1F5F9", marginBottom: 4 }}>Pozo Colibrí-3</div>
-            <div style={{ fontSize: 10, color: "#64748B" }}>
+            <div style={{ fontSize: 10, color: "#94A3B8" }}>
               Pr {COLIBRI.Pr.toLocaleString()} psi · Pb {COLIBRI.Pb.toLocaleString()} psi · IP {COLIBRI.IP} m³/d/psi · Prof. {COLIBRI.depth.toLocaleString()} m · Densidad {COLIBRI.densidad} kg/L
             </div>
           </div>
           <div style={{ display: "flex", gap: 6 }}>
             {CASO_STEPS.map((_, i) => (
               <button key={i} onClick={() => setStep(i)} style={{
-                background: step === i ? "#34D399" : "#1E293B",
+                background: step === i ? "#34D399" : "#334155",
                 border: `1px solid ${step === i ? "#34D399" : "#334155"}`,
-                borderRadius: 6, color: step === i ? "#0B0F1A" : "#64748B",
+                borderRadius: 6, color: step === i ? "#0F172A" : "#94A3B8",
                 fontSize: 10, padding: "6px 14px", cursor: "pointer",
                 fontFamily: "inherit", fontWeight: step === i ? 700 : 400,
               }}>Paso {i + 1}</button>
@@ -703,7 +469,7 @@ function TabCaso() {
           <p style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.8, margin: "0 0 14px" }}>{s.context}</p>
           <div style={{ background: "#0F172A", border: "1px solid #34D39933", borderLeft: "3px solid #34D399", borderRadius: "0 6px 6px 0", padding: "10px 12px" }}>
             <div style={{ fontSize: 9, color: "#34D399", letterSpacing: 2, textTransform: "uppercase", marginBottom: 6 }}>PREGUNTA GUIADA</div>
-            <p style={{ fontSize: 11, color: "#CBD5E1", lineHeight: 1.7, margin: "0 0 8px" }}>{s.question}</p>
+            <p style={{ fontSize: 11, color: "#F1F5F9", lineHeight: 1.7, margin: "0 0 8px" }}>{s.question}</p>
             <p style={{ fontSize: 10, color: "#475569", margin: 0, fontStyle: "italic" }}>Pista: {s.hint}</p>
           </div>
 
@@ -754,12 +520,12 @@ function TabEvaluacion() {
         <div>
           <div style={{ fontSize: 9, color: "#F472B6", letterSpacing: 3, textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>EVALUACIÓN · MÓDULO 1</div>
           <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9" }}>Análisis Nodal / IPR</div>
-          <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>5 preguntas · 100 puntos · Mínimo aprobatorio: 70%</div>
+          <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>5 preguntas · 100 puntos · Mínimo aprobatorio: 70%</div>
         </div>
         {submitted && (
           <button onClick={handleReset} style={{
-            background: "transparent", border: "1px solid #1E293B", borderRadius: 6,
-            color: "#64748B", fontSize: 10, padding: "6px 14px", cursor: "pointer", fontFamily: "inherit",
+            background: "transparent", border: "1px solid #334155", borderRadius: 6,
+            color: "#94A3B8", fontSize: 10, padding: "6px 14px", cursor: "pointer", fontFamily: "inherit",
           }}>↺ Reintentar</button>
         )}
       </div>
@@ -779,7 +545,7 @@ function TabEvaluacion() {
             <div style={{ fontSize: 13, fontWeight: 700, color: result.passed ? "#4ADE80" : "#FCA5A5", marginBottom: 4 }}>
               {result.passed ? "APROBADO" : "NO APROBADO"} — {result.earned_points} / {result.total_points} puntos
             </div>
-            <div style={{ fontSize: 11, color: "#64748B" }}>
+            <div style={{ fontSize: 11, color: "#94A3B8" }}>
               {result.passed
                 ? "Dominas los conceptos fundamentales del Análisis Nodal. Puedes avanzar al Módulo 2."
                 : `Puntaje mínimo: ${M1_EVALUATION.passing_score}%. Revisa la teoría e intenta de nuevo.`}
@@ -794,8 +560,8 @@ function TabEvaluacion() {
           const fb = result?.feedback.find(f => f.question_id === q.id);
           return (
             <div key={q.id} style={{
-              background: "#111827", borderRadius: 10, padding: "16px 18px",
-              border: `1px solid ${fb ? (fb.correct ? "#22C55E44" : "#EF444444") : "#1E293B"}`,
+              background: "#334155", borderRadius: 10, padding: "16px 18px",
+              border: `1px solid ${fb ? (fb.correct ? "#22C55E44" : "#EF444444") : "#334155"}`,
             }}>
               {/* Question */}
               <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
@@ -808,7 +574,7 @@ function TabEvaluacion() {
                 {q.options.map(opt => {
                   const selected = answers[q.id] === opt.id;
                   const isCorrect = opt.id === q.correct;
-                  let borderColor = "#1E293B";
+                  let borderColor = "#334155";
                   let bgColor     = "#0F172A";
                   let textColor   = "#94A3B8";
                   if (selected && !submitted) { borderColor = "#F472B6"; bgColor = "#F472B618"; textColor = "#F9A8D4"; }
@@ -832,7 +598,7 @@ function TabEvaluacion() {
 
               {/* Feedback */}
               {fb && (
-                <div style={{ marginTop: 12, marginLeft: 22, background: "#0B0F1A", border: `1px solid ${fb.correct ? "#22C55E33" : "#EF444433"}`, borderRadius: 6, padding: "10px 12px" }}>
+                <div style={{ marginTop: 12, marginLeft: 22, background: "#0F172A", border: `1px solid ${fb.correct ? "#22C55E33" : "#EF444433"}`, borderRadius: 6, padding: "10px 12px" }}>
                   <div style={{ fontSize: 9, color: fb.correct ? "#22C55E" : "#EF4444", letterSpacing: 2, textTransform: "uppercase", fontWeight: 700, marginBottom: 5 }}>
                     {fb.correct ? `✓ Correcto — ${q.points} pts` : `✗ Incorrecto — 0 pts`}
                   </div>
@@ -851,9 +617,9 @@ function TabEvaluacion() {
             disabled={!allAnswered}
             onClick={() => setSubmitted(true)}
             style={{
-              background: allAnswered ? "#F472B6" : "#1E293B",
+              background: allAnswered ? "#F472B6" : "#334155",
               border: "none", borderRadius: 8,
-              color: allAnswered ? "#0B0F1A" : "#334155",
+              color: allAnswered ? "#0F172A" : "#334155",
               fontSize: 11, fontWeight: 700, padding: "10px 24px",
               cursor: allAnswered ? "pointer" : "not-allowed",
               fontFamily: "inherit", letterSpacing: 1,
@@ -886,19 +652,19 @@ export default function SIMBES_M1() {
   const [densidad, setDensidad] = useState(0.876);
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', 'Courier New', monospace", background: "#0B0F1A", minHeight: "100vh", color: "#CBD5E1", padding: "20px 24px" }}>
+    <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", background: "#0F172A", minHeight: "100vh", color: "#F1F5F9", padding: "20px 24px" }}>
 
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-          <div style={{ background: "#0EA5E9", borderRadius: 4, padding: "2px 8px", fontSize: 9, letterSpacing: 2, color: "#0B0F1A", fontWeight: 800, textTransform: "uppercase" }}>SIMBES · M1</div>
+          <div style={{ background: "#0EA5E9", borderRadius: 4, padding: "2px 8px", fontSize: 9, letterSpacing: 2, color: "#0F172A", fontWeight: 800, textTransform: "uppercase", fontFamily: C.fontUI }}>SIMBES · M1</div>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 8px #22C55E" }} />
-          <span style={{ fontSize: 10, color: "#475569", letterSpacing: 1 }}>SIMULACIÓN ACTIVA</span>
+          <span style={{ fontSize: 10, color: "#475569", letterSpacing: 1, fontFamily: C.fontUI }}>SIMULACIÓN ACTIVA</span>
         </div>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#F1F5F9", letterSpacing: 0.5 }}>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#F1F5F9", letterSpacing: 0.5, fontFamily: C.fontUI }}>
           Análisis Nodal — IPR · VLP
         </h1>
-        <p style={{ margin: "4px 0 0", fontSize: 11, color: "#64748B" }}>
+        <p style={{ margin: "4px 0 0", fontSize: 11, color: "#94A3B8", fontFamily: C.fontUI }}>
           Curva de Afluencia (Darcy / Vogel) · Levantamiento BES · Punto de Operación
         </p>
       </div>

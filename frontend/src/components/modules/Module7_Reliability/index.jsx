@@ -20,32 +20,30 @@ import {
 } from "../../../physics/reliability";
 import BENCHMARKS_DATA from "../../../data/mtbf-benchmarks.json";
 import { M7_QUESTIONS, gradeM7 } from "../../../pedagogy/evaluations/m7";
+import TheoryLayout from '../../ui/TheoryLayout';
+import { TEORIA_M7 } from './teoria-data';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const ACCENT = "#FB923C";
-const C = {
-  bg: "#0B0F1A", surface: "#111827", surfAlt: "#0D1424",
-  border: "#1E293B", text: "#CBD5E1", muted: "#64748B",
-  ok: "#22C55E", warn: "#F59E0B", danger: "#EF4444",
-};
+import { C } from '../../../theme';
 const BENCHMARKS = BENCHMARKS_DATA.benchmarks;
 
 const BENCH_COLORS = ["#22C55E", "#38BDF8", "#F59E0B", "#EF4444"];
 
 const TOOLTIP_STYLE = {
   background: "#0D1424", border: "1px solid #1E293B",
-  fontSize: 10, color: "#CBD5E1", fontFamily: "IBM Plex Mono, monospace",
+  fontSize: 10, color: "#CBD5E1", fontFamily: "JetBrains Mono, monospace",
 };
 
 // ─── Micro-componentes ────────────────────────────────────────────────────────
 function KPI({ label, value, unit, color, sub }) {
   return (
     <div style={{ background: C.surface, border: `1px solid ${color}30`, borderRadius: 8, padding: "10px 14px" }}>
-      <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 20, fontWeight: 800, color, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1 }}>
+      <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color, fontFamily: "JetBrains Mono, monospace", lineHeight: 1 }}>
         {value}<span style={{ fontSize: 10, fontWeight: 400, marginLeft: 3 }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginTop: 3 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginTop: 3 }}>{sub}</div>}
     </div>
   );
 }
@@ -57,7 +55,7 @@ function ICBar({ lower, upper, mle, label }) {
   const upperPct = (upper / total) * 100;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>{label}</div>
+      <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{label}</div>
       <div style={{ position: "relative", height: 20, borderRadius: 4, background: "#1E293B" }}>
         {/* IC range */}
         <div style={{
@@ -80,7 +78,7 @@ function ICBar({ lower, upper, mle, label }) {
           transform: "translateX(-50%)",
         }} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
         <span style={{ color: C.ok }}>▼ {lower} d</span>
         <span style={{ color: ACCENT }}>MLE: {mle} d</span>
         <span style={{ color: C.warn }}>▲ {upper} d</span>
@@ -210,31 +208,7 @@ Drawdown — presión diferencial entre estático y fluyente (Pr − Pwf)`,
 ];
 
 function TabTeoria() {
-  const [active, setActive] = useState("exponencial");
-  const sec = TEORIA_SECTIONS.find(s => s.id === active);
-  return (
-    <div style={{ display: "flex", gap: 20, minHeight: 520 }}>
-      <div style={{ width: 180, display: "flex", flexDirection: "column", gap: 4 }}>
-        {TEORIA_SECTIONS.map(s => (
-          <button key={s.id} onClick={() => setActive(s.id)} style={{
-            background: active === s.id ? ACCENT + "18" : "transparent",
-            border: `1px solid ${active === s.id ? ACCENT + "60" : C.border}`,
-            borderRadius: 6, padding: "7px 10px", cursor: "pointer",
-            fontSize: 9, color: active === s.id ? ACCENT : C.muted,
-            textAlign: "left", fontFamily: "IBM Plex Mono, monospace",
-          }}>
-            {s.title}
-          </button>
-        ))}
-      </div>
-      <div style={{ flex: 1, background: C.surface, borderRadius: 8, padding: 24, border: `1px solid ${C.border}` }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 14 }}>{sec.title}</div>
-        <pre style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", whiteSpace: "pre-wrap", lineHeight: 1.85, margin: 0 }}>
-          {sec.body}
-        </pre>
-      </div>
-    </div>
-  );
+  return <TheoryLayout sections={TEORIA_M7} accentColor="#A78BFA" />;
 }
 
 // ─── Tab B: Simulador ────────────────────────────────────────────────────────
@@ -317,7 +291,7 @@ function TabSimulador() {
               background: mode === m ? modeColor + "22" : "transparent",
               border: `1px solid ${mode === m ? modeColor : C.border}`,
               color: mode === m ? modeColor : C.muted,
-              fontFamily: "IBM Plex Mono, monospace",
+              fontFamily: "JetBrains Mono, monospace",
             }}>{l}</button>
           ))}
         </div>
@@ -325,22 +299,22 @@ function TabSimulador() {
         {mode === "curva" && (
           <>
             <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>PARÁMETROS</div>
+              <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>PARÁMETROS</div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>MTBF (días)</div>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>MTBF (días)</div>
                 <input type="range" min={90} max={3650} step={30} value={MTBF} onChange={e => setMTBF(+e.target.value)}
                   style={{ accentColor: "#38BDF8", width: "100%" }} />
-                <div style={{ fontSize: 13, color: "#38BDF8", fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>
+                <div style={{ fontSize: 13, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
                   {MTBF} d <span style={{ fontSize: 9, color: C.muted }}>({(MTBF / 365).toFixed(1)} años)</span>
                 </div>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>Tiempo consulta t (días)</div>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Tiempo consulta t (días)</div>
                 <input type="range" min={30} max={MTBF * 2} step={15} value={Math.min(t_query, MTBF * 2)} onChange={e => setTQuery(+e.target.value)}
                   style={{ accentColor: ACCENT, width: "100%" }} />
-                <div style={{ fontSize: 13, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>
+                <div style={{ fontSize: 13, color: ACCENT, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
                   {t_query} d <span style={{ fontSize: 9, color: C.muted }}>→ R={R_t_pct}%</span>
                 </div>
               </div>
@@ -348,14 +322,14 @@ function TabSimulador() {
 
             {/* Benchmark selector */}
             <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>REFERENCIA INDUSTRIA</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>REFERENCIA INDUSTRIA</div>
               {BENCHMARKS.map((b, i) => (
                 <button key={b.id} onClick={() => { setBenchId(b.id); setMTBF(b.MTBF_days); }} style={{
                   padding: "5px 8px", fontSize: 9, borderRadius: 4, textAlign: "left",
                   background: benchId === b.id ? BENCH_COLORS[i] + "18" : "transparent",
                   border: `1px solid ${benchId === b.id ? BENCH_COLORS[i] : C.border}`,
                   color: benchId === b.id ? BENCH_COLORS[i] : C.muted,
-                  cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+                  cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
                 }}>
                   {b.environment.split(" ")[0]} {b.environment.split(" ")[1] || ""} · {b.MTBF_days} d
                 </button>
@@ -366,25 +340,25 @@ function TabSimulador() {
 
         {mode === "estimacion" && (
           <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ fontSize: 9, color: "#A78BFA", letterSpacing: 2, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>DATOS DE CAMPO</div>
+            <div style={{ fontSize: 9, color: "#A78BFA", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>DATOS DE CAMPO</div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>Fallas observadas (r)</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Fallas observadas (r)</div>
               <input type="range" min={1} max={30} step={1} value={r} onChange={e => setR(+e.target.value)}
                 style={{ accentColor: "#A78BFA", width: "100%" }} />
-              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>{r} fallas</div>
+              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{r} fallas</div>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>T_total acumulado (días)</div>
-              <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>fallas + censurados</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>T_total acumulado (días)</div>
+              <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>fallas + censurados</div>
               <input type="range" min={500} max={30000} step={100} value={T_total} onChange={e => setTTotal(+e.target.value)}
                 style={{ accentColor: "#A78BFA", width: "100%" }} />
-              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>{T_total.toLocaleString()} d</div>
+              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{T_total.toLocaleString()} d</div>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>Nivel de confianza IC</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Nivel de confianza IC</div>
               <div style={{ display: "flex", gap: 4 }}>
                 {[[0.20, "80%"], [0.10, "90%"], [0.05, "95%"]].map(([a, l]) => (
                   <button key={a} onClick={() => setAlpha(a)} style={{
@@ -392,7 +366,7 @@ function TabSimulador() {
                     background: alpha === a ? "#A78BFA22" : "transparent",
                     border: `1px solid ${alpha === a ? "#A78BFA" : C.border}`,
                     color: alpha === a ? "#A78BFA" : C.muted,
-                    cursor: "pointer", fontFamily: "IBM Plex Mono, monospace",
+                    cursor: "pointer", fontFamily: "JetBrains Mono, monospace",
                   }}>{l}</button>
                 ))}
               </div>
@@ -426,38 +400,38 @@ function TabSimulador() {
         {/* Curva R(t) */}
         <div style={{ background: C.surfAlt, borderRadius: 8, padding: 16, border: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               {mode === "curva"
                 ? `Curva de Supervivencia R(t) — MTBF=${MTBF} días`
                 : `Curva R(t) con IC ${100 - alpha * 100}% — MTBF_MLE=${est?.MTBF_mle} días`}
             </div>
-            <div style={{ fontSize: 9, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>
+            <div style={{ fontSize: 9, color: ACCENT, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
               R(MTBF) = e⁻¹ = 36.77%
             </div>
           </div>
           <ResponsiveContainer width="100%" height={230}>
             <LineChart data={chartData} margin={{ top: 4, right: 16, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+              <XAxis dataKey="t" tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                 label={{ value: "t [días]", position: "insideBottomRight", offset: -5, fill: C.muted, fontSize: 8 }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+              <YAxis domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                 tickFormatter={v => `${v}%`} />
               <Tooltip contentStyle={TOOLTIP_STYLE}
                 formatter={(v, n) => [`${v}%`, n === "R" ? "R(t)" : n]}
                 labelFormatter={v => `t = ${v} días`} />
               {/* Línea R=36.77% */}
               <ReferenceLine y={36.77} stroke={ACCENT} strokeDasharray="4 2"
-                label={{ value: "36.77%", fill: ACCENT, fontSize: 8, fontFamily: "IBM Plex Mono, monospace", position: "right" }} />
+                label={{ value: "36.77%", fill: ACCENT, fontSize: 8, fontFamily: "JetBrains Mono, monospace", position: "right" }} />
               {/* Línea R=50% (mediana) */}
               <ReferenceLine y={50} stroke={C.muted} strokeDasharray="2 3"
-                label={{ value: "50% (mediana)", fill: C.muted, fontSize: 8, fontFamily: "IBM Plex Mono, monospace", position: "right" }} />
+                label={{ value: "50% (mediana)", fill: C.muted, fontSize: 8, fontFamily: "JetBrains Mono, monospace", position: "right" }} />
 
               {mode === "curva" ? (
                 <>
                   <Line type="monotone" dataKey="R" stroke="#38BDF8" strokeWidth={2.5} dot={false} isAnimationActive={false} name="R(t)" />
                   {/* Línea vertical en t_query */}
                   <ReferenceLine x={t_query} stroke={ACCENT} strokeWidth={1.5}
-                    label={{ value: `t=${t_query}`, fill: ACCENT, fontSize: 8, fontFamily: "IBM Plex Mono, monospace", position: "top" }} />
+                    label={{ value: `t=${t_query}`, fill: ACCENT, fontSize: 8, fontFamily: "JetBrains Mono, monospace", position: "top" }} />
                 </>
               ) : (
                 <>
@@ -475,7 +449,7 @@ function TabSimulador() {
 
           {mode === "estimacion" && est && (
             <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 14 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700 }}>INTERVALO DE CONFIANZA {100 - alpha * 100}%</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>INTERVALO DE CONFIANZA {100 - alpha * 100}%</div>
               <ICBar lower={est.ic.MTBF_lower} upper={Math.min(est.ic.MTBF_upper, est.MTBF_mle * 8)} mle={est.MTBF_mle} label="MTBF" />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 {[
@@ -485,14 +459,14 @@ function TabSimulador() {
                   { label: "t (R=90%)",   value: `${est.t_90} d`,                 color: C.ok },
                 ].map((m, i) => (
                   <div key={i}>
-                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace", textTransform: "uppercase" }}>{m.label}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: m.color, fontFamily: "IBM Plex Mono, monospace" }}>{m.value}</div>
+                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>{m.label}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: m.color, fontFamily: "JetBrains Mono, monospace" }}>{m.value}</div>
                   </div>
                 ))}
               </div>
               <div style={{
                 background: C.warn + "08", border: `1px solid ${C.warn}25`, borderRadius: 6, padding: "8px 12px",
-                fontSize: 9, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.6,
+                fontSize: 9, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6,
               }}>
                 <span style={{ color: C.warn, fontWeight: 700 }}>⚠ Sesgo: </span>
                 {est.bias.recommendation}
@@ -502,16 +476,16 @@ function TabSimulador() {
 
           {mode === "curva" && (
             <div style={{ background: C.surfAlt, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>MTBF por ambiente</div>
+              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>MTBF por ambiente</div>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart data={benchChartData} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                  <XAxis dataKey="name" tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} />
-                  <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} />
+                  <XAxis dataKey="name" tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} />
+                  <YAxis tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} />
                   <Tooltip contentStyle={TOOLTIP_STYLE}
                     formatter={(v, n) => [n === "MTBF" ? `${v} días` : `${v}%`, n === "MTBF" ? "MTBF" : "R(1 año)"]} />
                   <Bar dataKey="MTBF" radius={[4, 4, 0, 0]}
-                    label={{ position: "top", fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace", formatter: v => `${v}d` }}
+                    label={{ position: "top", fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace", formatter: v => `${v}d` }}
                     fill={ACCENT} />
                 </BarChart>
               </ResponsiveContainer>
@@ -520,19 +494,19 @@ function TabSimulador() {
 
           {/* R(1 año) por benchmark */}
           <div style={{ background: C.surfAlt, borderRadius: 8, padding: 14, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>R(365 días) por ambiente</div>
+            <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>R(365 días) por ambiente</div>
             <ResponsiveContainer width="100%" height={160}>
               <BarChart data={benchChartData} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                <XAxis dataKey="name" tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace" }}
+                <XAxis dataKey="name" tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace" }}
                   tickFormatter={v => `${v}%`} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} formatter={v => [`${v}%`, "R(1 año)"]} />
                 <ReferenceLine y={36.77} stroke={ACCENT} strokeDasharray="3 2"
-                  label={{ value: "36.77%", fill: ACCENT, fontSize: 7, fontFamily: "IBM Plex Mono, monospace" }} />
+                  label={{ value: "36.77%", fill: ACCENT, fontSize: 7, fontFamily: "JetBrains Mono, monospace" }} />
                 {benchChartData.map((b, i) => null)}
                 <Bar dataKey="R_1y" radius={[4, 4, 0, 0]}
-                  label={{ position: "top", fontSize: 8, fill: C.muted, fontFamily: "IBM Plex Mono, monospace", formatter: v => `${v}%` }}>
+                  label={{ position: "top", fontSize: 8, fill: C.muted, fontFamily: "JetBrains Mono, monospace", formatter: v => `${v}%` }}>
                   {benchChartData.map((entry, i) => (
                     <rect key={i} fill={entry.fill} />
                   ))}
@@ -609,31 +583,31 @@ function TabCaso() {
             background: step === i ? ACCENT + "22" : "transparent",
             border: `1px solid ${step === i ? ACCENT : C.border}`,
             color: step === i ? ACCENT : C.muted,
-            fontFamily: "IBM Plex Mono, monospace",
+            fontFamily: "JetBrains Mono, monospace",
           }}>Paso {i + 1}</button>
         ))}
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-          <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>CAMPO COLIBRÍ · Caso M7</div>
+          <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>CAMPO COLIBRÍ · Caso M7</div>
         </div>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "IBM Plex Mono, monospace", marginBottom: 10 }}>{s.title}</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
-            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: ACCENT, fontFamily: "JetBrains Mono, monospace", marginBottom: 10 }}>{s.title}</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7, marginBottom: 12 }}>{s.context}</div>
+            <div style={{ background: ACCENT + "10", border: `1px solid ${ACCENT}30`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>
               📋 {s.task}
             </div>
           </div>
           <div style={{ background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 8, padding: 14 }}>
-            <div style={{ fontSize: 9, color: C.ok, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
-            <div style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
+            <div style={{ fontSize: 9, color: C.ok, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 6 }}>CONCLUSIÓN</div>
+            <div style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>{s.conclusion}</div>
           </div>
         </div>
 
         <div style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "IBM Plex Mono, monospace" }}>Resultado calculado</div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>Resultado calculado</div>
 
           {step === 0 && (
             <>
@@ -645,13 +619,13 @@ function TabCaso() {
                   { label: "Fallas año 1",  value: `~${computed.fallas} equipos`, color: C.warn },
                 ].map((m, i) => (
                   <div key={i} style={{ background: C.surfAlt, borderRadius: 6, padding: "8px 12px" }}>
-                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>{m.label}</div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: m.color, fontFamily: "IBM Plex Mono, monospace" }}>{m.value}</div>
+                    <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{m.label}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: m.color, fontFamily: "JetBrains Mono, monospace" }}>{m.value}</div>
                   </div>
                 ))}
               </div>
               <div style={{ background: C.danger + "08", border: `1px solid ${C.danger}25`, borderRadius: 6, padding: "10px 14px" }}>
-                <div style={{ fontSize: 10, color: C.danger, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.6 }}>
+                <div style={{ fontSize: 10, color: C.danger, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6 }}>
                   El gerente esperaba 0 fallas. La realidad: ~{computed.fallas} fallas previstas en el año 1.
                 </div>
               </div>
@@ -661,8 +635,8 @@ function TabCaso() {
           {step === 1 && (
             <>
               <div>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginBottom: 4 }}>Cálculo de T_total:</div>
-                <pre style={{ fontSize: 10, color: C.text, fontFamily: "IBM Plex Mono, monospace", margin: 0, lineHeight: 1.7 }}>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginBottom: 4 }}>Cálculo de T_total:</div>
+                <pre style={{ fontSize: 10, color: C.text, fontFamily: "JetBrains Mono, monospace", margin: 0, lineHeight: 1.7 }}>
 {`T_fallas  = 95 + 210 + 340 + 290 = 935 días
 T_cens    = 14 × 300              = 4200 días
 T_total   = 935 + 4200            = 5135 días
@@ -671,11 +645,11 @@ MTBF_MLE  = 5135 / 4              = ${computed.MTBF} días`}
                 </pre>
               </div>
               <div style={{ background: "#A78BFA10", border: "1px solid #A78BFA30", borderRadius: 6, padding: "10px 14px" }}>
-                <div style={{ fontSize: 9, color: "#A78BFA", fontWeight: 700, fontFamily: "IBM Plex Mono, monospace", marginBottom: 4 }}>IC 90%</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: "IBM Plex Mono, monospace" }}>
+                <div style={{ fontSize: 9, color: "#A78BFA", fontWeight: 700, fontFamily: "JetBrains Mono, monospace", marginBottom: 4 }}>IC 90%</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.text, fontFamily: "JetBrains Mono, monospace" }}>
                   [{computed.ic.lower}, {computed.ic.upper}] días
                 </div>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "IBM Plex Mono, monospace", marginTop: 4 }}>
+                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginTop: 4 }}>
                   Límite inferior = {computed.ic.lower} días → valor de planificación
                 </div>
               </div>
@@ -691,19 +665,19 @@ MTBF_MLE  = 5135 / 4              = ${computed.MTBF} días`}
                 <div key={i} style={{
                   background: sc.color + "08", border: `1px solid ${sc.color}30`, borderRadius: 8, padding: 14,
                 }}>
-                  <div style={{ fontSize: 9, color: sc.color, fontFamily: "IBM Plex Mono, monospace", fontWeight: 700, marginBottom: 8 }}>{sc.label}</div>
+                  <div style={{ fontSize: 9, color: sc.color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, marginBottom: 8 }}>{sc.label}</div>
                   <div style={{ display: "flex", gap: 16 }}>
                     <div>
-                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>R(730d)</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "IBM Plex Mono, monospace" }}>{sc.R}%</div>
+                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>R(730d)</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "JetBrains Mono, monospace" }}>{sc.R}%</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>Fallas año 2</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "IBM Plex Mono, monospace" }}>~{sc.fallas} eq.</div>
+                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>Fallas año 2</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "JetBrains Mono, monospace" }}>~{sc.fallas} eq.</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>Repuestos</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "IBM Plex Mono, monospace" }}>{sc.fallas}</div>
+                      <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>Repuestos</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: sc.color, fontFamily: "JetBrains Mono, monospace" }}>{sc.fallas}</div>
                     </div>
                   </div>
                 </div>
@@ -717,13 +691,13 @@ MTBF_MLE  = 5135 / 4              = ${computed.MTBF} días`}
         <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${C.border}`,
           background: "transparent", color: C.muted, cursor: step === 0 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>← Anterior</button>
         <button onClick={() => setStep(s => Math.min(CASO_STEPS.length - 1, s + 1))} disabled={step === CASO_STEPS.length - 1} style={{
           padding: "8px 20px", borderRadius: 6, border: `1px solid ${ACCENT}`,
           background: ACCENT + "22", color: ACCENT,
           cursor: step === CASO_STEPS.length - 1 ? "not-allowed" : "pointer",
-          fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+          fontSize: 10, fontFamily: "JetBrains Mono, monospace",
         }}>Siguiente →</button>
       </div>
     </div>
@@ -748,10 +722,10 @@ function TabEvaluacion() {
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warn : C.danger, fontFamily: "JetBrains Mono, monospace" }}>
               {result.score}/{result.total} — {result.pct}%
             </div>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: "IBM Plex Mono, monospace" }}>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>
               {result.pct >= 80
                 ? "Excelente. Dominás la distribución exponencial, el MTBF MLE y los intervalos Chi²."
                 : result.pct >= 60
@@ -759,7 +733,7 @@ function TabEvaluacion() {
                 : "Repasá los conceptos de supervivencia exponencial, sesgo de sobrevivencia y el IC Chi²."}
             </div>
           </div>
-          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>Reintentar</button>
+          <button onClick={reset} style={{ padding: "8px 16px", borderRadius: 6, border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT, cursor: "pointer", fontSize: 10, fontFamily: "JetBrains Mono, monospace" }}>Reintentar</button>
         </div>
       )}
 
@@ -767,7 +741,7 @@ function TabEvaluacion() {
         const res = result?.results.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
-            <div style={{ fontSize: 11, color: C.text, fontFamily: "IBM Plex Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
+            <div style={{ fontSize: 11, color: C.text, fontFamily: "JetBrains Mono, monospace", marginBottom: 12, lineHeight: 1.6 }}>
               <span style={{ color: ACCENT, fontWeight: 700 }}>{qi + 1}. </span>{q.text}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -783,7 +757,7 @@ function TabEvaluacion() {
                     border: `1px solid ${color}`,
                     color: selected ? color : C.muted,
                     cursor: result ? "default" : "pointer",
-                    fontSize: 10, fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.5,
+                    fontSize: 10, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.5,
                   }}>
                     <span style={{ fontWeight: 700 }}>{opt.id.toUpperCase()})</span> {opt.text}
                   </button>
@@ -791,7 +765,7 @@ function TabEvaluacion() {
               })}
             </div>
             {res && (
-              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "IBM Plex Mono, monospace", lineHeight: 1.7 }}>
+              <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
                 💡 {q.explanation}
               </div>
             )}
@@ -805,7 +779,7 @@ function TabEvaluacion() {
           border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT,
           cursor: Object.keys(answers).length < M7_QUESTIONS.length ? "not-allowed" : "pointer",
           opacity: Object.keys(answers).length < M7_QUESTIONS.length ? 0.5 : 1,
-          fontFamily: "IBM Plex Mono, monospace", letterSpacing: 1,
+          fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
         }}>
           CALIFICAR ({Object.keys(answers).length}/{M7_QUESTIONS.length} respondidas)
         </button>
@@ -825,17 +799,17 @@ const TABS = [
 export default function Module7({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: "IBM Plex Mono, 'Courier New', monospace", background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace" }}>← Hub</button>
+        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800 }}>M07</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9" }}>Confiabilidad y MTBF</span>
+            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M07</span>
+            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Confiabilidad y MTBF</span>
           </div>
           <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1 }}>R(t) = e^(−t/MTBF) · Datos Censurados · Intervalos Chi²</div>
         </div>
-        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: "IBM Plex Mono, monospace" }}>✅ Disponible</span>
+        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: C.fontUI }}>✅ Disponible</span>
       </div>
 
       <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 40, zIndex: 100, background: C.bg, paddingTop: 8 }}>
@@ -845,7 +819,7 @@ export default function Module7({ onBack }) {
             background: tab === t.id ? ACCENT + "18" : "transparent",
             borderBottom: tab === t.id ? `2px solid ${ACCENT}` : "2px solid transparent",
             color: tab === t.id ? ACCENT : C.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: "IBM Plex Mono, monospace",
+            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
             fontWeight: tab === t.id ? 700 : 400,
           }}>{t.label}</button>
         ))}

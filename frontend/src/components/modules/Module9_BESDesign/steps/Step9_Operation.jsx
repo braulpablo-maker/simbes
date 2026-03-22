@@ -6,12 +6,7 @@
  */
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 function Metric({ label, value, unit, color = C.text, sub }) {
   return (
@@ -19,11 +14,11 @@ function Metric({ label, value, unit, color = C.text, sub }) {
       background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
       border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700 }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -45,7 +40,7 @@ function MonitoreoRow({ label, activo }) {
     <div style={{
       display: 'flex', alignItems: 'center', gap: 10,
       padding: '8px 0', borderBottom: `1px solid ${C.border}`,
-      fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+      fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
     }}>
       <span style={{ color: activo ? C.ok : C.muted, fontSize: 13 }}>
         {activo ? '✅' : '—'}
@@ -74,7 +69,7 @@ export default function Step9_Operation({
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 9 — Estrategia de operación y set points</span>
         <br />
@@ -94,7 +89,7 @@ export default function Step9_Operation({
             borderRadius: 8, padding: '16px',
           }}>
             <div style={{
-              fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12,
             }}>PARÁMETROS DE ARRANQUE</div>
 
@@ -122,11 +117,11 @@ export default function Step9_Operation({
             borderRadius: 8, padding: '16px',
           }}>
             <div style={{
-              fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12,
             }}>SET POINTS DE PROTECCIÓN VSD</div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'IBM Plex Mono, monospace' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace' }}>
               <thead>
                 <tr>
                   {['Protección', 'Valor', 'Unidad'].map((h, i) => (
@@ -159,7 +154,7 @@ export default function Step9_Operation({
             borderRadius: 8, padding: '16px',
           }}>
             <div style={{
-              fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
               letterSpacing: 1, marginBottom: 12,
             }}>MONITOREO RECOMENDADO</div>
 
@@ -173,7 +168,7 @@ export default function Step9_Operation({
           <div style={{
             background: C.surfaceAlt, border: `1px solid ${C.border}`,
             borderRadius: 6, padding: '12px 14px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.7,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted, lineHeight: 1.7,
           }}>
             <span style={{ color: C.indigo, fontWeight: 700 }}>Nota sobre set points</span>
             <br />
@@ -191,7 +186,7 @@ export default function Step9_Operation({
         <button onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
           }}>
           ← VOLVER A PASO 8
@@ -201,7 +196,7 @@ export default function Step9_Operation({
           <button onClick={onComplete}
             style={{
               background: `${C.indigo}18`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
@@ -216,7 +211,7 @@ export default function Step9_Operation({
           marginTop: 24,
           background: `${C.ok}12`, border: `1px solid ${C.ok}40`,
           borderRadius: 8, padding: '20px',
-          fontFamily: 'IBM Plex Mono, monospace',
+          fontFamily: 'JetBrains Mono, monospace',
         }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: C.ok, marginBottom: 8 }}>
             Paso 9 completado — Estrategia de operación registrada
@@ -228,7 +223,7 @@ export default function Step9_Operation({
           <button onClick={onAdvance}
             style={{
               background: `${C.green}18`, border: `1px solid ${C.green}`,
-              color: C.green, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.green, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>

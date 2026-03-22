@@ -13,20 +13,7 @@ import {
 import { buildIPRCurve, M3D_PER_STB } from '../../../../physics/ipr.js';
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg:        '#0B0F1A',
-  surface:   '#111827',
-  surfaceAlt:'#0D1424',
-  border:    '#1E293B',
-  text:      '#CBD5E1',
-  muted:     '#64748B',
-  indigo:    '#818CF8',
-  green:     '#34D399',
-  yellow:    '#FBBF24',
-  ok:        '#22C55E',
-  warning:   '#F59E0B',
-  danger:    '#EF4444',
-};
+import { C } from '../../../../theme';
 
 const IP_M3D_TO_STBD = 1 / 6.28981;
 
@@ -36,11 +23,11 @@ function Metric({ label, value, unit, color = C.text, sub }) {
       background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
       border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700 }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
+      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
         {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -66,7 +53,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 2 — IPR: caudal resultante al Pwf estratégico</span>
         <br />
@@ -83,7 +70,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
           borderRadius: 8, padding: '16px 8px 8px',
         }}>
           <div style={{
-            fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             marginBottom: 8, marginLeft: 16, letterSpacing: 1,
           }}>
             IPR — Curva de afluencia del yacimiento · Pwf vs. Q (m³/d)
@@ -95,17 +82,17 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
                 dataKey="Q_m3d"
                 type="number"
                 domain={[0, 'auto']}
-                tick={{ fill: C.muted, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }}
+                tick={{ fill: C.muted, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
                 tickFormatter={v => Math.round(v)}
                 label={{ value: 'Q (m³/d)', position: 'insideBottom', offset: -18, fill: C.muted, fontSize: 10 }}
               />
               <YAxis
                 domain={[0, inputs.Pr * 1.05]}
-                tick={{ fill: C.muted, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }}
+                tick={{ fill: C.muted, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }}
                 label={{ value: 'Pwf (psi)', angle: -90, position: 'insideLeft', offset: 14, fill: C.muted, fontSize: 10 }}
               />
               <Tooltip
-                contentStyle={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', color: C.text }}
+                contentStyle={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: C.text }}
                 formatter={(v, n) => [n === 'Pwf' ? `${v} psi` : `${v} m³/d`, n]}
                 labelFormatter={v => `Q = ${v} m³/d`}
               />
@@ -118,18 +105,18 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
 
               {/* Línea Pb — presión de burbuja */}
               <ReferenceLine y={inputs.Pb} stroke={C.yellow} strokeDasharray="6 3" strokeWidth={1.5}
-                label={{ value: `Pb=${inputs.Pb}`, position: 'right', fill: C.yellow, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }} />
+                label={{ value: `Pb=${inputs.Pb}`, position: 'right', fill: C.yellow, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }} />
 
               {/* Línea Pwf — ENTRADA estratégica */}
               {inputs.Pwf && (
                 <ReferenceLine y={inputs.Pwf} stroke={C.green} strokeDasharray="4 2" strokeWidth={2}
-                  label={{ value: `Pwf=${inputs.Pwf} psi`, position: 'insideTopLeft', fill: C.green, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }} />
+                  label={{ value: `Pwf=${inputs.Pwf} psi`, position: 'insideTopLeft', fill: C.green, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }} />
               )}
 
               {/* Línea Q_resultante */}
               {Q_m3d !== null && (
                 <ReferenceLine x={+Q_m3d.toFixed(1)} stroke={C.warning} strokeDasharray="4 2" strokeWidth={2}
-                  label={{ value: `Q=${Q_m3d.toFixed(1)} m³/d`, position: 'top', fill: C.warning, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }} />
+                  label={{ value: `Q=${Q_m3d.toFixed(1)} m³/d`, position: 'top', fill: C.warning, fontSize: 9, fontFamily: 'JetBrains Mono, monospace' }} />
               )}
 
               {/* Punto de operación */}
@@ -143,7 +130,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
           {/* Leyenda */}
           <div style={{
             display: 'flex', gap: 16, flexWrap: 'wrap',
-            padding: '8px 16px', fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+            padding: '8px 16px', fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
           }}>
             <span style={{ color: C.indigo }}>── IPR (Vogel+Darcy)</span>
             <span style={{ color: C.green }}>╌ Pwf estratégico (entrada)</span>
@@ -171,7 +158,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
             background: zona === 'Vogel' ? `${C.yellow}14` : `${C.indigo}14`,
             border: `1px solid ${zona === 'Vogel' ? C.yellow : C.indigo}40`,
             borderRadius: 6, padding: '8px 12px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 10,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 10,
           }}>
             <div style={{ color: C.muted, marginBottom: 2 }}>ZONA IPR</div>
             <div style={{ color: zona === 'Vogel' ? C.yellow : C.indigo, fontWeight: 700, fontSize: 12 }}>
@@ -195,7 +182,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
       <div style={{
         background: C.surfaceAlt, border: `1px solid ${C.border}`,
         borderRadius: 8, padding: '12px 16px', marginTop: 20,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.muted, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.muted, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>¿Por qué Pwf es un dato de entrada y no un resultado?</span>
         <br />
@@ -212,7 +199,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
           onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
             letterSpacing: 1,
           }}>
@@ -224,7 +211,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
             onClick={onAdvance}
             style={{
               background: `${C.indigo}22`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700, letterSpacing: 1,
             }}>
@@ -236,7 +223,7 @@ export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
           <div style={{
             background: `${C.danger}10`, border: `1px solid ${C.danger}30`,
             borderRadius: 6, padding: '10px 16px',
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.danger,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.danger,
           }}>
             ❌ BLOQUEO: Pwf demasiado bajo. Volvé al PASO 0 y ajustá el Pwf estratégico.
           </div>

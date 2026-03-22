@@ -188,3 +188,43 @@
 - Selector de tipo de impulsor por Ns
 - Número de etapas = TDH_requerida / head_por_etapa
 - Curva H-Q vs. curva de sistema graficada con Recharts
+
+---
+
+## Sprint: Estandarización Pestaña Teoría — 2026-03-21
+
+**Objetivo:** Un único componente `TheoryLayout` que reemplaza 3 patrones incompatibles.
+**Piloto:** M2 (mejor implementación actual) → validar look → rollout al resto.
+
+### Plan
+
+- [x] Análisis de los 8 módulos (completado — ver propuesta en sesión)
+- [x] Crear `TheoryLayout.jsx` en `components/ui/`
+- [x] Crear `teoria-data.js` para M2 (piloto)
+- [x] Integrar TheoryLayout en M2 — build y validar
+- [x] Crear `teoria-data.js` para M1, M3, M4, M5, M6, M7
+- [x] Integrar TheoryLayout en M1, M3–M7
+- [x] M8 — solo ajuste visual (sin migración de datos)
+- [x] Build final limpio
+
+### Estructura de datos por sección
+
+```js
+{
+  id: string,
+  title: string,          // "① Título"
+  concepto: string,       // texto pedagógico (Outfit)
+  formula: string,        // texto multi-línea (JetBrains Mono)
+  variables: [{ sym, unit, desc }],
+  regla: string | null,   // badge operativo opcional
+  tipo_regla: 'warning' | 'ok' | 'indigo',
+}
+```
+
+### Criterios de aceptación
+
+- [ ] Todas las pestañas Teoría usan el mismo componente base
+- [ ] Fórmulas en JetBrains Mono, texto en Outfit
+- [ ] Accordion colapsable, una sección abierta a la vez
+- [ ] Variables en tabla compacta 3 columnas
+- [ ] Build sin errores

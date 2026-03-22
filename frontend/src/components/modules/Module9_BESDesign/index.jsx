@@ -20,18 +20,7 @@ import Step10_Economics   from './steps/Step10_Economics.jsx';
 import Step11_DataSheet   from './steps/Step11_DataSheet.jsx';
 import { exportToPDF, exportToMD } from './steps/exportDataSheet.js';
 
-const C = {
-  bg:        '#0B0F1A',
-  surface:   '#111827',
-  surfaceAlt:'#0D1424',
-  border:    '#1E293B',
-  text:      '#CBD5E1',
-  muted:     '#64748B',
-  indigo:    '#818CF8',
-  ok:        '#22C55E',
-  warning:   '#F59E0B',
-  danger:    '#EF4444',
-};
+import { C } from '../../../theme';
 
 // ── Pasos del wizard completo (beta activa 0–7) ──────────────────
 const STEPS = [
@@ -77,7 +66,7 @@ function StepBar({ currentStep, completedSteps, onJump }) {
                 background: isCurrent ? `${C.indigo}18` : 'transparent',
                 border: `1px solid ${isCurrent ? C.indigo : isCompleted ? C.ok : C.border}`,
                 borderRadius: 6, padding: '4px 10px',
-                color, fontFamily: 'IBM Plex Mono, monospace', fontSize: 9,
+                color, fontFamily: C.fontUI, fontSize: 9,
                 cursor: isClickable ? 'pointer' : 'not-allowed',
                 opacity: !s.active ? 0.3 : 1,
                 whiteSpace: 'nowrap', letterSpacing: 0.5,
@@ -124,7 +113,7 @@ export default function Module9_BESDesign() {
 
   return (
     <div style={{
-      fontFamily: "IBM Plex Mono, 'Courier New', monospace",
+      fontFamily: C.font,
       background: C.bg, minHeight: '100vh', color: C.text,
     }}>
 
@@ -136,19 +125,20 @@ export default function Module9_BESDesign() {
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
           <div style={{
             fontSize: 11, fontWeight: 800, color: C.indigo,
-            letterSpacing: 2, fontFamily: 'IBM Plex Mono, monospace',
+            letterSpacing: 2, fontFamily: C.font,
           }}>M09</div>
           <h1 style={{
             margin: 0, fontSize: 21, fontWeight: 800,
             color: '#F1F5F9', letterSpacing: -0.3, lineHeight: 1.1,
+            fontFamily: C.fontUI,
           }}>
             Flujo de Diseño BES
           </h1>
-          <span style={{ fontSize: 10, color: C.ok, letterSpacing: 1 }}>
+          <span style={{ fontSize: 10, color: C.ok, letterSpacing: 1, fontFamily: C.fontUI }}>
             PASOS 0–11 DISPONIBLES
           </span>
         </div>
-        <div style={{ fontSize: 11, color: C.muted, paddingBottom: 12 }}>
+        <div style={{ fontSize: 11, color: C.muted, paddingBottom: 12, fontFamily: C.fontUI }}>
           Diseño integrado paso a paso · Ciclos A–F de iteración
         </div>
       </div>
@@ -194,7 +184,7 @@ export default function Module9_BESDesign() {
                   onClick={advanceStep3}
                   style={{
                     background: `${C.indigo}22`, border: `1px solid ${C.indigo}`,
-                    color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+                    color: C.indigo, fontFamily: C.fontUI,
                     fontSize: 11, padding: '10px 24px', borderRadius: 6,
                     cursor: 'pointer', fontWeight: 700, letterSpacing: 1,
                   }}>
@@ -300,7 +290,7 @@ export default function Module9_BESDesign() {
                 onClick={() => jumpToStep(10)}
                 style={{
                   background: C.surface, border: `1px solid ${C.border}`,
-                  color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+                  color: C.muted, fontFamily: C.fontUI,
                   fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
                 }}>
                 ← VOLVER A PASO 10
@@ -313,7 +303,7 @@ export default function Module9_BESDesign() {
                 onClick={() => exportToMD(state, inputs)}
                 style={{
                   background: `${C.green}15`, border: `1px solid ${C.green}50`,
-                  color: C.green, fontFamily: 'IBM Plex Mono, monospace',
+                  color: C.green, fontFamily: C.fontUI,
                   fontSize: 11, padding: '10px 18px', borderRadius: 6,
                   cursor: 'pointer', letterSpacing: 1, fontWeight: 700,
                 }}>
@@ -324,7 +314,7 @@ export default function Module9_BESDesign() {
                 onClick={() => exportToPDF('step11-sheet')}
                 style={{
                   background: `${C.warning}15`, border: `1px solid ${C.warning}50`,
-                  color: C.warning, fontFamily: 'IBM Plex Mono, monospace',
+                  color: C.warning, fontFamily: C.fontUI,
                   fontSize: 11, padding: '10px 18px', borderRadius: 6,
                   cursor: 'pointer', letterSpacing: 1, fontWeight: 700,
                 }}>
@@ -335,7 +325,7 @@ export default function Module9_BESDesign() {
                 onClick={() => jumpToStep(0)}
                 style={{
                   background: `${C.indigo}15`, border: `1px solid ${C.indigo}40`,
-                  color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+                  color: C.indigo, fontFamily: C.fontUI,
                   fontSize: 11, padding: '10px 18px', borderRadius: 6,
                   cursor: 'pointer', letterSpacing: 1,
                 }}>

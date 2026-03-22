@@ -8,7 +8,7 @@ export function ComingSoon({ number, title, topics = [] }) {
     <div style={{
       minHeight: '100vh', background: '#0B0F1A', display: 'flex',
       alignItems: 'center', justifyContent: 'center', padding: 32,
-      fontFamily: 'IBM Plex Mono, monospace',
+      fontFamily: 'JetBrains Mono, monospace',
     }}>
       <div style={{
         background: '#111827', border: '1px solid #1E293B',

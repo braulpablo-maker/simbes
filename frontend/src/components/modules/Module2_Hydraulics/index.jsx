@@ -5,6 +5,8 @@
  *         velocidad específica (Ns), número de etapas, curva de sistema vs H-Q.
  */
 import { useState, useMemo } from 'react';
+import TheoryLayout from '../../ui/TheoryLayout';
+import { TEORIA_M2 } from './teoria-data';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ReferenceLine, ReferenceDot,
@@ -17,23 +19,7 @@ import {
 import { M2_QUESTIONS, gradeM2 } from '../../../pedagogy/evaluations/m2';
 
 // ─── Paleta ────────────────────────────────────────────────────────
-const C = {
-  bg:        '#0B0F1A',
-  surface:   '#111827',
-  surfaceAlt:'#0D1424',
-  border:    '#1E293B',
-  text:      '#CBD5E1',
-  muted:     '#64748B',
-  green:     '#34D399',   // M2 accent
-  blue:      '#38BDF8',   // curva H-Q bomba
-  orange:    '#FB923C',   // curva de sistema
-  pink:      '#F472B6',   // BEP
-  red:       '#FB7185',   // punto de operación
-  yellow:    '#FBBF24',
-  ok:        '#22C55E',
-  warning:   '#F59E0B',
-  danger:    '#EF4444',
-};
+import { C } from '../../../theme';
 
 // ─── Tamaños de tubing estándar (OD → ID) ─────────────────────────
 const TUBING_SIZES = [
@@ -51,7 +37,7 @@ function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip
     <div style={{ marginBottom: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ color: C.text, fontSize: 12, fontFamily: 'IBM Plex Mono, monospace' }}>{label}</span>
+          <span style={{ color: C.text, fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
           {tooltip && (
             <span
               style={{ cursor: 'pointer', color: C.muted, fontSize: 11, border: `1px solid ${C.border}`, borderRadius: 4, padding: '0 5px', lineHeight: '16px' }}
@@ -60,7 +46,7 @@ function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip
             >?</span>
           )}
         </div>
-        <span style={{ color: C.green, fontWeight: 700, fontSize: 13, fontFamily: 'IBM Plex Mono, monospace' }}>
+        <span style={{ color: C.green, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>
           {Number(value).toFixed(dec)} <span style={{ color: C.muted, fontWeight: 400, fontSize: 11 }}>{unit}</span>
         </span>
       </div>
@@ -73,7 +59,7 @@ function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip
         onChange={e => onChange(parseFloat(e.target.value))}
         style={{ width: '100%', accentColor: C.green, cursor: 'pointer' }}
       />
-      <div style={{ display: 'flex', justifyContent: 'space-between', color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}>
         <span>{min}</span><span>{max}</span>
       </div>
     </div>
@@ -83,9 +69,9 @@ function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip
 function Metric({ label, value, unit, color = C.green, sub }) {
   return (
     <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 14px', flex: 1, minWidth: 110 }}>
-      <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 4 }}>{label}</div>
-      <div style={{ color, fontWeight: 700, fontSize: 18, fontFamily: 'IBM Plex Mono, monospace' }}>{value}</div>
-      <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }}>{unit}{sub && <> · <span style={{ color: C.muted }}>{sub}</span></>}</div>
+      <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', marginBottom: 4 }}>{label}</div>
+      <div style={{ color, fontWeight: 700, fontSize: 18, fontFamily: 'JetBrains Mono, monospace' }}>{value}</div>
+      <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}>{unit}{sub && <> · <span style={{ color: C.muted }}>{sub}</span></>}</div>
     </div>
   );
 }
@@ -98,7 +84,7 @@ function Alert({ type, msg }) {
   };
   const s = styles[type] || styles.warning;
   return (
-    <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 8, padding: '10px 14px', marginBottom: 8, fontSize: 12, fontFamily: 'IBM Plex Mono, monospace', color: s.color }}>
+    <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 8, padding: '10px 14px', marginBottom: 8, fontSize: 12, fontFamily: 'JetBrains Mono, monospace', color: s.color }}>
       {s.icon} {msg}
     </div>
   );
@@ -108,7 +94,7 @@ function Alert({ type, msg }) {
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 14px', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }}>
+    <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: '10px 14px', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
       <div style={{ color: C.muted, marginBottom: 4 }}>Q = {Number(label).toFixed(1)} m³/d</div>
       {payload.map(p => (
         <div key={p.dataKey} style={{ color: p.color }}>
@@ -135,7 +121,7 @@ function NsBar({ Ns }) {
         ))}
         <div style={{ position: 'absolute', left: `calc(${pct}% - 4px)`, top: 0, width: 8, height: '100%', background: C.red, borderRadius: 4, zIndex: 2 }} />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3, fontSize: 9, color: C.muted, fontFamily: 'IBM Plex Mono, monospace' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3, fontSize: 9, color: C.muted, fontFamily: 'JetBrains Mono, monospace' }}>
         <span>0</span><span style={{ color: '#818CF8' }}>Radial ← 1500</span>
         <span style={{ color: C.green }}>Mixto → 4500</span><span style={{ color: '#F59E0B' }}>Axial</span>
       </div>
@@ -145,9 +131,7 @@ function NsBar({ Ns }) {
 
 // ─── Tab Teoría ───────────────────────────────────────────────────
 function TabTeoria() {
-  const [open, setOpen] = useState(null);
-
-  // Datos para gráfico comparativo de curvas H-Q por tipo de impulsor (normalizadas)
+  // Gráfico comparativo de curvas H-Q por tipo de impulsor (se inyecta en sección Ns)
   const nsChartData = Array.from({ length: 41 }, (_, i) => {
     const q = i / 40;
     return {
@@ -158,185 +142,43 @@ function TabTeoria() {
     };
   });
 
-  const sections = [
-    {
-      key: 'tdh', title: '① TDH — Total Dynamic Head',
-      content: (
-        <div style={{ fontSize: 13, lineHeight: 1.8, color: C.text }}>
-          <p>El TDH es la <strong style={{ color: C.green }}>altura total</strong> que la bomba debe generar para mover el fluido desde la profundidad del yacimiento hasta la superficie.</p>
-          <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', margin: '12px 0', fontFamily: 'IBM Plex Mono, monospace', fontSize: 13 }}>
-            <div style={{ color: C.orange }}>TDH = H_estático + H_fricción + H_contrapresión</div>
-            <div style={{ color: C.muted, marginTop: 6, fontSize: 11 }}>
-              H_estático     = depth [m]  — columna de fluido<br/>
-              H_fricción     = f·(L/D)·v²/(2g) [m]  — Darcy-Weisbach<br/>
-              H_contrapresión = (Pwh / gradiente) × 0.3048 [m]
-            </div>
-          </div>
-          <p style={{ color: C.muted, fontSize: 12 }}>En campo, la contrapresión suele representar 5–15% del TDH. Las pérdidas por fricción son clave en pozos profundos o con alto caudal.</p>
-        </div>
-      ),
-    },
-    {
-      key: 'dw', title: '② Darcy-Weisbach',
-      content: (
-        <div style={{ fontSize: 13, lineHeight: 1.8, color: C.text }}>
-          <p>Ecuación universal para pérdidas de carga en tubing:</p>
-          <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', margin: '12px 0', fontFamily: 'IBM Plex Mono, monospace', fontSize: 13 }}>
-            <div style={{ color: C.orange }}>h_f = f × (L/D) × v² / (2g)</div>
-            <div style={{ color: C.muted, marginTop: 6, fontSize: 11 }}>
-              f = factor de fricción (Colebrook-White)<br/>
-              L = longitud del tubing ≈ depth [m]<br/>
-              D = diámetro interno [m]<br/>
-              v = velocidad del fluido = Q/A [m/s]<br/>
-              g = 9.81 m/s²
-            </div>
-          </div>
-          <p style={{ color: C.warning, fontSize: 12 }}>⚠️ La fricción crece con v² (y Q²) y escala como 1/D⁵. Duplicar el diámetro reduce h_f en un factor ~32×.</p>
-        </div>
-      ),
-    },
-    {
-      key: 'cw', title: '③ Colebrook-White (factor de fricción)',
-      content: (
-        <div style={{ fontSize: 13, lineHeight: 1.8, color: C.text }}>
-          <p>El factor de fricción f depende del <strong style={{ color: C.blue }}>número de Reynolds</strong> y la <strong style={{ color: C.blue }}>rugosidad relativa</strong> del tubing:</p>
-          <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', margin: '12px 0', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>
-            <div style={{ color: C.orange }}>1/√f = −2·log₁₀(ε/3.7D + 2.51/(Re·√f))</div>
-            <div style={{ color: C.muted, marginTop: 6, fontSize: 11 }}>
-              ε = rugosidad absoluta (m) — acero comercial: 4.6×10⁻⁵ m<br/>
-              Re = ρ·v·D / μ — Número de Reynolds<br/>
-              Laminar  (Re &lt; 2300):  f = 64/Re<br/>
-              Turbulento (Re &gt; 4000): Colebrook-White
-            </div>
-          </div>
-          <p style={{ color: C.muted, fontSize: 12 }}>En BES, el flujo es casi siempre turbulento (Re &gt; 10 000). La ecuación se resuelve iterativamente (Newton, converge en &lt; 5 iteraciones).</p>
-        </div>
-      ),
-    },
-    {
-      key: 'ns', title: '④ Velocidad Específica (Ns)',
-      content: (
-        <div style={{ fontSize: 13, lineHeight: 1.8, color: C.text }}>
-          <p>La Ns clasifica la geometría del impulsor y define la forma de la curva H-Q:</p>
-          <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', margin: '12px 0', fontFamily: 'IBM Plex Mono, monospace', fontSize: 13 }}>
-            <div style={{ color: C.green }}>Ns = N × Q^0.5 / H^0.75</div>
-            <div style={{ color: C.muted, marginTop: 6, fontSize: 11 }}>
-              N = RPM del motor (2-polo: 3600 rpm a 60 Hz)<br/>
-              Q = caudal en BEP (GPM)<br/>
-              H = altura por etapa en BEP (ft)
-            </div>
-          </div>
-          <div style={{ fontSize: 12, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 8, marginBottom: 16 }}>
-            {[
-              ['Radial',      '< 1 500',    '#38BDF8', 'Alta altura, bajo caudal. Curva empinada: pequeño cambio en Q produce gran cambio en H.'],
-              ['Flujo Mixto', '1 500–4 500','#34D399', 'Curva intermedia. Mayoría de BES modernos. Balance entre rango de caudal y altura.'],
-              ['Axial',       '> 4 500',    '#FBBF24', 'Alto caudal, baja altura. Curva plana: la bomba mantiene su altura en un amplio rango de Q.'],
-            ].map(([t, r, col, d]) => (
-              <div key={t} style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 6, padding: '8px 10px' }}>
-                <div style={{ color: col, fontWeight: 700 }}>{t}</div>
-                <div style={{ color: C.yellow, fontSize: 11 }}>Ns {r}</div>
-                <div style={{ color: C.muted, fontSize: 10, marginTop: 4 }}>{d}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Gráfico comparativo */}
-          <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '14px 10px 8px' }}>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 8, marginLeft: 8 }}>
-              Curvas H-Q comparativas — normalizadas (H/H₀ vs Q/Qmax)
-            </div>
-            <ResponsiveContainer width="100%" height={190}>
-              <LineChart data={nsChartData} margin={{ top: 4, right: 24, left: -10, bottom: 24 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                <XAxis dataKey="Q"
-                  tick={{ fill: C.muted, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }}
-                  tickFormatter={v => Math.round(v)}
-                  label={{ value: 'Q / Qmax (%)', position: 'insideBottom', offset: -16, fill: C.muted, fontSize: 10 }}
-                />
-                <YAxis domain={[0, 100]}
-                  tick={{ fill: C.muted, fontSize: 9, fontFamily: 'IBM Plex Mono, monospace' }}
-                  label={{ value: 'H / H₀ (%)', angle: -90, position: 'insideLeft', offset: 16, fill: C.muted, fontSize: 10 }}
-                />
-                <Tooltip
-                  contentStyle={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', color: C.text }}
-                  formatter={(v, n) => [`${v}%`, n]}
-                  labelFormatter={v => `Q = ${v}% de Qmax`}
-                />
-                <Legend wrapperStyle={{ fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', paddingTop: 4 }} />
-                <Line dataKey="Radial"       stroke="#38BDF8" strokeWidth={2.5} dot={false} isAnimationActive={false} />
-                <Line dataKey="Flujo Mixto"  stroke="#34D399" strokeWidth={2.5} dot={false} isAnimationActive={false} />
-                <Line dataKey="Axial"        stroke="#FBBF24" strokeWidth={2.5} dot={false} isAnimationActive={false} />
-              </LineChart>
-            </ResponsiveContainer>
-            <div style={{ fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', lineHeight: 1.7, marginTop: 6, paddingLeft: 8 }}>
-              <span style={{ color: '#38BDF8', fontWeight: 700 }}>Radial</span>: curva empinada — a Q=50% la bomba ya perdió el 50% de su altura. Sensible a variaciones de caudal.<br />
-              <span style={{ color: '#34D399', fontWeight: 700 }}>Flujo mixto</span>: curva moderada — a Q=50% conserva el 72% de la altura. Curva típica de BES modernos.<br />
-              <span style={{ color: '#FBBF24', fontWeight: 700 }}>Axial</span>: curva plana — a Q=50% conserva el 91% de la altura. Alta tolerancia a variaciones de caudal, pero inestable a caudal muy bajo.
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 'etapas', title: '⑤ Número de Etapas',
-      content: (
-        <div style={{ fontSize: 13, lineHeight: 1.8, color: C.text }}>
-          <p>Cada etapa es un impulsor-difusor que agrega altura al fluido. El número de etapas determina el TDH total de la bomba:</p>
-          <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', margin: '12px 0', fontFamily: 'IBM Plex Mono, monospace', fontSize: 13 }}>
-            <div style={{ color: C.green }}>N_etapas = ceil(TDH_requerido / H_por_etapa_en_BEP)</div>
-          </div>
-          <p style={{ color: C.muted, fontSize: 12 }}>Rango típico BES: 50–200 etapas. La Ns de la bomba (geometría del impulsor) define H por etapa. Mayor H por etapa → menos etapas → motor más corto.</p>
-        </div>
-      ),
-    },
-    {
-      key: 'glosario', title: '⑥ Glosario del Módulo',
-      content: (
-        <div style={{ fontSize: 12, fontFamily: 'IBM Plex Mono, monospace' }}>
-          {[
-            ['TDH',   'Total Dynamic Head — altura total que debe generar la bomba (m o ft)'],
-            ['h_f',   'Head loss por fricción (Darcy-Weisbach) — pérdidas en el tubing (m)'],
-            ['Re',    'Número de Reynolds — caracteriza el régimen de flujo (adimensional)'],
-            ['f',     'Factor de fricción de Darcy — adimensional, depende de Re y rugosidad'],
-            ['ε',     'Rugosidad absoluta del tubing (m) — acero comercial: 4.6×10⁻⁵ m'],
-            ['Ns',    'Velocidad específica — clasifica la geometría del impulsor (US units)'],
-            ['v',     'Velocidad media del fluido en el tubing (m/s)'],
-            ['D_in',  'Diámetro interno del tubing (pulgadas)'],
-            ['H₀',   'Altura por etapa a Q=0 y 60 Hz (ft) — altura de cierre (shutoff)'],
-            ['BEP',   'Best Efficiency Point — punto de máxima eficiencia de la bomba'],
-          ].map(([t, d]) => (
-            <div key={t} style={{ display: 'flex', gap: 12, padding: '6px 0', borderBottom: `1px solid ${C.border}` }}>
-              <span style={{ color: C.green, minWidth: 70 }}>{t}</span>
-              <span style={{ color: C.muted }}>{d}</span>
-            </div>
-          ))}
-        </div>
-      ),
-    },
-  ];
-
-  return (
-    <div>
-      <div style={{ color: C.green, fontWeight: 700, fontSize: 15, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 16 }}>
-        TEORÍA — DISEÑO HIDRÁULICO BES
+  // El gráfico de Ns se inyecta como `extra` en la sección correspondiente
+  const nsExtra = (
+    <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: '14px 10px 8px' }}>
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: C.font, marginBottom: 8, marginLeft: 8 }}>
+        Curvas H-Q comparativas — normalizadas (H/H₀ vs Q/Qmax)
       </div>
-      {sections.map(s => (
-        <div key={s.key} style={{ marginBottom: 8 }}>
-          <button
-            onClick={() => setOpen(open === s.key ? null : s.key)}
-            style={{ width: '100%', background: open === s.key ? C.surfaceAlt : C.surface, border: `1px solid ${open === s.key ? C.green : C.border}`, borderRadius: 8, padding: '12px 16px', cursor: 'pointer', textAlign: 'left', color: open === s.key ? C.green : C.text, fontFamily: 'IBM Plex Mono, monospace', fontSize: 13, fontWeight: 700, display: 'flex', justifyContent: 'space-between' }}
-          >
-            <span>{s.title}</span><span style={{ color: C.muted }}>{open === s.key ? '▲' : '▼'}</span>
-          </button>
-          {open === s.key && (
-            <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderTop: 'none', borderRadius: '0 0 8px 8px', padding: '16px 20px' }}>
-              {s.content}
-            </div>
-          )}
-        </div>
-      ))}
+      <ResponsiveContainer width="100%" height={190}>
+        <LineChart data={nsChartData} margin={{ top: 4, right: 24, left: -10, bottom: 24 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
+          <XAxis dataKey="Q"
+            tick={{ fill: C.muted, fontSize: 9, fontFamily: C.font }}
+            tickFormatter={v => Math.round(v)}
+            label={{ value: 'Q / Qmax (%)', position: 'insideBottom', offset: -16, fill: C.muted, fontSize: 10 }}
+          />
+          <YAxis domain={[0, 100]}
+            tick={{ fill: C.muted, fontSize: 9, fontFamily: C.font }}
+            label={{ value: 'H / H₀ (%)', angle: -90, position: 'insideLeft', offset: 16, fill: C.muted, fontSize: 10 }}
+          />
+          <Tooltip
+            contentStyle={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, fontSize: 10, fontFamily: C.font, color: C.text }}
+            formatter={(v, n) => [`${v}%`, n]}
+            labelFormatter={v => `Q = ${v}% de Qmax`}
+          />
+          <Legend wrapperStyle={{ fontSize: 10, fontFamily: C.font, paddingTop: 4 }} />
+          <Line dataKey="Radial"       stroke="#38BDF8" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+          <Line dataKey="Flujo Mixto"  stroke="#34D399" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+          <Line dataKey="Axial"        stroke="#FBBF24" strokeWidth={2.5} dot={false} isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
+
+  const sections = TEORIA_M2.map(s =>
+    s.id === 'ns' ? { ...s, extra: nsExtra } : s
+  );
+
+  return <TheoryLayout sections={sections} accentColor={C.green} />;
 }
 
 // ─── Tab Simulador ────────────────────────────────────────────────
@@ -398,7 +240,7 @@ function TabSimulador() {
     <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20 }}>
       {/* ── Controles ── */}
       <div>
-        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Parámetros del Pozo</div>
+        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Parámetros del Pozo</div>
         <Slider label="Profundidad de la bomba" unit="m"    value={depth}    min={300}  max={4300} step={50}  dec={0} onChange={setDepth}
           tooltip="Profundidad de asiento de la bomba. Determina H_estático = depth. BES típico: 600–3 500 m." />
         <Slider label="Presión de cabezal (Pwh)" unit="psi" value={Pwh}      min={50}   max={1000} step={10}  dec={0} onChange={setPwh}
@@ -406,22 +248,22 @@ function TabSimulador() {
         <Slider label="Densidad del fluido"   unit="kg/L"  value={densidad} min={0.70} max={1.15} step={0.01} dec={3} onChange={setDensidad}
           tooltip="Densidad del fluido. Afecta gradiente (grad = densidad × 0.4335 psi/ft) y número de Reynolds." />
 
-        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 8, marginTop: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Tubing</div>
+        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8, marginTop: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Tubing</div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
           {TUBING_SIZES.map(t => (
             <button key={t.D_in} onClick={() => setDIn(t.D_in)}
-              style={{ flex: 1, padding: '6px 0', background: D_in === t.D_in ? C.green : C.surfaceAlt, color: D_in === t.D_in ? '#000' : C.muted, border: `1px solid ${D_in === t.D_in ? C.green : C.border}`, borderRadius: 6, cursor: 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, fontWeight: D_in === t.D_in ? 700 : 400 }}>
+              style={{ flex: 1, padding: '6px 0', background: D_in === t.D_in ? C.green : C.surfaceAlt, color: D_in === t.D_in ? '#000' : C.muted, border: `1px solid ${D_in === t.D_in ? C.green : C.border}`, borderRadius: 6, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: D_in === t.D_in ? 700 : 400 }}>
               {t.label}
             </button>
           ))}
         </div>
-        <div style={{ color: C.muted, fontSize: 10, marginBottom: 12, fontFamily: 'IBM Plex Mono, monospace' }}>
+        <div style={{ color: C.muted, fontSize: 10, marginBottom: 12, fontFamily: 'JetBrains Mono, monospace' }}>
           ID = {D_in}" → A = {(Math.PI * (D_in * 0.0254) ** 2 / 4 * 10000).toFixed(2)} cm²
         </div>
         <Slider label="Viscosidad del fluido" unit="cP"  value={mu}    min={0.5} max={100} step={0.5} dec={1} onChange={setMu}
           tooltip="Viscosidad dinámica. Afecta Re y régimen de flujo. Agua ≈ 1 cP. Crudo liviano: 2–20 cP. Crudo pesado: 20–500 cP." />
 
-        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 8, marginTop: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Bomba BES</div>
+        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8, marginTop: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Bomba BES</div>
         <Slider label="Altura por etapa (H₀) a Q=0" unit="ft/etapa" value={H0stage} min={15} max={100} step={1} dec={0} onChange={setH0stage}
           tooltip="Altura de cierre (shutoff) por etapa a 60 Hz. Define Ns y tipo de impulsor. BES típico: 20–80 ft/etapa." />
         <Slider label="Frecuencia VSD" unit="Hz" value={freq} min={30} max={70} step={1} dec={0} onChange={setFreq}
@@ -437,19 +279,19 @@ function TabSimulador() {
 
         {/* Gráfico curva sistema vs H-Q bomba */}
         <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 10, padding: '16px 8px 8px' }}>
-          <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', paddingLeft: 16, marginBottom: 4 }}>
+          <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', paddingLeft: 16, marginBottom: 4 }}>
             CURVA DE SISTEMA vs. H-Q BOMBA ({sim.nStages} etapas · {freq} Hz)
           </div>
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={sim.chartData} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
               <CartesianGrid stroke={C.border} strokeDasharray="3 3" />
-              <XAxis dataKey="Q" stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', fill: C.muted }}
+              <XAxis dataKey="Q" stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', fill: C.muted }}
                 tickFormatter={v => Math.round(v)}
                 label={{ value: 'Q (m³/d)', position: 'insideBottom', offset: -4, fill: C.muted, fontSize: 11 }} />
-              <YAxis stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', fill: C.muted }}
+              <YAxis stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', fill: C.muted }}
                 label={{ value: 'Altura (m)', angle: -90, position: 'insideLeft', offset: 12, fill: C.muted, fontSize: 11 }} />
               <Tooltip content={<ChartTooltip />} />
-              <Legend wrapperStyle={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, paddingTop: 8 }} />
+              <Legend wrapperStyle={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, paddingTop: 8 }} />
               {/* Curva de sistema */}
               <Line type="monotone" dataKey="Sistema" stroke={C.orange} strokeWidth={2.5} dot={false} name="TDH sistema" />
               {/* Curva H-Q bomba */}
@@ -488,12 +330,12 @@ function TabSimulador() {
         <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 8, padding: '12px 16px', marginTop: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }}>VELOCIDAD ESPECÍFICA</div>
-              <div style={{ color: C.green, fontWeight: 700, fontSize: 20, fontFamily: 'IBM Plex Mono, monospace' }}>Ns = {sim.Ns.toLocaleString()}</div>
+              <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}>VELOCIDAD ESPECÍFICA</div>
+              <div style={{ color: C.green, fontWeight: 700, fontSize: 20, fontFamily: 'JetBrains Mono, monospace' }}>Ns = {sim.Ns.toLocaleString()}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ color: C.muted, fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }}>TIPO DE IMPULSOR</div>
-              <div style={{ color: C.yellow, fontWeight: 700, fontSize: 13, fontFamily: 'IBM Plex Mono, monospace' }}>{sim.nsType}</div>
+              <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}>TIPO DE IMPULSOR</div>
+              <div style={{ color: C.yellow, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>{sim.nsType}</div>
             </div>
           </div>
           <NsBar Ns={sim.Ns} />
@@ -553,7 +395,7 @@ function TabCaso() {
 
   return (
     <div>
-      <div style={{ color: C.green, fontWeight: 700, fontSize: 14, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 12 }}>
+      <div style={{ color: C.green, fontWeight: 700, fontSize: 14, fontFamily: 'JetBrains Mono, monospace', marginBottom: 12 }}>
         CASO PRÁCTICO — POZO GARZA-7 · REACTIVACIÓN POST-WORKOVER
       </div>
       <div style={{ color: C.muted, fontSize: 12, marginBottom: 16, lineHeight: 1.6 }}>
@@ -564,19 +406,19 @@ function TabCaso() {
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
         {CASO_STEPS.map((cs, i) => (
           <button key={i} onClick={() => setStep(i)}
-            style={{ flex: 1, padding: '10px 12px', background: step === i ? C.green : C.surfaceAlt, color: step === i ? '#000' : C.muted, border: `1px solid ${step === i ? C.green : C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, fontWeight: step === i ? 700 : 400 }}>
+            style={{ flex: 1, padding: '10px 12px', background: step === i ? C.green : C.surfaceAlt, color: step === i ? '#000' : C.muted, border: `1px solid ${step === i ? C.green : C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: step === i ? 700 : 400 }}>
             Paso {i + 1}
           </button>
         ))}
       </div>
 
       <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: '16px 20px', marginBottom: 16 }}>
-        <div style={{ color: C.green, fontWeight: 700, fontSize: 13, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 8 }}>{s.title}</div>
+        <div style={{ color: C.green, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>{s.title}</div>
         <div style={{ color: C.text, fontSize: 13, lineHeight: 1.6, marginBottom: 10 }}>{s.desc}</div>
-        <div style={{ background: C.surfaceAlt, borderRadius: 6, padding: '8px 12px', color: C.blue, fontSize: 12, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 8 }}>
+        <div style={{ background: C.surfaceAlt, borderRadius: 6, padding: '8px 12px', color: C.blue, fontSize: 12, fontFamily: 'JetBrains Mono, monospace', marginBottom: 8 }}>
           📋 {s.task}
         </div>
-        <div style={{ color: C.muted, fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }}>
+        <div style={{ color: C.muted, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
           💡 {s.hint}
         </div>
       </div>
@@ -584,7 +426,7 @@ function TabCaso() {
       {/* Parámetros del paso */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
         {[['depth', depth, 'm'], ['Pwh', Pwh, 'psi'], ['densidad', densidad, 'kg/L'], [`D_in`, D_in, '"'], ['mu', mu, 'cP'], ['freq', freq, 'Hz'], ['H₀', H0stage, 'ft/etapa']].map(([k, v, u]) => (
-          <div key={k} style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 6, padding: '6px 10px', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11 }}>
+          <div key={k} style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 6, padding: '6px 10px', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
             <span style={{ color: C.muted }}>{k} = </span>
             <span style={{ color: C.green, fontWeight: 700 }}>{v}</span>
             <span style={{ color: C.muted }}> {u}</span>
@@ -597,10 +439,10 @@ function TabCaso() {
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={sim.chartData} margin={{ top: 8, right: 20, left: 0, bottom: 10 }}>
             <CartesianGrid stroke={C.border} strokeDasharray="3 3" />
-            <XAxis dataKey="Q" stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', fill: C.muted }} tickFormatter={v => Math.round(v)} />
-            <YAxis stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'IBM Plex Mono, monospace', fill: C.muted }} />
+            <XAxis dataKey="Q" stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', fill: C.muted }} tickFormatter={v => Math.round(v)} />
+            <YAxis stroke={C.muted} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', fill: C.muted }} />
             <Tooltip content={<ChartTooltip />} />
-            <Legend wrapperStyle={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 11 }} />
+            <Legend wrapperStyle={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }} />
             <Line type="monotone" dataKey="Sistema" stroke={C.orange} strokeWidth={2.5} dot={false} name="TDH sistema" />
             <Line type="monotone" dataKey="Bomba"   stroke={C.blue}   strokeWidth={2.5} dot={false} name="H-Q bomba" />
             <ReferenceLine x={+sim.Q_bep_m3d.toFixed(1)} stroke={C.pink} strokeDasharray="4 3" strokeWidth={1} />
@@ -624,11 +466,11 @@ function TabCaso() {
       {/* Botones navegación */}
       <div style={{ display: 'flex', gap: 12, marginTop: 20, justifyContent: 'space-between' }}>
         <button onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}
-          style={{ padding: '10px 20px', background: step === 0 ? C.surface : C.surfaceAlt, color: step === 0 ? C.muted : C.text, border: `1px solid ${C.border}`, borderRadius: 8, cursor: step === 0 ? 'not-allowed' : 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>
+          style={{ padding: '10px 20px', background: step === 0 ? C.surface : C.surfaceAlt, color: step === 0 ? C.muted : C.text, border: `1px solid ${C.border}`, borderRadius: 8, cursor: step === 0 ? 'not-allowed' : 'pointer', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
           ← Paso anterior
         </button>
         <button onClick={() => setStep(Math.min(CASO_STEPS.length - 1, step + 1))} disabled={step === CASO_STEPS.length - 1}
-          style={{ padding: '10px 20px', background: step === CASO_STEPS.length - 1 ? C.surface : C.green, color: step === CASO_STEPS.length - 1 ? C.muted : '#000', border: 'none', borderRadius: 8, cursor: step === CASO_STEPS.length - 1 ? 'not-allowed' : 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, fontWeight: 700 }}>
+          style={{ padding: '10px 20px', background: step === CASO_STEPS.length - 1 ? C.surface : C.green, color: step === CASO_STEPS.length - 1 ? C.muted : '#000', border: 'none', borderRadius: 8, cursor: step === CASO_STEPS.length - 1 ? 'not-allowed' : 'pointer', fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700 }}>
           Siguiente paso →
         </button>
       </div>
@@ -663,13 +505,13 @@ function TabEvaluacion() {
 
   return (
     <div>
-      <div style={{ color: C.green, fontWeight: 700, fontSize: 14, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 16 }}>
+      <div style={{ color: C.green, fontWeight: 700, fontSize: 14, fontFamily: 'JetBrains Mono, monospace', marginBottom: 16 }}>
         EVALUACIÓN — DISEÑO HIDRÁULICO BES
       </div>
 
       {submitted && result && (
         <div style={{ background: result.pct >= 80 ? '#052e16' : result.pct >= 60 ? '#431407' : '#450a0a', border: `1px solid ${result.pct >= 80 ? '#166534' : result.pct >= 60 ? '#92400e' : '#991b1b'}`, borderRadius: 10, padding: '16px 20px', marginBottom: 20 }}>
-          <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 18, fontWeight: 700, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warning : C.danger }}>
+          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: result.pct >= 80 ? C.ok : result.pct >= 60 ? C.warning : C.danger }}>
             {result.score}/{result.total} correctas — {result.pct}%
           </div>
           <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>
@@ -683,7 +525,7 @@ function TabEvaluacion() {
         const res     = result?.results?.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: '16px 20px', marginBottom: 14 }}>
-            <div style={{ color: C.text, fontWeight: 700, fontSize: 13, fontFamily: 'IBM Plex Mono, monospace', marginBottom: 12 }}>
+            <div style={{ color: C.text, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace', marginBottom: 12 }}>
               {qi + 1}. {q.text}
             </div>
             {q.options.map(opt => {
@@ -693,13 +535,13 @@ function TabEvaluacion() {
               if (submitted && sel === opt.id && sel !== q.correct) { bg = '#450a0a'; border = C.danger; color = C.danger; }
               return (
                 <button key={opt.id} onClick={() => handleSelect(q.id, opt.id)}
-                  style={{ display: 'block', width: '100%', textAlign: 'left', background: bg, border: `1px solid ${border}`, borderRadius: 7, padding: '10px 14px', marginBottom: 6, cursor: submitted ? 'default' : 'pointer', color, fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, lineHeight: 1.5 }}>
+                  style={{ display: 'block', width: '100%', textAlign: 'left', background: bg, border: `1px solid ${border}`, borderRadius: 7, padding: '10px 14px', marginBottom: 6, cursor: submitted ? 'default' : 'pointer', color, fontFamily: 'JetBrains Mono, monospace', fontSize: 12, lineHeight: 1.5 }}>
                   <span style={{ fontWeight: 700, marginRight: 8 }}>{opt.id.toUpperCase()})</span>{opt.text}
                 </button>
               );
             })}
             {submitted && res && (
-              <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 6, padding: '10px 14px', marginTop: 8, fontSize: 11, color: C.muted, fontFamily: 'IBM Plex Mono, monospace', lineHeight: 1.6 }}>
+              <div style={{ background: C.surfaceAlt, border: `1px solid ${C.border}`, borderRadius: 6, padding: '10px 14px', marginTop: 8, fontSize: 11, color: C.muted, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.6 }}>
                 💬 {res.explanation}
               </div>
             )}
@@ -710,13 +552,13 @@ function TabEvaluacion() {
       <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 8 }}>
         {submitted && (
           <button onClick={handleReset}
-            style={{ padding: '10px 24px', background: C.surfaceAlt, color: C.text, border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12 }}>
+            style={{ padding: '10px 24px', background: C.surfaceAlt, color: C.text, border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
             Reintentar
           </button>
         )}
         {!submitted && (
           <button onClick={handleSubmit} disabled={!allAnswered}
-            style={{ padding: '10px 28px', background: allAnswered ? C.green : C.surface, color: allAnswered ? '#000' : C.muted, border: 'none', borderRadius: 8, cursor: allAnswered ? 'pointer' : 'not-allowed', fontFamily: 'IBM Plex Mono, monospace', fontSize: 13, fontWeight: 700 }}>
+            style={{ padding: '10px 28px', background: allAnswered ? C.green : C.surface, color: allAnswered ? '#000' : C.muted, border: 'none', borderRadius: 8, cursor: allAnswered ? 'pointer' : 'not-allowed', fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700 }}>
             Calificar →
           </button>
         )}
@@ -732,19 +574,19 @@ export default function Module2() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: 'IBM Plex Mono, monospace', padding: '0 0 60px' }}>
+    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: C.font, padding: '0 0 60px' }}>
       {/* Header */}
       <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: '20px 32px', position: 'sticky', top: 40, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 6 }}>
-          <div style={{ background: C.green, color: '#000', fontWeight: 800, borderRadius: 8, padding: '4px 12px', fontSize: 13 }}>M2</div>
-          <div style={{ color: C.green, fontWeight: 800, fontSize: 24 }}>Diseño Hidráulico</div>
-          <div style={{ color: C.muted, fontSize: 12 }}>TDH · Colebrook-White · Ns · Etapas</div>
+          <div style={{ background: C.green, color: '#000', fontWeight: 800, borderRadius: 8, padding: '4px 12px', fontSize: 13, fontFamily: C.font }}>M2</div>
+          <div style={{ color: C.green, fontWeight: 800, fontSize: 24, fontFamily: C.fontUI }}>Diseño Hidráulico</div>
+          <div style={{ color: C.muted, fontSize: 12, fontFamily: C.fontUI }}>TDH · Colebrook-White · Ns · Etapas</div>
         </div>
         {/* Tabs */}
         <div style={{ display: 'flex', gap: 4, marginTop: 12 }}>
           {TABS.map((t, i) => (
             <button key={t} onClick={() => setActiveTab(i)}
-              style={{ padding: '8px 18px', background: activeTab === i ? C.green : 'transparent', color: activeTab === i ? '#000' : C.muted, border: `1px solid ${activeTab === i ? C.green : C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, fontWeight: activeTab === i ? 700 : 400 }}>
+              style={{ padding: '8px 18px', background: activeTab === i ? C.green : 'transparent', color: activeTab === i ? '#000' : C.muted, border: `1px solid ${activeTab === i ? C.green : C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: C.fontUI, fontSize: 12, fontWeight: activeTab === i ? 700 : 400 }}>
               {t}
             </button>
           ))}

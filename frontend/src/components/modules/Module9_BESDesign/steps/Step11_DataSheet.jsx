@@ -3,15 +3,10 @@
  * ============================================
  * Documento de solo lectura que resume todas las decisiones de diseño
  * tomadas a lo largo del asistente (Pasos 0–10 + log de iteraciones).
- * Formato: "selection sheet" industrial en IBM Plex Mono.
+ * Formato: "selection sheet" industrial en JetBrains Mono.
  */
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 /* ─── Sub-componentes ─────────────────────────────────── */
 
@@ -23,12 +18,12 @@ function SectionHeader({ letter, title }) {
     }}>
       <span style={{
         background: `${C.indigo}20`, border: `1px solid ${C.indigo}50`,
-        color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+        color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
         fontWeight: 700, fontSize: 11, padding: '2px 8px', borderRadius: 4,
         letterSpacing: 1,
       }}>{letter}</span>
       <span style={{
-        color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+        color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
         fontWeight: 700, fontSize: 12, letterSpacing: 0.5,
       }}>{title}</span>
     </div>
@@ -40,7 +35,7 @@ function Row({ label, value, unit = '', color = C.text }) {
     <div style={{
       display: 'grid', gridTemplateColumns: '220px 1fr',
       borderBottom: `1px solid ${C.border}`, padding: '5px 0',
-      fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+      fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
     }}>
       <span style={{ color: C.muted }}>{label}</span>
       <span style={{ color }}>
@@ -111,7 +106,7 @@ export default function Step11_DataSheet({ inputs, state }) {
   const serie = s4.serie ?? {};
 
   return (
-    <div id="step11-sheet" style={{ padding: '24px 0', fontFamily: 'IBM Plex Mono, monospace' }}>
+    <div id="step11-sheet" style={{ padding: '24px 0', fontFamily: 'JetBrains Mono, monospace' }}>
 
       {/* Header bar */}
       <div style={{
@@ -330,7 +325,7 @@ export default function Step11_DataSheet({ inputs, state }) {
       <div style={{
         background: `${C.muted}08`, border: `1px solid ${C.border}`,
         borderRadius: 6, padding: '10px 16px', marginTop: 8,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: C.muted,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: C.muted,
         lineHeight: 1.6, textAlign: 'center',
       }}>
         Este documento es generado automaticamente por SIMBES. Para uso educativo unicamente

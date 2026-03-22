@@ -8,12 +8,7 @@
  */
 import { AlertPanel } from '../../../ui/index.jsx';
 
-const C = {
-  bg: '#0B0F1A', surface: '#111827', surfaceAlt: '#0D1424',
-  border: '#1E293B', text: '#CBD5E1', muted: '#64748B',
-  indigo: '#818CF8', green: '#34D399', yellow: '#FBBF24',
-  ok: '#22C55E', warning: '#F59E0B', danger: '#EF4444',
-};
+import { C } from '../../../../theme';
 
 function estadoEmoji(estado) {
   if (estado === 'ok')      return '✅';
@@ -50,7 +45,7 @@ export default function Step8_Risks({
       <div style={{
         background: `${C.indigo}12`, border: `1px solid ${C.indigo}30`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 24,
-        fontFamily: 'IBM Plex Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: C.text, lineHeight: 1.7,
       }}>
         <span style={{ color: C.indigo, fontWeight: 700 }}>PASO 8 — Evaluación de riesgos operativos</span>
         <br />
@@ -67,11 +62,11 @@ export default function Step8_Risks({
         borderRadius: 8, padding: '16px', marginBottom: 20,
       }}>
         <div style={{
-          fontSize: 10, color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+          fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace',
           letterSpacing: 1, marginBottom: 12,
         }}>SEMÁFORO DE RIESGOS OPERATIVOS (9 INDICADORES)</div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'IBM Plex Mono, monospace', fontSize: 11 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
           <thead>
             <tr>
               {['', 'Riesgo', 'Indicador / Valor', 'Umbrales', 'Mitigación recomendada'].map((h, i) => (
@@ -125,7 +120,7 @@ export default function Step8_Risks({
       <div style={{
         background: `${resumenColor}10`, border: `1px solid ${resumenColor}40`,
         borderRadius: 8, padding: '12px 16px', marginBottom: 16,
-        fontFamily: 'IBM Plex Mono, monospace',
+        fontFamily: 'JetBrains Mono, monospace',
       }}>
         <span style={{ color: resumenColor, fontWeight: 700, fontSize: 12 }}>
           {resumenLabel(resumen_estado)}
@@ -139,13 +134,13 @@ export default function Step8_Risks({
           borderRadius: 8, padding: '16px', marginBottom: 20,
         }}>
           <div style={{
-            fontSize: 10, color: C.danger, fontFamily: 'IBM Plex Mono, monospace',
+            fontSize: 10, color: C.danger, fontFamily: 'JetBrains Mono, monospace',
             letterSpacing: 1, fontWeight: 700, marginBottom: 8,
           }}>
             CICLO F — Riesgo crítico detectado
           </div>
           <div style={{
-            fontFamily: 'IBM Plex Mono, monospace', fontSize: 11, color: C.text,
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: C.text,
             marginBottom: 12, lineHeight: 1.7,
           }}>
             Uno o más indicadores superan el umbral crítico. Se recomienda revisar el diseño
@@ -155,7 +150,7 @@ export default function Step8_Risks({
             <button onClick={onCicloF}
               style={{
                 background: `${C.danger}22`, border: `1px solid ${C.danger}`,
-                color: C.danger, fontFamily: 'IBM Plex Mono, monospace', fontSize: 11,
+                color: C.danger, fontFamily: 'JetBrains Mono, monospace', fontSize: 11,
                 padding: '10px 20px', borderRadius: 6, cursor: 'pointer', fontWeight: 700,
               }}>
               ↺ CICLO F — Revisar diseño
@@ -174,7 +169,7 @@ export default function Step8_Risks({
         <button onClick={onBack}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
-            color: C.muted, fontFamily: 'IBM Plex Mono, monospace',
+            color: C.muted, fontFamily: 'JetBrains Mono, monospace',
             fontSize: 11, padding: '10px 20px', borderRadius: 6, cursor: 'pointer',
           }}>
           ← VOLVER A PASO 7
@@ -184,7 +179,7 @@ export default function Step8_Risks({
           <button onClick={onComplete}
             style={{
               background: `${C.indigo}18`, border: `1px solid ${C.indigo}`,
-              color: C.indigo, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.indigo, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
@@ -199,7 +194,7 @@ export default function Step8_Risks({
           marginTop: 24,
           background: `${C.ok}12`, border: `1px solid ${C.ok}40`,
           borderRadius: 8, padding: '20px',
-          fontFamily: 'IBM Plex Mono, monospace',
+          fontFamily: 'JetBrains Mono, monospace',
         }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: C.ok, marginBottom: 8 }}>
             Paso 8 completado — Evaluación de riesgos registrada
@@ -211,7 +206,7 @@ export default function Step8_Risks({
           <button onClick={onAdvance}
             style={{
               background: `${C.green}18`, border: `1px solid ${C.green}`,
-              color: C.green, fontFamily: 'IBM Plex Mono, monospace',
+              color: C.green, fontFamily: 'JetBrains Mono, monospace',
               fontSize: 11, padding: '10px 24px', borderRadius: 6,
               cursor: 'pointer', fontWeight: 700,
             }}>
