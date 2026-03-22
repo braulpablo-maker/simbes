@@ -21,6 +21,7 @@ import {
 import { M4_QUESTIONS, gradeM4 } from "../../../pedagogy/evaluations/m4";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M4 } from './teoria-data';
+import { Slider } from '../../ui';
 
 import { C } from '../../../theme';
 
@@ -100,92 +101,6 @@ function ProgressBar({ pct, label, color = COLORS.ok, max = 100 }) {
 }
 
 // ─── Tab A: Teoría ────────────────────────────────────────────────────────────
-const TEORIA_SECTIONS = [
-  {
-    id: "cable", title: "Cable Eléctrico · Caída de Voltaje",
-    body: `El cable del motor BES transporta la energía eléctrica desde superficie hasta el motor en el fondo. La resistencia aumenta con la temperatura, incrementando las pérdidas.
-
-Resistencia corregida por temperatura:
-  R_T = R_20 × (1 + α × (T_avg − 20))   [Ω]
-
-  α_cobre = 0.00393 /°C
-
-Caída de voltaje (trifásico):
-  V_drop = I × R_T × 3   [V]
-
-Límites operativos:
-  • < 5% del voltaje nominal → OK
-  • 5–10% → ADVERTENCIA (calentamiento adicional)
-  • > 10% → PELIGRO (pérdida de eficiencia severa)
-
-Calibres AWG: a menor número → mayor diámetro → menor resistencia.
-  AWG #1 (R ≈ 0.124 Ω/1000ft)  vs.  AWG #14 (R ≈ 2.525 Ω/1000ft)`,
-  },
-  {
-    id: "arrhenius", title: "Regla de Arrhenius · Degradación de Aislamiento",
-    body: `El aislamiento del motor es el componente más sensible a la temperatura. La regla de los 10°C (Arrhenius simplificado) establece:
-
-  τ₂/τ₁ = 2^((T₁ − T₂) / 10)
-
-Interpretación: por cada 10°C sobre el límite nominal del aislamiento, la vida útil se REDUCE A LA MITAD.
-
-Ejemplo (motor clase H, límite 180°C):
-  T_op = 180°C → vida = 100% (nominal)
-  T_op = 190°C → vida = 50%
-  T_op = 200°C → vida = 25%
-  T_op = 220°C → vida = 6.25%
-
-Clases de aislamiento típicas en BES:
-  • Clase F: 155°C   • Clase H: 180°C   • Clase C: 220°C`,
-  },
-  {
-    id: "thd", title: "THD · Distorsión Armónica Total",
-    body: `El VSD (Variable Speed Drive) convierte frecuencia de red y genera armónicos de corriente que degradan la calidad de la red eléctrica.
-
-THD por topología (representativo — ABB TN060):
-  6 pulsos estándar  → THD ≈ 30%   ❌
-  12 pulsos          → THD ≈ 17.5% ❌
-  18 pulsos          → THD ≈ 4%    ✅
-  Active Front End   → THD ≈ 2.5%  ✅
-  Filtro Activo      → THD ≈ 1.5%  ✅
-
-IEEE 519-2014: límite THDv < 5% en el Punto de Acoplamiento Común (PCC).
-
-Impactos del THD alto:
-  • Calentamiento de transformadores y motores
-  • Errores en instrumentación y medición
-  • Interferencia en comunicaciones y SCADA`,
-  },
-  {
-    id: "nace", title: "Selección de Materiales · NACE MR0175",
-    body: `La norma NACE MR0175 / ISO 15156 rige la selección de materiales para ambientes con H₂S (gas amargo), donde existe riesgo de SSC (Sulfide Stress Cracking).
-
-Condición → Material requerido:
-  T > 140°C                → EPDM o PEEK (no NBR)
-  H₂S presente             → Lead Sheath + Monel 400
-  Inyección de solventes    → PEEK mandatorio
-
-Consecuencia de incumplimiento:
-  El H₂S difunde a través de los elastómeros NBR a alta temperatura,
-  causando descompresión explosiva al detener el pozo y pérdida de
-  hermeticidad del sello del motor (invasión de fluidos → falla).`,
-  },
-  {
-    id: "glosario", title: "Glosario M4",
-    body: `AWG — American Wire Gauge: escala inversa de calibre de conductor.
-VSD — Variable Speed Drive: variador de frecuencia que controla la velocidad del motor.
-THD — Total Harmonic Distortion: distorsión armónica total de voltaje o corriente.
-PCC — Point of Common Coupling: punto de conexión común en la red eléctrica.
-IEEE 519-2014 — norma para control de armónicos en sistemas de potencia eléctrica.
-AFE — Active Front End: rectificador IGBT activo de muy bajo THD.
-SSC — Sulfide Stress Cracking: fisuración por tensión en presencia de H₂S.
-NACE MR0175 — norma de materiales para ambientes con gas amargo (H₂S).
-Lead Sheath — camisa de plomo usada en cables para pozos con H₂S.
-Monel 400 — aleación Ni-Cu resistente a la corrosión por H₂S.
-Clase H — clase de aislamiento con límite de 180°C (la más común en BES profundos).`,
-  },
-];
-
 function TabTeoria() {
   return <TheoryLayout sections={TEORIA_M4} accentColor="#F472B6" />;
 }
@@ -271,7 +186,7 @@ function TabSimulador() {
   const thdColor   = sim.thd.complies_ieee519 ? COLORS.ok : COLORS.danger;
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
+    <div style={{ display: "flex", gap: 20, minWidth: 780, overflowX: 'auto' }}>
       {/* ── Controls ── */}
       <div style={{ width: 230, display: "flex", flexDirection: "column", gap: 16 }}>
 
@@ -293,28 +208,25 @@ function TabSimulador() {
             </div>
           </Param>
 
-          <Param label="Profundidad (ft)" hint="= longitud del cable">
-            <input type="range" min={1000} max={14000} step={100} value={depth_ft} onChange={e => setDepth(+e.target.value)}
-              style={{ accentColor: ACCENT, width: "100%" }} />
-            <div style={{ fontSize: 11, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>{depth_ft.toLocaleString()} ft</div>
-          </Param>
+          <Slider label="Profundidad" unit="ft"
+            value={depth_ft} min={1000} max={14000} step={100}
+            onChange={v => setDepth(v)} accentColor={ACCENT}
+            tooltip="Longitud total del cable = profundidad de instalación de la bomba. Campo BES típico: 3,000–12,000 ft." />
 
-          <Param label="Corriente motor (A)" hint="Corriente nominal de operación">
-            <input type="range" min={20} max={200} step={5} value={I_amps} onChange={e => setI(+e.target.value)}
-              style={{ accentColor: ACCENT, width: "100%" }} />
-            <div style={{ fontSize: 11, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>{I_amps} A</div>
-          </Param>
+          <Slider label="Corriente motor" unit="A"
+            value={I_amps} min={20} max={200} step={5}
+            onChange={v => setI(v)} accentColor={ACCENT}
+            tooltip="Corriente nominal de operación del motor. Define la caída de voltaje: V_drop = I × R_T × 3 (trifásico)." />
         </div>
 
         {/* Thermal group */}
         <div style={{ background: COLORS.surface, borderRadius: 8, padding: 14, border: `1px solid ${COLORS.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontSize: 9, color: "#FB923C", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>TEMPERATURA</div>
 
-          <Param label="T° fondo del pozo (°C)" hint="Afecta resistencia cable y Arrhenius">
-            <input type="range" min={60} max={220} step={5} value={T_bot} onChange={e => setTBot(+e.target.value)}
-              style={{ accentColor: "#FB923C", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#FB923C", fontFamily: "JetBrains Mono, monospace" }}>{T_bot}°C</div>
-          </Param>
+          <Slider label="T° fondo del pozo" unit="°C"
+            value={T_bot} min={60} max={220} step={5}
+            onChange={v => setTBot(v)} accentColor="#FB923C"
+            tooltip="Temperatura de fondo afecta resistencia del cable (R_T = R_20 × (1 + α×ΔT)) y la vida útil por Arrhenius. Gradiente típico: 2.5–4°C/100m." />
 
           <Param label="Clase de aislamiento" hint="T° nominal máxima del aislamiento">
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -459,7 +371,7 @@ function TabSimulador() {
               {[
                 { label: "Elastómero", value: sim.nace.elastomer_recommendation },
                 { label: "Cubierta cable", value: sim.nace.cable_jacket },
-                { label: "Normas", value: (sim.nace.applicable_standards ?? ["API RP 11S6 / NACE MR0175"]).join(", ") },
+                { label: "Normas", value: sim.nace.applicable_standards.join(", ") },
               ].map((r, i) => (
                 <div key={i} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <div style={{ fontSize: 9, color: COLORS.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>{r.label}</div>
@@ -635,7 +547,9 @@ function TabEvaluacion() {
 
   const submit = () => {
     const arr = M4_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }));
-    setResult(gradeM4(arr));
+    const r = gradeM4(arr);
+    try { localStorage.setItem('simbes_eval_m4', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
   };
 
   const reset = () => { setAnswers({}); setResult(null); };
@@ -736,7 +650,8 @@ export default function Module4({ onBack }) {
       background: COLORS.bg,
       minHeight: "100vh",
       color: COLORS.text,
-      padding: "24px 32px 48px",
+      padding: "24px clamp(16px, 3vw, 32px) 48px",
+      maxWidth: 1300, margin: '0 auto',
     }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>

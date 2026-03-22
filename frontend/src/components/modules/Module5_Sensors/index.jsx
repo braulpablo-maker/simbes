@@ -19,10 +19,11 @@ import {
 import { M5_QUESTIONS, gradeM5 } from "../../../pedagogy/evaluations/m5";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M5 } from './teoria-data';
+import { Slider } from '../../ui';
+import { C } from '../../../theme';
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
-const ACCENT = "#FBBF24";
-import { C } from '../../../theme';
+const ACCENT = "#FB923C";
 
 const CURRENT_CONDITIONS = [
   { key: "normal",    label: "Normal",    color: C.ok },
@@ -114,110 +115,6 @@ function VibeMeter({ rms }) {
 }
 
 // ─── Tab A: Teoría ────────────────────────────────────────────────────────────
-const TEORIA_SECTIONS = [
-  {
-    id: "cartas", title: "Cartas Amperimétricas",
-    body: `Las cartas amperimétricas son registros de corriente del motor vs. tiempo.
-Son el sensor más básico y universalmente disponible en un BES.
-
-Patrones característicos:
-
-  NORMAL:     Corriente estable ≈ 95–105% nominal. Ruido ±2%.
-
-  SURGING:    Corriente oscilante ±15–25% a 0.3–0.8 Hz.
-              Causa: bomba fuera del BEP o ingesta cíclica de gas.
-              Solución: ajustar frecuencia VSD o Ps.
-
-  SUBCARGA:   Corriente baja sostenida <70% nominal.
-              Causa: gas en bomba, baja densidad, eje roto.
-
-  SOBRECARGA: Corriente alta >115% nominal.
-              Causa: alta viscosidad, sólidos, back-pressure elevada.
-
-  GAS LOCK:   Caída súbita de corriente a <20% nominal.
-              La bomba gira en gas — sin producción de fluido.
-              ACCIÓN: paro inmediato y purga del sistema.`,
-  },
-  {
-    id: "pt", title: "Sensores P/T Downhole (DPTS)",
-    body: `El DPTS (Downhole Pressure & Temperature Sensor) mide en el fondo del pozo.
-Proporciona datos críticos para el diagnóstico del sistema BES.
-
-Temperatura de fondo — gradiente geotérmico:
-  T_BH = T_superficie + (gradiente × profundidad)
-  Gradiente típico: 2.5–4.0°C por cada 100 m.
-
-Datos clave del DPTS:
-  • Intake pressure (Ps) → comparar con Pb para evaluar GVF
-  • Discharge pressure (Pd) → verificar TDH real vs. diseño
-  • T_motor → aplicar Arrhenius si supera clase de aislamiento
-  • T_cable → corrección de resistencia (ver Módulo 4)
-
-Integración con módulos previos:
-  Ps < Pb → gas libre en succión (Módulo 3)
-  T_motor > T_rated → Arrhenius activo (Módulo 4)`,
-  },
-  {
-    id: "vibracion", title: "Vibración — Umbrales y Diagnóstico",
-    body: `Los sensores de vibración piezoeléctricos miden velocidad radial/axial (mm/s RMS).
-
-Zonas operativas (ISO 10816-3 / API RP 11S5):
-  Zona A: < 4.0 mm/s RMS  → Nueva instalación. Normal.
-  Zona B: 4.0–6.3 mm/s    → Alerta temprana. Investigar.
-  Zona C: > 6.3 mm/s      → Paro recomendado.
-
-Patrones de vibración → causa:
-
-  DESBALANCEO: Componente fuerte a 1× frecuencia de rotación (60 Hz).
-               Causa: masa excéntrica, sólidos, daño de impulsor.
-
-  RODAMIENTO:  Impactos periódicos de alta frecuencia (BPFO ≈ 4–6× f_rot).
-               Causa: defecto en rodamiento radial/axial.
-               Falla inminente → planificar extracción urgente.
-
-  CAVITACIÓN:  Ruido aleatorio broadband (alto contenido frecuencial).
-               Causa: GVF > 15%, surging, punto de operación erróneo.`,
-  },
-  {
-    id: "correlacion", title: "Correlación Sensores → Diagnóstico",
-    body: `La interpretación integrada de múltiples sensores reduce ambigüedad diagnóstica.
-
-Matriz de diagnóstico:
-
-  Corriente baja + Vibración alta + Ps < 0.5×Pb
-  → Gas libre en bomba. Instalar separador.
-
-  Corriente oscilante + Vibración broadband
-  → Surging / cavitación. Ajustar punto de operación.
-
-  Corriente alta + T_motor elevada + Vibración normal
-  → Sobrecarga térmica. Verificar viscosidad y back-pressure.
-
-  Corriente baja + Vibración con impactos de alta frecuencia
-  → Subcarga + falla de rodamiento. Extracción urgente.
-
-  Caída súbita de corriente a <20%
-  → Gas lock. PARAR inmediatamente.
-
-La combinación de carta amperimérica + vibración + DPTS
-permite reducir la incertidumbre diagnóstica de ≈60% a <10%.`,
-  },
-  {
-    id: "glosario", title: "Glosario M5",
-    body: `DPTS — Downhole Pressure & Temperature Sensor: sensor de P y T en fondo.
-Carta amperimérica — registro de corriente del motor vs. tiempo.
-Surging — oscilación de caudal y corriente por operación fuera del BEP.
-Gas Lock — pérdida total de succión por gas en la bomba.
-Subcarga — corriente <70% nominal; posible gas o eje roto.
-Sobrecarga — corriente >115% nominal; posible sólidos o viscosidad.
-RMS — Root Mean Square: valor cuadrático medio de la señal de vibración.
-BPFO — Ball Pass Frequency Outer race: frecuencia de defecto de rodamiento.
-ISO 10816-3 — norma de evaluación de vibración para maquinaria rotativa.
-Zona A/B/C — clasificación ISO de severidad de vibración.
-Gradiente geotérmico — variación de temperatura con la profundidad (°C/100m).`,
-  },
-];
-
 function TabTeoria() {
   return <TheoryLayout sections={TEORIA_M5} accentColor="#FB923C" />;
 }
@@ -261,7 +158,7 @@ function TabSimulador() {
   const PsColor      = Ps_psi < Pb_psi * 0.5 ? C.danger : Ps_psi < Pb_psi ? C.warn : C.ok;
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
+    <div style={{ display: "flex", gap: 20, minWidth: 780, overflowX: 'auto' }}>
       {/* ── Controls ── */}
       <div style={{ width: 230, display: "flex", flexDirection: "column", gap: 14 }}>
 
@@ -281,11 +178,10 @@ function TabSimulador() {
               ))}
             </div>
           </Param>
-          <Param label="Corriente nominal (A)">
-            <input type="range" min={30} max={200} step={5} value={I_rated} onChange={e => setIRated(+e.target.value)}
-              style={{ accentColor: ACCENT, width: "100%" }} />
-            <div style={{ fontSize: 11, color: ACCENT, fontFamily: "JetBrains Mono, monospace" }}>{I_rated} A</div>
-          </Param>
+          <Slider label="Corriente nominal" unit="A"
+            value={I_rated} min={30} max={200} step={5}
+            onChange={v => setIRated(v)} accentColor={ACCENT}
+            tooltip="Corriente nominal del motor al 100% de carga. Las cartas muestran variaciones como % de este valor de referencia." />
         </div>
 
         {/* Vibración */}
@@ -309,31 +205,26 @@ function TabSimulador() {
         {/* P/T Downhole */}
         <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ fontSize: 9, color: "#38BDF8", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>P/T DOWNHOLE</div>
-          <Param label="Profundidad (m)">
-            <input type="range" min={500} max={5000} step={50} value={depth_m} onChange={e => setDepth(+e.target.value)}
-              style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{depth_m.toLocaleString()} m</div>
-          </Param>
-          <Param label="T° superficie (°C)">
-            <input type="range" min={10} max={50} step={1} value={T_surface} onChange={e => setTSurf(+e.target.value)}
-              style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{T_surface}°C</div>
-          </Param>
-          <Param label="Gradiente geotérmico" hint="°C por cada 100 m">
-            <input type="range" min={1.5} max={5.0} step={0.1} value={gradient} onChange={e => setGradient(+e.target.value)}
-              style={{ accentColor: "#38BDF8", width: "100%" }} />
-            <div style={{ fontSize: 11, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace" }}>{gradient.toFixed(1)}°C/100m</div>
-          </Param>
-          <Param label="Ps — Presión succión (psi)">
-            <input type="range" min={100} max={3000} step={50} value={Ps_psi} onChange={e => setPs(+e.target.value)}
-              style={{ accentColor: PsColor, width: "100%" }} />
-            <div style={{ fontSize: 11, color: PsColor, fontFamily: "JetBrains Mono, monospace" }}>{Ps_psi} psi</div>
-          </Param>
-          <Param label="Pb — Presión de burbuja (psi)">
-            <input type="range" min={200} max={4000} step={50} value={Pb_psi} onChange={e => setPb(+e.target.value)}
-              style={{ accentColor: C.muted, width: "100%" }} />
-            <div style={{ fontSize: 11, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{Pb_psi} psi</div>
-          </Param>
+          <Slider label="Profundidad" unit="m"
+            value={depth_m} min={500} max={5000} step={50}
+            onChange={v => setDepth(v)} accentColor="#38BDF8"
+            tooltip="Profundidad de instalación de la bomba BES. Determina T_BH = T_sup + (gradiente × profundidad)." />
+          <Slider label="T° superficie" unit="°C"
+            value={T_surface} min={10} max={50} step={1}
+            onChange={v => setTSurf(v)} accentColor="#38BDF8"
+            tooltip="Temperatura superficial. Base para el cálculo de T_BH. Valor típico: 20–35°C en campo." />
+          <Slider label="Gradiente geotérmico" unit="°C/100m"
+            value={gradient} min={1.5} max={5.0} step={0.1} dec={1}
+            onChange={v => setGradient(v)} accentColor="#38BDF8"
+            tooltip="Variación de temperatura con profundidad. Típico: 2.5–4.0°C cada 100 m. Zonas volcánicas pueden superar 5°C/100m." />
+          <Slider label="Ps — Presión succión" unit="psi"
+            value={Ps_psi} min={100} max={3000} step={50}
+            onChange={v => setPs(v)} accentColor={PsColor}
+            tooltip="Pump intake pressure. Si Ps < Pb → gas libre en la bomba. Ps/Pb < 0.5 → riesgo alto de gas lock." />
+          <Slider label="Pb — Presión de burbuja" unit="psi"
+            value={Pb_psi} min={200} max={4000} step={50}
+            onChange={v => setPb(v)} accentColor={C.muted}
+            tooltip="Presión de burbuja del crudo. Por debajo de Pb el gas sale de solución. Definida por el PVT del yacimiento." />
           <Param label="Clase de aislamiento">
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {INSULATION_CLASSES.map(c => (
@@ -625,7 +516,11 @@ function TabEvaluacion() {
   const [answers, setAnswers] = useState({});
   const [result,  setResult]  = useState(null);
   const select = (qId, optId) => { if (!result) setAnswers(p => ({ ...p, [qId]: optId })); };
-  const submit = () => setResult(gradeM5(M5_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }))));
+  const submit = () => {
+    const r = gradeM5(M5_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
+    try { localStorage.setItem('simbes_eval_m5', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
+  };
   const reset  = () => { setAnswers({}); setResult(null); };
 
   return (
@@ -709,7 +604,7 @@ const TABS = [
 export default function Module5({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
         <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>

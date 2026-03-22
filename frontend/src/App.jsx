@@ -1,15 +1,17 @@
 // SIMBES — App root con navegación Hub ↔ Módulos
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import Hub from "./components/Hub.jsx";
-import M1  from "./components/modules/Module1_IPR/SIMBES_Modulo1.jsx";
-import M2  from "./components/modules/Module2_Hydraulics/index.jsx";
-import M3  from "./components/modules/Module3_Gas/index.jsx";
-import M4  from "./components/modules/Module4_Electrical/index.jsx";
-import M5  from "./components/modules/Module5_Sensors/index.jsx";
-import M6  from "./components/modules/Module6_DIFA/index.jsx";
-import M7  from "./components/modules/Module7_Reliability/index.jsx";
-import M8  from "./components/modules/Module8_Builder/index.jsx";
-import M9  from "./components/modules/Module9_BESDesign/index.jsx";
+import ModuleChallenges from "./components/challenges/ModuleChallenges.jsx";
+
+const M1 = lazy(() => import("./components/modules/Module1_IPR/SIMBES_Modulo1.jsx"));
+const M2 = lazy(() => import("./components/modules/Module2_Hydraulics/index.jsx"));
+const M3 = lazy(() => import("./components/modules/Module3_Gas/index.jsx"));
+const M4 = lazy(() => import("./components/modules/Module4_Electrical/index.jsx"));
+const M5 = lazy(() => import("./components/modules/Module5_Sensors/index.jsx"));
+const M6 = lazy(() => import("./components/modules/Module6_DIFA/index.jsx"));
+const M7 = lazy(() => import("./components/modules/Module7_Reliability/index.jsx"));
+const M8 = lazy(() => import("./components/modules/Module8_Builder/index.jsx"));
+const M9 = lazy(() => import("./components/modules/Module9_BESDesign/index.jsx"));
 
 const MODULES = { m1: M1, m2: M2, m3: M3, m4: M4, m5: M5, m6: M6, m7: M7, m8: M8, m9: M9 };
 const MODULE_ORDER = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'];
@@ -57,6 +59,7 @@ export default function App() {
   const [activeModule, setActiveModule] = useState(null); // null = Hub
 
   if (!activeModule) return <Hub onNavigate={setActiveModule} />;
+  if (activeModule === 'challenges') return <ModuleChallenges onBack={() => setActiveModule(null)} />;
 
   const idx = MODULE_ORDER.indexOf(activeModule);
   const goTo = (id) => setActiveModule(id);
@@ -67,7 +70,13 @@ export default function App() {
   return (
     <div>
       <NavBar moduleId={activeModule} onBack={() => setActiveModule(null)} onPrev={onPrev} onNext={onNext} />
-      <ModuleComponent onBack={() => setActiveModule(null)} />
+      <Suspense fallback={
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "#64748B", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: 2 }}>
+          CARGANDO MÓDULO…
+        </div>
+      }>
+        <ModuleComponent onBack={() => setActiveModule(null)} />
+      </Suspense>
     </div>
   );
 }

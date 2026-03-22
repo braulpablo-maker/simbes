@@ -491,7 +491,9 @@ function TabEvaluacion() {
 
   const handleSubmit = () => {
     const ans = M2_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || '' }));
-    setResult(gradeM2(ans));
+    const r = gradeM2(ans);
+    try { localStorage.setItem('simbes_eval_m2', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
     setSubmitted(true);
   };
 

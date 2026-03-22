@@ -321,7 +321,7 @@ function TabEvaluacion() {
   const [submitted, setSubmitted] = useState(false);
   const [result,    setResult]    = useState(null);
   const handleSelect = (qid, opt) => { if (!submitted) setAnswers(p=>({...p,[qid]:opt})); };
-  const handleSubmit = () => { const ans=M3_QUESTIONS.map(q=>({id:q.id,selected:answers[q.id]||''}));setResult(gradeM3(ans));setSubmitted(true); };
+  const handleSubmit = () => { const ans=M3_QUESTIONS.map(q=>({id:q.id,selected:answers[q.id]||''}));const r=gradeM3(ans);try{localStorage.setItem('simbes_eval_m3',JSON.stringify({score_pct:r.pct,passed:r.pct>=70,ts:Date.now()}))}catch{}setResult(r);setSubmitted(true); };
   const handleReset  = () => { setAnswers({});setSubmitted(false);setResult(null); };
   const allAnswered  = M3_QUESTIONS.every(q=>answers[q.id]);
   return (

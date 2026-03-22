@@ -5,6 +5,7 @@
  * Cada paso es una puerta: no se puede avanzar sin completar el anterior.
  * Ciclos A–F implementados para iteración de diseño.
  */
+import { useState } from 'react';
 import { useBESDesign } from './hooks/useBESDesign.js';
 import Step0_DataEntry    from './steps/Step0_DataEntry.jsx';
 import Step1_Candidacy    from './steps/Step1_Candidacy.jsx';
@@ -89,9 +90,12 @@ function StepBar({ currentStep, completedSteps, onJump }) {
 
 // ── Componente principal ──────────────────────────────────────────
 export default function Module9_BESDesign() {
+  const LS_KEY_M9 = 'simbes_m9_inputs';
+  const [saveMsg, setSaveMsg] = useState('');
+
   const {
     state,
-    updateInput, validateStep0, advanceStep1, advanceStep2,
+    updateInput, loadInputs, loadState, validateStep0, advanceStep1, advanceStep2,
     completeStep2,
     advanceStep3, cicloA, completeStep3,
     advanceStep4, cicloB_freq, cicloB_serie, completeStep4,
@@ -110,6 +114,28 @@ export default function Module9_BESDesign() {
     step8, step9, step10, step11,
     currentStep, completedSteps,
   } = state;
+
+  const handleSave = () => {
+    try {
+      localStorage.setItem(LS_KEY_M9, JSON.stringify(state));
+      setSaveMsg(`✓ Guardado — Paso ${state.currentStep} guardado`);
+    } catch { setSaveMsg('✗ Error al guardar'); }
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
+
+  const handleLoad = () => {
+    try {
+      const s = localStorage.getItem(LS_KEY_M9);
+      if (s) {
+        const saved = JSON.parse(s);
+        loadState(saved);
+        setSaveMsg(`✓ Diseño cargado — restaurado en Paso ${saved.currentStep ?? 0}`);
+      } else {
+        setSaveMsg('⚠ Sin diseño guardado — usa 💾 Guardar diseño primero');
+      }
+    } catch (err) { setSaveMsg(`⚠ Error al cargar: ${err.message}`); }
+    setTimeout(() => setSaveMsg(''), 3500);
+  };
 
   return (
     <div style={{
@@ -138,10 +164,34 @@ export default function Module9_BESDesign() {
             PASOS 0–11 DISPONIBLES
           </span>
         </div>
-        <div style={{ fontSize: 11, color: C.muted, paddingBottom: 12, fontFamily: C.fontUI }}>
-          Diseño integrado paso a paso · Ciclos A–F de iteración
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 12 }}>
+          <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>
+            Diseño integrado paso a paso · Ciclos A–F de iteración
+          </div>
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+            <button onClick={handleSave} style={{ padding: '4px 10px', fontSize: 9, borderRadius: 5, border: `1px solid ${C.indigo}`, background: C.indigo + '18', color: C.indigo, cursor: 'pointer', fontFamily: C.fontUI }}>
+              💾 Guardar diseño
+            </button>
+            <button onClick={handleLoad} style={{ padding: '4px 10px', fontSize: 9, borderRadius: 5, border: `1px solid ${C.border}`, background: 'transparent', color: C.muted, cursor: 'pointer', fontFamily: C.fontUI }}>
+              📂 Cargar diseño
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Feedback banner */}
+      {saveMsg && (
+        <div style={{
+          padding: '10px 32px',
+          background: saveMsg.startsWith('✓') ? C.ok + '18' : C.warning + '18',
+          borderBottom: `1px solid ${saveMsg.startsWith('✓') ? C.ok + '50' : C.warning + '50'}`,
+          fontSize: 12, fontWeight: 600, fontFamily: C.fontUI,
+          color: saveMsg.startsWith('✓') ? C.ok : C.warning,
+          letterSpacing: 0.3,
+        }}>
+          {saveMsg}
+        </div>
+      )}
 
       {/* Barra de pasos sticky */}
       <StepBar currentStep={currentStep} completedSteps={completedSteps} onJump={jumpToStep} />

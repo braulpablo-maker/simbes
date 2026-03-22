@@ -3,8 +3,19 @@
  * =======================
  * Mapa de los 8 módulos con estado, temas y navegación.
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { C } from '../theme';
+
+function readEvalScores() {
+  const scores = {};
+  for (const id of ['m1','m2','m3','m4','m5','m6','m7','m8']) {
+    try {
+      const v = localStorage.getItem(`simbes_eval_${id}`);
+      if (v) scores[id] = JSON.parse(v);
+    } catch {}
+  }
+  return scores;
+}
 
 const MODULES = [
   {
@@ -145,7 +156,7 @@ const MODULES = [
   },
 ];
 
-function ModuleCard({ mod, onEnter, hovered, onHover }) {
+function ModuleCard({ mod, onEnter, hovered, onHover, score }) {
   const available = mod.status === "available";
   const isHovered = hovered === mod.id;
 
@@ -156,8 +167,10 @@ function ModuleCard({ mod, onEnter, hovered, onHover }) {
       onClick={() => onEnter(mod.id)}
       style={{
         background: isHovered ? "#243044" : C.surface,
-        border: `1px solid ${isHovered ? mod.color + "60" : C.border}`,
         borderTop: `3px solid ${available ? mod.color : C.border}`,
+        borderRight: `1px solid ${isHovered ? mod.color + "60" : C.border}`,
+        borderBottom: `1px solid ${isHovered ? mod.color + "60" : C.border}`,
+        borderLeft: `1px solid ${isHovered ? mod.color + "60" : C.border}`,
         borderRadius: 16,
         padding: "20px 20px 16px",
         cursor: "pointer",
@@ -213,6 +226,29 @@ function ModuleCard({ mod, onEnter, hovered, onHover }) {
         ))}
       </div>
 
+      {/* Score bar */}
+      {score && (
+        <div style={{ marginTop: 4 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <span style={{ fontSize: 9, color: C.muted, fontFamily: C.fontUI }}>Evaluación</span>
+            <span style={{
+              fontSize: 9, fontWeight: 700, fontFamily: C.fontUI,
+              color: score.passed ? C.ok : C.warning,
+            }}>
+              {score.score_pct}% {score.passed ? '✓' : '—'}
+            </span>
+          </div>
+          <div style={{ height: 3, background: C.border, borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{
+              height: '100%', borderRadius: 2,
+              width: `${score.score_pct}%`,
+              background: score.passed ? C.ok : C.warning,
+              transition: 'width 0.4s ease',
+            }} />
+          </div>
+        </div>
+      )}
+
       {/* CTA */}
       <div style={{ marginTop: 6 }}>
         {available ? (
@@ -244,6 +280,12 @@ function ModuleCard({ mod, onEnter, hovered, onHover }) {
 
 export default function Hub({ onNavigate }) {
   const [hovered, setHovered] = useState(null);
+  const [evalScores, setEvalScores] = useState(readEvalScores);
+
+  // Refresh scores when Hub becomes visible (user may have completed an eval)
+  useEffect(() => {
+    setEvalScores(readEvalScores());
+  }, []);
 
   return (
     <div style={{
@@ -296,8 +338,35 @@ export default function Hub({ onNavigate }) {
             hovered={hovered}
             onHover={setHovered}
             onEnter={onNavigate}
+            score={evalScores[mod.id]}
           />
         ))}
+      </div>
+
+      {/* ── DESAFÍOS ── */}
+      <div style={{ marginTop: 28 }}>
+        <div
+          onClick={() => onNavigate('challenges')}
+          style={{
+            background: '#38BDF808',
+            border: `1px solid #38BDF830`,
+            borderRadius: 12, padding: '18px 24px',
+            cursor: 'pointer', transition: 'all 0.2s',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 10, color: C.primary, fontFamily: C.fontUI, fontWeight: 700, letterSpacing: 2, marginBottom: 4 }}>MODO DESAFÍOS</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: C.fontUI, marginBottom: 2 }}>Desafíos de Campo BES</div>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>4 escenarios · Aprendizaje Basado en Problemas · Identifica causas raíz con el simulador</div>
+          </div>
+          <div style={{
+            background: C.primary + '22', border: `1px solid ${C.primary}55`,
+            borderRadius: 8, padding: '10px 18px',
+            fontSize: 12, color: C.primary, fontWeight: 600,
+            fontFamily: C.fontUI, whiteSpace: 'nowrap',
+          }}>Abrir →</div>
+        </div>
       </div>
 
       {/* ── FOOTER ── */}

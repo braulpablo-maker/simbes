@@ -73,150 +73,6 @@ function ApiSeriesBadge({ series }) {
 }
 
 // ─── Tab A: Teoría ────────────────────────────────────────────────────────────
-const TEORIA_SECTIONS = [
-  {
-    id: "difa", title: "¿Qué es el DIFA?",
-    body: `DIFA — Downhole Investigation and Failure Analysis.
-Proceso sistemático para identificar la causa raíz de fallas en equipos
-BES/ESP extraídos del pozo.
-
-El DIFA combina:
-  • Historial operativo (cartas amperimétricas, alarmas, tendencias)
-  • Inspección visual del equipo extraído (teardown)
-  • Codificación según API RP 11S1 (Teardown Report)
-  • Análisis de causa raíz (RCA — Root Cause Analysis)
-
-Objetivo: no solo reparar, sino PREVENIR la reincidencia.
-Sin DIFA: el equipo vuelve al pozo con el mismo problema.`,
-  },
-  {
-    id: "api", title: "Codificación API RP 11S1",
-    body: `El estándar API RP 11S1 define un lenguaje común para
-clasificar los daños encontrados en el teardown.
-
-Estructura del código: XYYY
-  X   = categoría del sistema afectado
-  YYY = tipo específico de daño observado
-
-Series principales:
-  3700 — Corrosión / Picadura
-         3712: Desgaste por recirculación
-         3720: Incrustación de escala
-         3730: Ataque por H₂S o CO₂
-
-  4900 — Sello primario / invasión de fluido
-         4910: Gas lock → sobrecalentamiento del motor
-         4930: Falla de elastómero → invasión
-
-  5400 — Sellos secundarios / daño mecánico
-         5410: Daño por surging (operación fuera de BEP)
-         5430: Falla de rodamiento
-
-  5900 — Sellos terciarios / cable / sistema eléctrico
-         5910: Caída de voltaje en cable
-         5930: Corrosión de cable por H₂S
-
-El código es la base del informe DIFA y permite comparar
-tendencias entre pozos, campañas y años.`,
-  },
-  {
-    id: "arbol", title: "Árbol de Diagnóstico",
-    body: `El árbol de diagnóstico organiza los síntomas en ramas:
-
-SÍNTOMA PRINCIPAL → CAUSA PROBABLE → CÓDIGO API
-
-Corriente baja sostenida (< 60% nominal)
-  → Subcarga / gas en bomba  → 3712 o 4910
-  → Eje roto                 → 5430
-
-Corriente alta sostenida (> 120% nominal)
-  → Incrustación de escala   → 3720
-  → Alta viscosidad           → evaluar HI correction
-
-Corriente errática / oscilante
-  → Surging (sobre BEP)      → 5410
-  → Gas lock intermitente    → 4910
-  → Falla de aislamiento     → 5910
-
-IR < 1 MΩ
-  → Degradación por temp     → 4930
-  → Ataque por H₂S           → 3730 / 5930
-  → Invasión de fluido       → 4930
-
-Vibración alta + impactos periódicos
-  → Falla de rodamiento      → 5430
-
-Caudal reducido gradual + corriente alta
-  → Incrustación de escala   → 3720
-
-Regla de oro: buscar siempre el primer daño.
-Todos los demás suelen ser consecuencias.`,
-  },
-  {
-    id: "teardown", title: "El Teardown Report",
-    body: `El Teardown Report es el documento central del DIFA.
-Se elabora al desarmar el equipo extraído en el taller.
-
-Estructura mínima:
-  1. Datos del pozo y del equipo (serial, modelo, fecha instalación)
-  2. Historial operativo (carta amperimérica, alarmas)
-  3. Inspección visual por componente:
-       Bomba → impulsores, difusores, eje, cojinetes
-       Sello  → elastómero, cámara de aceite, laberinto
-       Motor  → bobinas, aislamiento, cojinetes de empuje
-       Cable  → aislamiento, conectores, tapa de boca
-  4. Fotografías de cada daño observado
-  5. Código API RP 11S1 por cada daño
-  6. Conclusión: causa raíz + código principal
-  7. Recomendaciones de prevención
-
-Un buen teardown report convierte cada falla
-en conocimiento institucional permanente.`,
-  },
-  {
-    id: "prevencion", title: "Prevención — Cierre del Ciclo",
-    body: `El DIFA solo tiene valor si cierra el ciclo:
-Falla → Análisis → Prevención → Cero Reincidencia.
-
-Acciones de prevención por categoría:
-
-3700 — Corrosión:
-  → Tratamiento químico (inhibidor, biocida)
-  → Selección de materiales (NACE MR0175)
-
-4900 — Sello:
-  → Verificar diseño térmico
-  → Selección de elastómero correcto (EPDM/PEEK vs NBR)
-  → Monitoreo de IR mensual
-
-5400 — Mecánico / Surging:
-  → Operar siempre 80–110% del BEP
-  → Análisis de vibración como monitoreo continuo
-  → Verificar TDH de diseño vs. TDH real
-
-5900 — Eléctrico / Cable:
-  → Verificar caída de voltaje < 5% antes de instalar
-  → Especificar Lead Sheath en pozos amargos
-  → Medición de IR en superficie y anualmente`,
-  },
-  {
-    id: "glosario", title: "Glosario M6",
-    body: `DIFA  — Downhole Investigation and Failure Analysis
-API RP 11S1 — Recommended Practice for ESP Teardown Report
-Teardown  — Desmontaje y inspección del equipo extraído
-RCA  — Root Cause Analysis: análisis de causa raíz
-IR   — Insulation Resistance (resistencia de aislamiento)
-NBR  — Nitrilo (elastómero para temperatura < 120°C)
-EPDM — Etileno-propileno (elastómero para hasta 177°C)
-PEEK — Poliéteretercetona (plástico de ingeniería, hasta 250°C)
-Lead Sheath — funda de plomo en cable (protección H₂S)
-Monel 400 — aleación Ni-Cu resistente a H₂S
-BEP  — Best Efficiency Point: punto de máxima eficiencia de la bomba
-Surging — operación sobre el BEP con recirculación en descarga
-Gas lock — pérdida total de succión por gas en la bomba
-BPFO — Ball Pass Frequency Outer race: frecuencia de falla de rodamiento`,
-  },
-];
 
 function TabTeoria() {
   return <TheoryLayout sections={TEORIA_M6} accentColor="#EF4444" />;
@@ -363,7 +219,7 @@ function TabSimulador() {
   }));
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
+    <div style={{ display: "flex", gap: 20, minWidth: 780, overflowX: 'auto' }}>
 
       {/* ── Panel de síntomas ── */}
       <div style={{ width: 250, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -703,7 +559,11 @@ function TabEvaluacion() {
   const [answers, setAnswers] = useState({});
   const [result,  setResult]  = useState(null);
   const select = (qId, optId) => { if (!result) setAnswers(p => ({ ...p, [qId]: optId })); };
-  const submit = () => setResult(gradeM6(M6_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }))));
+  const submit = () => {
+    const r = gradeM6(M6_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
+    try { localStorage.setItem('simbes_eval_m6', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
+  };
   const reset  = () => { setAnswers({}); setResult(null); };
 
   return (
@@ -793,7 +653,7 @@ const TABS = [
 export default function Module6({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
         <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>

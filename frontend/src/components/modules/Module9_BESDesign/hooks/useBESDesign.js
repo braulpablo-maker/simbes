@@ -601,6 +601,16 @@ function reducer(state, action) {
       return { ...initialState, inputs: newInputs };
     }
 
+    case 'LOAD_INPUTS': {
+      const merged = { ...initialState.inputs, ...action.inputs };
+      return { ...initialState, inputs: merged };
+    }
+
+    case 'LOAD_STATE': {
+      // Restaura estado completo (inputs + paso actual + pasos completados + resultados)
+      return { ...initialState, ...action.state };
+    }
+
     case 'VALIDATE_STEP_0': {
       const errors = validateInputs(state.inputs);
       return { ...state, step0: { valid: Object.keys(errors).length === 0, errors } };
@@ -793,6 +803,8 @@ export function useBESDesign() {
   return {
     state,
     updateInput:         (f, v) => dispatch({ type: 'UPDATE_INPUT', field: f, value: v }),
+    loadInputs:          (inputs) => dispatch({ type: 'LOAD_INPUTS', inputs }),
+    loadState:           (st)    => dispatch({ type: 'LOAD_STATE', state: st }),
     validateStep0:       ()     => dispatch({ type: 'VALIDATE_STEP_0' }),
     advanceStep1:        ()     => dispatch({ type: 'ADVANCE_TO_STEP_1' }),
     advanceStep2:        ()     => dispatch({ type: 'ADVANCE_TO_STEP_2' }),

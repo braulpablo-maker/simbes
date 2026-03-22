@@ -22,10 +22,11 @@ import BENCHMARKS_DATA from "../../../data/mtbf-benchmarks.json";
 import { M7_QUESTIONS, gradeM7 } from "../../../pedagogy/evaluations/m7";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M7 } from './teoria-data';
+import { Slider } from '../../ui';
+import { C } from '../../../theme';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
-const ACCENT = "#FB923C";
-import { C } from '../../../theme';
+const ACCENT = "#A78BFA";
 const BENCHMARKS = BENCHMARKS_DATA.benchmarks;
 
 const BENCH_COLORS = ["#22C55E", "#38BDF8", "#F59E0B", "#EF4444"];
@@ -88,125 +89,6 @@ function ICBar({ lower, upper, mle, label }) {
 }
 
 // ─── Tab A: Teoría ────────────────────────────────────────────────────────────
-const TEORIA_SECTIONS = [
-  {
-    id: "exponencial", title: "Distribución Exponencial",
-    body: `La distribución exponencial modela el tiempo entre fallas cuando
-la tasa de falla λ es CONSTANTE (independiente del tiempo transcurrido).
-
-  R(t) = P(T > t) = e^(−t/MTBF) = e^(−λt)
-
-  donde λ = 1/MTBF = tasa de falla [fallas/día]
-
-Propiedades fundamentales:
-  MTBF = valor esperado = 1/λ
-  Mediana = MTBF × ln(2) ≈ 0.693 × MTBF
-  Varianza = MTBF²
-
-Resultado clave — R(MTBF):
-  R(MTBF) = e^(−1) ≈ 0.3679 = 36.77%
-
-  Al cumplir el MTBF, solo el 36.77% de los equipos
-  siguen operativos. El 63.23% ya falló.
-
-IMPORTANTE: el MTBF NO es el "tiempo garantizado de operación".
-Es el valor promedio — la mitad de los equipos falla ANTES
-de 0.693 × MTBF (la mediana).`,
-  },
-  {
-    id: "censurados", title: "Datos Censurados",
-    body: `Un equipo se llama "censurado" cuando fue observado durante
-un tiempo t_c sin fallar, pero no se sabe cuándo habría fallado.
-
-Tipos de censura:
-  Tipo I:   observación truncada a tiempo fijo
-            (extracción planeada, fin de contrato)
-  Tipo II:  truncada al acumular r fallas de n equipos
-            (ensayos de laboratorio acelerados)
-
-Sesgo de sobrevivencia inverso:
-  Ignorar los censurados produce MTBF artificialmente BAJO.
-  Los equipos que "sobreviven" son los más confiables —
-  excluirlos supone que todos habrían fallado a t_c.
-
-Estimador MLE correcto con censurados:
-  MTBF_MLE = T_total / r
-
-  T_total = Σ t_fallas + Σ t_censurados
-  r       = número de fallas (solo las fallas, no censurados)
-
-Intuitivamente: acumulás TODO el tiempo de observación
-en el denominador, pero solo contás las fallas reales.`,
-  },
-  {
-    id: "chi2", title: "Intervalos de Confianza Chi²",
-    body: `Con pocas fallas (r < 20), el MTBF_MLE tiene alta incertidumbre.
-Los intervalos de confianza (IC) cuantifican esa incertidumbre.
-
-Para distribución exponencial (Nelson, 1982):
-
-  MTBF_lower = 2T / χ²(1−α/2 , 2r+2)
-  MTBF_upper = 2T / χ²(α/2   , 2r)
-
-  α = nivel de significancia (0.10 para IC 90%)
-  T = tiempo total acumulado
-
-Interpretación:
-  Con IC 90%, el MTBF real está entre [lower, upper]
-  con probabilidad del 90%.
-
-  El límite INFERIOR es el número de gestión:
-  → es el peor caso razonable a usar en planificación.
-  → "Con 90% de confianza, el MTBF real es al menos X días."
-
-Regla práctica: con r < 5 fallas, el IC es tan amplio
-que la decisión debe basarse en el límite inferior,
-no en el MTBF_MLE.`,
-  },
-  {
-    id: "benchmarks", title: "Benchmarks de MTBF por Ambiente",
-    body: `MTBF de referencia de la industria BES (pedagógico):
-
-  BENIGNO       : 1825 d (5 años)
-  Petróleo limpio, < 120°C, sin corrosión
-  → Mejores prácticas + VSD calibrado + monitoreo
-
-  MODERADO      : 913 d (2.5 años)
-  Agua de corte 50–80%, GOR < 500, T 120–150°C
-  → Inhibición química + IR mensual
-
-  SEVERO        : 365 d (1 año)
-  GOR > 1000, T > 150°C, H₂S o CO₂
-  → Materiales NACE + AGS + IR semanal
-
-  ARENA         : 180 d (0.5 años)
-  Arena > 50 ppm
-  → Drawdown controlado + inspección frecuente
-
-Cálculo de R(t) según ambiente:
-  Benigno  → R(365 d) = e^(−365/1825) = 82%
-  Moderado → R(365 d) = e^(−365/913)  = 67%
-  Severo   → R(365 d) = e^(−365/365)  = 37%
-  Arena    → R(365 d) = e^(−365/180)  = 13%`,
-  },
-  {
-    id: "glosario", title: "Glosario M7",
-    body: `MTBF  — Mean Time Between Failures: tiempo medio entre fallas
-λ     — tasa de falla (fallas/día = 1/MTBF)
-R(t)  — función de supervivencia (probabilidad de sobrevivir a t)
-F(t)  — función de falla = 1 − R(t)
-Mediana — tiempo en que falla el 50%: MTBF × ln(2) ≈ 0.693 × MTBF
-MLE   — Maximum Likelihood Estimator: estimador de máxima verosimilitud
-IC    — Intervalo de Confianza
-Dato censurado — equipo observado sin falla hasta tiempo t_c
-Censura Tipo I  — observación truncada a tiempo fijo
-Censura Tipo II — observación truncada a r fallas de n equipos
-Chi²  — distribución ji cuadrada; se usa para IC del MTBF exponencial
-Sesgo de sobrevivencia — subestimar el MTBF al ignorar censurados
-Drawdown — presión diferencial entre estático y fluyente (Pr − Pwf)`,
-  },
-];
-
 function TabTeoria() {
   return <TheoryLayout sections={TEORIA_M7} accentColor="#A78BFA" />;
 }
@@ -278,7 +160,7 @@ function TabSimulador() {
   const modeColor = mode === "curva" ? "#38BDF8" : "#A78BFA";
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
+    <div style={{ display: "flex", gap: 20, minWidth: 780, overflowX: 'auto' }}>
 
       {/* ── Controles ── */}
       <div style={{ width: 230, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -301,23 +183,15 @@ function TabSimulador() {
             <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ fontSize: 9, color: ACCENT, letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>PARÁMETROS</div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>MTBF (días)</div>
-                <input type="range" min={90} max={3650} step={30} value={MTBF} onChange={e => setMTBF(+e.target.value)}
-                  style={{ accentColor: "#38BDF8", width: "100%" }} />
-                <div style={{ fontSize: 13, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
-                  {MTBF} d <span style={{ fontSize: 9, color: C.muted }}>({(MTBF / 365).toFixed(1)} años)</span>
-                </div>
-              </div>
+              <Slider label="MTBF" unit="días"
+                value={MTBF} min={90} max={3650} step={30}
+                onChange={v => setMTBF(v)} accentColor="#38BDF8"
+                tooltip="Mean Time Between Failures. Parámetro λ = 1/MTBF. R(MTBF) = e⁻¹ ≈ 36.8% — solo 1 de 3 equipos alcanza su MTBF nominal." />
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Tiempo consulta t (días)</div>
-                <input type="range" min={30} max={MTBF * 2} step={15} value={Math.min(t_query, MTBF * 2)} onChange={e => setTQuery(+e.target.value)}
-                  style={{ accentColor: ACCENT, width: "100%" }} />
-                <div style={{ fontSize: 13, color: ACCENT, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>
-                  {t_query} d <span style={{ fontSize: 9, color: C.muted }}>→ R={R_t_pct}%</span>
-                </div>
-              </div>
+              <Slider label="Tiempo consulta t" unit="días"
+                value={Math.min(t_query, MTBF * 2)} min={30} max={MTBF * 2} step={15}
+                onChange={v => setTQuery(v)} accentColor={ACCENT}
+                tooltip="Tiempo en servicio a consultar: R(t) = e^(−t/MTBF). Resultado: probabilidad de que el equipo siga operando en el día t." />
             </div>
 
             {/* Benchmark selector */}
@@ -342,20 +216,15 @@ function TabSimulador() {
           <div style={{ background: C.surface, borderRadius: 8, padding: 14, border: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ fontSize: 9, color: "#A78BFA", letterSpacing: 2, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>DATOS DE CAMPO</div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Fallas observadas (r)</div>
-              <input type="range" min={1} max={30} step={1} value={r} onChange={e => setR(+e.target.value)}
-                style={{ accentColor: "#A78BFA", width: "100%" }} />
-              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{r} fallas</div>
-            </div>
+            <Slider label="Fallas observadas (r)" unit="fallas"
+              value={r} min={1} max={30} step={1}
+              onChange={v => setR(v)} accentColor="#A78BFA"
+              tooltip="Número de fallas confirmadas en el período. MTBF_MLE = T_total / r. Más fallas = estimado más preciso." />
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>T_total acumulado (días)</div>
-              <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>fallas + censurados</div>
-              <input type="range" min={500} max={30000} step={100} value={T_total} onChange={e => setTTotal(+e.target.value)}
-                style={{ accentColor: "#A78BFA", width: "100%" }} />
-              <div style={{ fontSize: 13, color: "#A78BFA", fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{T_total.toLocaleString()} d</div>
-            </div>
+            <Slider label="T_total acumulado" unit="días"
+              value={T_total} min={500} max={30000} step={100}
+              onChange={v => setTTotal(v)} accentColor="#A78BFA"
+              tooltip="Tiempo total acumulado de operación incluyendo equipos censurados (que aún no fallaron). T_total = Σt_fallas + Σt_censurados." />
 
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase" }}>Nivel de confianza IC</div>
@@ -709,7 +578,11 @@ function TabEvaluacion() {
   const [answers, setAnswers] = useState({});
   const [result,  setResult]  = useState(null);
   const select = (qId, optId) => { if (!result) setAnswers(p => ({ ...p, [qId]: optId })); };
-  const submit = () => setResult(gradeM7(M7_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }))));
+  const submit = () => {
+    const r = gradeM7(M7_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
+    try { localStorage.setItem('simbes_eval_m7', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
+  };
   const reset  = () => { setAnswers({}); setResult(null); };
 
   return (
@@ -799,7 +672,7 @@ const TABS = [
 export default function Module7({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
         <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>

@@ -7,6 +7,8 @@ import { M1_EVALUATION, gradeM1 } from "../../../pedagogy/evaluations/m1.js";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M1 } from './teoria-data';
 import { C } from '../../../theme';
+import { colebrookWhite, reynoldsNumber } from '../../../physics/hydraulics';
+import { Slider } from '../../ui';
 
 // ═══════════════════════════════════════════════════════
 //  UNIT CONVERSIONS  (physics engine runs in STB/d + ft)
@@ -56,11 +58,24 @@ function pumpHeadFt(Q, freq, H0 = 8500, Qmax = 4200) {
 }
 
 // VLP: minimum Pwf to sustain rate Q
-// [SIMPLIFIED: friction = 1.4e-5 × Q² valid for 2.875"–3.5" tubing, BES ranges]
-function vlpPwf(Q, depth, Pwh, freq, grad) {
-  const staticPsi   = grad * depth;
-  const pumpPsi     = pumpHeadFt(Q, freq) * grad;
-  const frictionPsi = 1.4e-5 * Q * Q;
+// Fricción: Darcy-Weisbach + Colebrook-White
+// [SIMPLIFIED: viscosidad = 1 cP (crude ligero), D = 2.992" (3.5" tubing)]
+// @ref Darcy-Weisbach (1845), Colebrook & White (1937)
+function vlpPwf(Q, depth, Pwh, freq, grad, D_in = 2.992) {
+  const staticPsi = grad * depth;
+  const pumpPsi   = pumpHeadFt(Q, freq) * grad;
+
+  const Q_m3d   = Q * M3D_PER_STB;
+  const depth_m = depth / FT_PER_M;
+  const rho_kgL = grad / 0.4335;
+  const Re      = reynoldsNumber(Q_m3d, D_in, rho_kgL, 1.0);
+  const D_m     = D_in * 0.0254;
+  const f       = colebrookWhite(Re, D_m);
+  const A_m2    = Math.PI * D_m * D_m / 4;
+  const v_ms    = Q_m3d > 0 ? (Q_m3d / 86400) / A_m2 : 0;
+  const h_f_m   = f * (depth_m / D_m) * (v_ms * v_ms) / (2 * 9.81);
+  const frictionPsi = (h_f_m * FT_PER_M) * grad;
+
   return Math.max(0, Pwh + staticPsi - pumpPsi + frictionPsi);
 }
 
@@ -145,24 +160,6 @@ function ControlGroup({ title, accent, children }) {
   );
 }
 
-function Param({ label, unit, value, min, max, step, onChange, dec = 0, color = "#60A5FA", hint }) {
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-        <span style={{ fontSize: 11, color: "#94A3B8" }}>{label}</span>
-        <span style={{ fontSize: 12, color: "#E2E8F0", fontWeight: 700 }}>
-          {dec ? value.toFixed(dec) : value.toLocaleString()}
-          <span style={{ fontSize: 10, color: "#94A3B8", marginLeft: 4 }}>{unit}</span>
-        </span>
-      </div>
-      <input type="range" min={min} max={max} step={step} value={value}
-        onChange={e => onChange(parseFloat(e.target.value))}
-        style={{ width: "100%", accentColor: color, cursor: "pointer", height: 4 }}
-      />
-      {hint && <div style={{ fontSize: 9, color: "#475569", marginTop: 4, lineHeight: 1.5, fontStyle: "italic" }}>{hint}</div>}
-    </div>
-  );
-}
 
 function Metric({ label, value, unit, color = "#E2E8F0", glow }) {
   return (
@@ -283,15 +280,6 @@ function NodalChart({ chartData, opPoint, safePb, bep_m3d, Pr }) {
 // ═══════════════════════════════════════════════════════
 //  TAB A — TEORÍA
 // ═══════════════════════════════════════════════════════
-const TEORIA_SECTIONS = [
-  { idx: 0, label: "① Análisis Nodal",   color: "#94A3B8" },
-  { idx: 1, label: "② IPR Darcy",        color: "#60A5FA" },
-  { idx: 2, label: "③ Vogel + AOF",      color: "#818CF8" },
-  { idx: 3, label: "④ VLP · Bomba BES",  color: "#34D399" },
-  { idx: 4, label: "⑤ Leyes Afinidad",   color: "#F472B6" },
-  { idx: 5, label: "⑥ Glosario",         color: "#FBBF24" },
-];
-
 function TabTeoria() {
   return <TheoryLayout sections={TEORIA_M1} accentColor="#38BDF8" />;
 }
@@ -299,12 +287,18 @@ function TabTeoria() {
 // ═══════════════════════════════════════════════════════
 //  TAB B — SIMULADOR (with tooltips)
 // ═══════════════════════════════════════════════════════
-function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq }) {
+function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq, BSW, setBSW }) {
   const safePb = Math.min(Pb, Pr - 50);
   const safeIP = Math.max(0.02, IP);
+
+  // [SIMPLIFIED: ρ_mix = BSW-weighted average of oil and saline water densities]
+  // ρ_agua ≈ 1.074 kg/L (saline water at reservoir conditions, average)
+  const RHO_AGUA = 1.074;
+  const densidadEfectiva = (1 - BSW / 100) * densidad + (BSW / 100) * RHO_AGUA;
+
   const { chartData, aof, qb, opPoint, alerts, bep_m3d } = useMemo(
-    () => computeSim(Pr, safePb, safeIP, depth, Pwh, freq, densidad),
-    [Pr, safePb, safeIP, depth, Pwh, freq, densidad]
+    () => computeSim(Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva),
+    [Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva]
   );
   const dd = opPoint ? Math.round((Pr - opPoint.Pwf) / Pr * 100) : null;
 
@@ -313,36 +307,40 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
       {/* Controls */}
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         <ControlGroup title="■ Yacimiento" accent="#60A5FA">
-          <Param label="Pr — Presión Reservorio" unit="psi"
-            value={Pr} min={500} max={7000} step={50} onChange={setPr} color="#60A5FA"
-            hint="Presión estática del reservorio. Campo: 500–10,000 psi. Mayor Pr = más energía disponible." />
-          <Param label="Pb — Presión de Burbuja" unit="psi"
+          <Slider label="Pr — Presión Reservorio" unit="psi"
+            value={Pr} min={500} max={7000} step={50} onChange={setPr} accentColor="#60A5FA"
+            tooltip="Presión estática del reservorio. Campo: 500–10,000 psi. Mayor Pr = más energía disponible." />
+          <Slider label="Pb — Presión de Burbuja" unit="psi"
             value={safePb} min={100} max={Pr - 50} step={50}
-            onChange={v => setPb(Math.min(v, Pr - 50))} color="#60A5FA"
-            hint="Por encima de Pb: fluido monofásico (Darcy). Por debajo: gas libre (Vogel). Campo: 500–4,000 psi." />
-          <Param label="IP — Índice Productividad" unit="m³/d/psi"
+            onChange={v => setPb(Math.min(v, Pr - 50))} accentColor="#60A5FA"
+            tooltip="Por encima de Pb: fluido monofásico (Darcy). Por debajo: gas libre (Vogel). Campo: 500–4,000 psi." />
+          <Slider label="IP — Índice Productividad" unit="m³/d/psi"
             value={IP} min={0.02} max={1.60} step={0.02} dec={2}
-            onChange={setIP} color="#60A5FA"
-            hint="Pendiente de la IPR. Mide la facilidad del yacimiento. BES típico: 0.05–1.5 m³/d/psi." />
+            onChange={setIP} accentColor="#60A5FA"
+            tooltip="Pendiente de la IPR. Mide la facilidad del yacimiento. BES típico: 0.05–1.5 m³/d/psi." />
         </ControlGroup>
 
         <ControlGroup title="■ Geometría del Pozo" accent="#34D399">
-          <Param label="Profundidad de Bomba" unit="m"
-            value={depth} min={300} max={4300} step={50} onChange={setDepth} color="#34D399"
-            hint="Profundidad de la bomba BES. Campo típico: 600–3,500 m. Mayor profundidad → mayor TDH." />
-          <Param label="Pwh — Presión Cabezal" unit="psi"
-            value={Pwh} min={50} max={1000} step={25} onChange={setPwh} color="#34D399"
-            hint="Contrapresión en cabeza de pozo (choke + flowline + separador). Campo: 50–500 psi." />
-          <Param label="Densidad del Fluido" unit="kg/L"
-            value={densidad} min={0.70} max={1.15} step={0.01} dec={3}
-            onChange={setDensidad} color="#34D399"
-            hint={`Agua = 1.0 kg/L · Crudo 30°API ≈ 0.876 kg/L. Gradiente = densidad × 0.4335 psi/ft (actual: ${(densidad * 0.4335).toFixed(4)} psi/ft).`} />
+          <Slider label="Profundidad de Bomba" unit="m"
+            value={depth} min={300} max={4300} step={50} onChange={setDepth} accentColor="#34D399"
+            tooltip="Profundidad de la bomba BES. Campo típico: 600–3,500 m. Mayor profundidad → mayor TDH." />
+          <Slider label="Pwh — Presión Cabezal" unit="psi"
+            value={Pwh} min={50} max={1000} step={25} onChange={setPwh} accentColor="#34D399"
+            tooltip="Contrapresión en cabeza de pozo (choke + flowline + separador). Campo: 50–500 psi." />
+          <Slider label="Densidad del Petróleo" unit="kg/L"
+            value={densidad} min={0.70} max={1.00} step={0.01} dec={3}
+            onChange={setDensidad} accentColor="#34D399"
+            tooltip="Densidad del crudo puro (sin agua). 30°API ≈ 0.876 kg/L · 20°API ≈ 0.934 kg/L. La mezcla efectiva depende del BSW." />
+          <Slider label="BSW — Corte de Agua" unit="%"
+            value={BSW} min={0} max={80} step={5} dec={0}
+            onChange={setBSW} accentColor="#60A5FA"
+            tooltip={`Basic Sediment & Water. ρ_mezcla = (1−BSW)·ρ_petróleo + BSW·1.074 kg/L → grad efectivo ≈ ${(densidadEfectiva * 0.4335).toFixed(3)} psi/ft. [SIMPLIFIED]`} />
         </ControlGroup>
 
         <ControlGroup title="■ VSD — Variador de Frecuencia" accent="#F472B6">
-          <Param label="Frecuencia" unit="Hz"
-            value={freq} min={30} max={70} step={1} onChange={setFreq} color="#F472B6"
-            hint="60 Hz = velocidad nominal. Rango campo BES: 40–70 Hz. Afecta Q (lineal), H (cuadrático) y potencia (cúbico)." />
+          <Slider label="Frecuencia" unit="Hz"
+            value={freq} min={30} max={70} step={1} onChange={setFreq} accentColor="#F472B6"
+            tooltip="60 Hz = velocidad nominal. Rango campo BES: 40–70 Hz. Afecta Q (lineal), H (cuadrático) y potencia (cúbico)." />
           <div style={{ fontSize: 10, color: "#475569", background: "#0F172A", padding: "8px 10px", borderRadius: 6, lineHeight: 1.8 }}>
             BEP estimado a {freq} Hz<br />
             <span style={{ color: "#F472B6" }}>≈ {bep_m3d.toFixed(1)} m³/d</span><br />
@@ -388,7 +386,7 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
           <span style={{ color: "#38BDF8", fontWeight: 700 }}>PUNTO DE OPERACIÓN · </span>
           Intersección de la curva <span style={{ color: "#38BDF8" }}>IPR</span> y la curva <span style={{ color: "#34D399" }}>VLP</span>.
           Modifica la <span style={{ color: "#F472B6" }}>frecuencia del VSD</span> para mover el punto de operación.
-          {` Fluido: ${densidad.toFixed(3)} kg/L → grad ≈ ${(densidad * 0.4335).toFixed(3)} psi/ft.`}
+          {` Petróleo: ${densidad.toFixed(3)} kg/L · BSW: ${BSW}% → ρ_mezcla: ${densidadEfectiva.toFixed(3)} kg/L → grad: ${(densidadEfectiva * 0.4335).toFixed(3)} psi/ft.`}
         </div>
       </div>
     </div>
@@ -615,7 +613,11 @@ function TabEvaluacion() {
         <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
           <button
             disabled={!allAnswered}
-            onClick={() => setSubmitted(true)}
+            onClick={() => {
+              const r = gradeM1(answers);
+              try { localStorage.setItem('simbes_eval_m1', JSON.stringify({ score_pct: r.score_pct, passed: r.passed, ts: Date.now() })); } catch {}
+              setSubmitted(true);
+            }}
             style={{
               background: allAnswered ? "#F472B6" : "#334155",
               border: "none", borderRadius: 8,
@@ -650,6 +652,7 @@ export default function SIMBES_M1() {
   const [Pwh,      setPwh]      = useState(150);
   const [freq,     setFreq]     = useState(60);
   const [densidad, setDensidad] = useState(0.876);
+  const [BSW,      setBSW]      = useState(0);
 
   return (
     <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", background: "#0F172A", minHeight: "100vh", color: "#F1F5F9", padding: "20px 24px" }}>
@@ -682,6 +685,7 @@ export default function SIMBES_M1() {
           IP={IP} setIP={setIP} depth={depth} setDepth={setDepth}
           Pwh={Pwh} setPwh={setPwh} densidad={densidad} setDensidad={setDensidad}
           freq={freq} setFreq={setFreq}
+          BSW={BSW} setBSW={setBSW}
         />
       )}
       {activeTab === "caso" && <TabCaso />}

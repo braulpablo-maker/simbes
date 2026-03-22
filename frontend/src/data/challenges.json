@@ -1,0 +1,79 @@
+[
+  {
+    "id": "ch1",
+    "title": "Decline Misterioso — Pozo X-23",
+    "module": "M1",
+    "difficulty": "básico",
+    "color": "#38BDF8",
+    "problem_description": "El gerente de producción reporta que el Pozo X-23 bajó de 380 a 110 m³/d en los últimos 6 meses. La bomba no muestra fallas mecánicas y el VSD opera a 60 Hz. El yacimiento tiene Pr = 2200 psi, Pb = 1800 psi, IP = 0.18 m³/d/psi. El pozo tiene 2400 m de profundidad. Tu tarea es identificar la causa raíz usando el simulador.",
+    "initial_state": {
+      "Pr": 2200, "Pb": 1800, "IP": 0.18,
+      "depth": 2400, "Pwh": 130, "freq": 60, "densidad": 0.876, "BSW": 0
+    },
+    "success_criteria": {
+      "type": "drawdown_range",
+      "min": 70, "max": 100,
+      "description": "Identifica que el drawdown supera el 70% — la bomba opera demasiado cerca del AOF"
+    },
+    "hint": "Observa el drawdown en las métricas y compara Pwf con Pb. ¿Qué alerta aparece?",
+    "explanation": "Con Pr = 2200 psi y Pb = 1800 psi, el margen de presión es mínimo (zona Darcy muy pequeña). El IP bajo (0.18 m³/d/psi) limita severamente el caudal. El sistema opera con drawdown crítico cercano al AOF — cualquier variación en Pr acelera el decline. La solución es optimizar la frecuencia del VSD para reducir el drawdown y operar más cerca del BEP."
+  },
+  {
+    "id": "ch2",
+    "title": "Gas Libre en Succión — Pozo Garza-7",
+    "module": "M1",
+    "difficulty": "intermedio",
+    "color": "#A78BFA",
+    "problem_description": "El Pozo Garza-7 opera normalmente hasta que se detecta vibración anormal en la bomba. Los datos de reservorio indican Pr = 3500 psi, Pb = 2800 psi, IP = 0.45 m³/d/psi. La bomba opera a 60 Hz, profundidad 1900 m. El fluido tiene 40% BSW. Identifica el riesgo operativo principal.",
+    "initial_state": {
+      "Pr": 3500, "Pb": 2800, "IP": 0.45,
+      "depth": 1900, "Pwh": 160, "freq": 60, "densidad": 0.876, "BSW": 40
+    },
+    "success_criteria": {
+      "type": "alert_type",
+      "alert_type": "warning",
+      "description": "Identifica al menos una alerta de WARNING en el diagnóstico operativo"
+    },
+    "hint": "Observa la relación entre Pwf y Pb en las métricas. Si Pwf < Pb, hay gas libre en succión. Prueba distintas frecuencias para aliviar el problema.",
+    "explanation": "Con Pb = 2800 psi y el punto de operación resultando en Pwf < Pb, la bomba succiona gas libre (zona Vogel). El BSW del 40% aumenta la densidad efectiva de la mezcla, incrementando el gradiente y el TDH requerido. La solución es subir la frecuencia del VSD para elevar la presión de succión, o evaluar un separador AGS (Módulo 3)."
+  },
+  {
+    "id": "ch3",
+    "title": "Surging por Sobredimensionamiento — Pozo Colibrí-11",
+    "module": "M1",
+    "difficulty": "intermedio",
+    "color": "#F472B6",
+    "problem_description": "Se instaló una bomba nueva en el Pozo Colibrí-11 y el operador nota ruido anormal y alta temperatura en el motor. Los datos: Pr = 4200 psi, Pb = 1200 psi, IP = 0.55 m³/d/psi, profundidad 1600 m, Pwh = 120 psi. El VSD opera a 65 Hz. Identifica el problema y propone la frecuencia correcta.",
+    "initial_state": {
+      "Pr": 4200, "Pb": 1200, "IP": 0.55,
+      "depth": 1600, "Pwh": 120, "freq": 65, "densidad": 0.860, "BSW": 10
+    },
+    "success_criteria": {
+      "type": "freq_range",
+      "min": 45, "max": 55,
+      "description": "Ajusta la frecuencia a un rango donde el sistema opere dentro del BEP (68%–132%) sin alertas de surging"
+    },
+    "hint": "A 65 Hz el punto de operación está muy lejos del BEP. Reduce la frecuencia gradualmente hasta que desaparezcan las alertas. El objetivo es operar entre 68% y 132% del BEP.",
+    "explanation": "A 65 Hz la bomba entrega más cabeza de la necesaria para este yacimiento, operando al 150%+ del BEP → surging (cavitación por exceso de caudal). La reducción de frecuencia baja el punto de operación hacia el BEP, elimina la cavitación y reduce el consumo eléctrico cúbicamente (Ley de Afinidad: P ∝ f³)."
+  },
+  {
+    "id": "ch4",
+    "title": "Optimización de Producción — Campo Norte",
+    "module": "M1",
+    "difficulty": "avanzado",
+    "color": "#34D399",
+    "problem_description": "El equipo de ingeniería debe maximizar la producción del Pozo Norte-3 manteniendo el drawdown por debajo del 65% para proteger la formación. Datos: Pr = 5000 psi, Pb = 2200 psi, IP = 0.32 m³/d/psi, profundidad 2800 m, Pwh = 200 psi. BSW = 25%. Encuentra la frecuencia óptima que maximiza Q sin superar 65% de drawdown y sin alertas de surging o recirculación.",
+    "initial_state": {
+      "Pr": 5000, "Pb": 2200, "IP": 0.32,
+      "depth": 2800, "Pwh": 200, "freq": 50, "densidad": 0.876, "BSW": 25
+    },
+    "success_criteria": {
+      "type": "combined",
+      "drawdown_max": 65,
+      "no_alerts": ["danger", "warning"],
+      "description": "Encuentra la frecuencia donde el sistema opera sin alertas y con drawdown ≤ 65%"
+    },
+    "hint": "Aumenta la frecuencia gradualmente desde 50 Hz. Monitorea el drawdown y las alertas simultáneamente. Hay una ventana estrecha donde se cumplen ambas condiciones.",
+    "explanation": "Este problema integra las restricciones operativas clave: el drawdown máximo (protección de la formación) y el rango BEP (protección de la bomba). La frecuencia óptima balancea ambas restricciones. En campo, este análisis se realiza periódicamente a medida que Pr declina por agotamiento del yacimiento, ajustando la frecuencia del VSD para mantener el punto de operación óptimo."
+  }
+]

@@ -4,7 +4,7 @@
  * Integración de M1–M7 en modo libre.
  * El usuario configura todos los parámetros y ve el análisis completo del sistema BES.
  */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ReferenceLine, ResponsiveContainer,
@@ -312,13 +312,34 @@ function AlertRow({ sev, msg }) {
   );
 }
 
-function SliderParam({ label, min, max, step, value, onChange, color, fmt, hint }) {
+function SliderParam({ label, min, max, step, value, onChange, color, fmt, tooltip }) {
+  const [showTip, setShowTip] = useState(false);
   return (
-    <Param label={label} hint={hint} accentColor={color}>
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <span style={{ fontSize: 9, color, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase", letterSpacing: 1 }}>{label}</span>
+          {tooltip && (
+            <span
+              style={{ cursor: "pointer", color: C.muted, fontSize: 10, border: `1px solid ${C.border}`, borderRadius: 3, padding: "0 4px", lineHeight: "14px", userSelect: "none" }}
+              onMouseEnter={() => setShowTip(true)}
+              onMouseLeave={() => setShowTip(false)}
+            >?</span>
+          )}
+        </div>
+        <span style={{ fontSize: 11, color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{fmt ? fmt(value) : value}</span>
+      </div>
+      {showTip && tooltip && (
+        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 5, padding: "6px 8px", marginBottom: 4, fontSize: 10, color: C.muted, lineHeight: 1.5, fontFamily: "JetBrains Mono, monospace" }}>
+          {tooltip}
+        </div>
+      )}
       <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(+e.target.value)}
         style={{ accentColor: color, width: "100%" }} />
-      <div style={{ fontSize: 11, color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{fmt ? fmt(value) : value}</div>
-    </Param>
+      <div style={{ display: "flex", justifyContent: "space-between", color: C.muted, fontSize: 9, fontFamily: "JetBrains Mono, monospace" }}>
+        <span>{min}</span><span>{max}</span>
+      </div>
+    </div>
   );
 }
 
@@ -445,9 +466,30 @@ function BtnGroup({ options, value, onChange, color }) {
   );
 }
 
+const LS_KEY_M8 = 'simbes_m8_scenario';
+
 function TabSimulador() {
-  const [p, setP] = useState(DEFAULT);
+  const [p, setP] = useState(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY_M8);
+      return saved ? { ...DEFAULT, ...JSON.parse(saved) } : DEFAULT;
+    } catch { return DEFAULT; }
+  });
   const set = (k, v) => setP(prev => ({ ...prev, [k]: v }));
+
+  const saveScenario = () => {
+    try { localStorage.setItem(LS_KEY_M8, JSON.stringify(p)); } catch {}
+  };
+  const loadScenario = () => {
+    try {
+      const saved = localStorage.getItem(LS_KEY_M8);
+      if (saved) setP({ ...DEFAULT, ...JSON.parse(saved) });
+    } catch {}
+  };
+  const resetScenario = () => {
+    try { localStorage.removeItem(LS_KEY_M8); } catch {}
+    setP(DEFAULT);
+  };
 
   const sim = useMemo(() => computeSystem({
     ...p,
@@ -462,24 +504,24 @@ function TabSimulador() {
   const groups = [
     { label: "YACIMIENTO", color: "#38BDF8",
       items: [
-        <SliderParam label="Pr — Presión estática (psi)" min={500} max={7000} step={100} value={p.Pr} onChange={v=>set("Pr",v)} color="#38BDF8" />,
-        <SliderParam label="Pb — Presión burbuja (psi)"  min={100} max={p.Pr-100} step={50} value={p.Pb} onChange={v=>set("Pb",v)} color="#FBBF24" />,
-        <SliderParam label="IP — Índice productividad"   min={0.03} max={1.59} step={0.01} value={p.IP} onChange={v=>set("IP",v)} color="#38BDF8" fmt={v=>`${v.toFixed(2)} m³/d/psi`} />,
+        <SliderParam label="Pr — Presión estática (psi)" min={500} max={7000} step={100} value={p.Pr} onChange={v=>set("Pr",v)} color="#38BDF8" tooltip="Presión estática del reservorio. Define el máximo caudal potencial (AOF). Campo típico: 1,000–6,000 psi." />,
+        <SliderParam label="Pb — Presión burbuja (psi)"  min={100} max={p.Pr-100} step={50} value={p.Pb} onChange={v=>set("Pb",v)} color="#FBBF24" tooltip="Por encima: fluido monofásico (Darcy). Por debajo: gas libre → degradación de bomba (Vogel). Comparar con Ps del sensor." />,
+        <SliderParam label="IP — Índice productividad"   min={0.03} max={1.59} step={0.01} value={p.IP} onChange={v=>set("IP",v)} color="#38BDF8" fmt={v=>`${v.toFixed(2)} m³/d/psi`} tooltip="Pendiente de la IPR. Mide la facilidad del yacimiento para entregar fluido. BES: 0.05–1.5 m³/d/psi." />,
       ]
     },
     { label: "HIDRÁULICA", color: "#34D399",
       items: [
-        <SliderParam label="Profundidad (m)" min={500} max={4500} step={50} value={p.depth_m} onChange={v=>set("depth_m",v)} color="#34D399" fmt={v=>`${v} m`} />,
-        <SliderParam label="Pwh — Presión cabezal (psi)" min={50} max={800} step={25} value={p.Pwh} onChange={v=>set("Pwh",v)} color="#34D399" fmt={v=>`${v} psi`} />,
-        <SliderParam label="Frecuencia VSD (Hz)" min={35} max={70} step={1} value={p.freq} onChange={v=>set("freq",v)} color="#F472B6" fmt={v=>`${v} Hz`} />,
-        <SliderParam label="Densidad fluido (kg/L)" min={0.75} max={1.10} step={0.005} value={p.rho_kgL} onChange={v=>set("rho_kgL",v)} color="#34D399" fmt={v=>`${v} kg/L`} />,
+        <SliderParam label="Profundidad (m)" min={500} max={4500} step={50} value={p.depth_m} onChange={v=>set("depth_m",v)} color="#34D399" fmt={v=>`${v} m`} tooltip="Profundidad de instalación de la bomba. Determina TDH estático = grad × profundidad. Campo BES: 600–4,000 m." />,
+        <SliderParam label="Pwh — Presión cabezal (psi)" min={50} max={800} step={25} value={p.Pwh} onChange={v=>set("Pwh",v)} color="#34D399" fmt={v=>`${v} psi`} tooltip="Contrapresión en cabeza de pozo (choke + flowline + separador). Aumenta el TDH requerido. Campo: 50–500 psi." />,
+        <SliderParam label="Frecuencia VSD (Hz)" min={35} max={70} step={1} value={p.freq} onChange={v=>set("freq",v)} color="#F472B6" fmt={v=>`${v} Hz`} tooltip="Frecuencia del variador. Q ∝ f, H ∝ f², P ∝ f³ (Leyes de Afinidad). 60 Hz = velocidad nominal. Campo BES: 45–65 Hz." />,
+        <SliderParam label="Densidad fluido (kg/L)" min={0.75} max={1.10} step={0.005} value={p.rho_kgL} onChange={v=>set("rho_kgL",v)} color="#34D399" fmt={v=>`${v} kg/L`} tooltip="Densidad del fluido producido. Agua = 1.0 kg/L. Crudo 30°API ≈ 0.876. Define el gradiente de presión: grad = densidad × 0.4335 psi/ft." />,
       ]
     },
     { label: "GAS / FLUIDO", color: "#A78BFA",
       items: [
-        <SliderParam label="GOR (m³/m³)" min={0} max={5000} step={25} value={p.GOR} onChange={v=>set("GOR",v)} color="#A78BFA" fmt={v=>`${v} m³/m³`} />,
-        <SliderParam label="T° fondo (°C)" min={49} max={138} step={2} value={p.T_F} onChange={v=>set("T_F",v)} color="#A78BFA" fmt={v=>`${v}°C`} />,
-        <SliderParam label="Viscosidad (cp)" min={1} max={150} step={1} value={p.mu} onChange={v=>set("mu",v)} color="#A78BFA" fmt={v=>`${v} cp`} />,
+        <SliderParam label="GOR (m³/m³)" min={0} max={5000} step={25} value={p.GOR} onChange={v=>set("GOR",v)} color="#A78BFA" fmt={v=>`${v} m³/m³`} tooltip="Gas-Oil Ratio superficial. Determina el GVF en succión. GVF > 15% → gas lock inminente (M3)." />,
+        <SliderParam label="T° fondo (°C)" min={49} max={138} step={2} value={p.T_F} onChange={v=>set("T_F",v)} color="#A78BFA" fmt={v=>`${v}°C`} tooltip="Temperatura de fondo. Afecta viscosidad del crudo, resistencia del cable (M4) y degradación del aislamiento (Arrhenius)." />,
+        <SliderParam label="Viscosidad (cp)" min={1} max={150} step={1} value={p.mu} onChange={v=>set("mu",v)} color="#A78BFA" fmt={v=>`${v} cp`} tooltip="Viscosidad del crudo. Agua ≈ 1 cP. Crudo liviano: 2–20 cP. Crudo pesado: 50–500 cP. Afecta curva H-Q real (corrección HI)." />,
         <Param label="Separador" accentColor="#A78BFA">
           <BtnGroup options={SEP_OPTS} value={p.separator} onChange={v=>set("separator",v)} color="#A78BFA" />
         </Param>,
@@ -490,7 +532,7 @@ function TabSimulador() {
         <Param label="Calibre cable (AWG)" accentColor="#F472B6">
           <BtnGroup options={AWG_OPTS.map(v=>[v,`#${v}`])} value={p.AWG} onChange={v=>set("AWG",v)} color="#F472B6" />
         </Param>,
-        <SliderParam label="Corriente motor (A)" min={20} max={200} step={5} value={p.I_amps} onChange={v=>set("I_amps",v)} color="#F472B6" fmt={v=>`${v} A`} />,
+        <SliderParam label="Corriente motor (A)" min={20} max={200} step={5} value={p.I_amps} onChange={v=>set("I_amps",v)} color="#F472B6" fmt={v=>`${v} A`} tooltip="Corriente nominal del motor. Define V_drop en cable: V_drop = I × R_T × 3 (trifásico). Comparar con límite del cable seleccionado." />,
         <Param label="Clase aislamiento" accentColor="#F472B6">
           <BtnGroup options={T_RAT_OPTS.map(([t,l])=>[t,`${l}(${t}°C)`])} value={p.T_rated} onChange={v=>set("T_rated",v)} color="#F472B6" />
         </Param>,
@@ -509,10 +551,24 @@ function TabSimulador() {
   ];
 
   return (
-    <div style={{ display: "flex", gap: 16 }}>
+    <div style={{ display: "flex", gap: 16, minWidth: 780, overflowX: 'auto' }}>
 
       {/* ── Controles (accordion) ── */}
       <div style={{ width: 240, display: "flex", flexDirection: "column", gap: 10 }}>
+
+        {/* Guardar / Cargar escenario */}
+        <div style={{ display: "flex", gap: 4 }}>
+          <button onClick={saveScenario} style={{ flex: 1, padding: "5px 0", fontSize: 9, borderRadius: 5, border: `1px solid ${ACCENT_B}`, background: ACCENT_B + "18", color: ACCENT_B, cursor: "pointer", fontFamily: C.fontUI }}>
+            💾 Guardar
+          </button>
+          <button onClick={loadScenario} style={{ flex: 1, padding: "5px 0", fontSize: 9, borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.muted, cursor: "pointer", fontFamily: C.fontUI }}>
+            📂 Cargar
+          </button>
+          <button onClick={resetScenario} title="Restablecer valores por defecto" style={{ padding: "5px 8px", fontSize: 9, borderRadius: 5, border: `1px solid ${C.border}`, background: "transparent", color: C.muted, cursor: "pointer", fontFamily: C.fontUI }}>
+            ↺
+          </button>
+        </div>
+
         {groups.map(grp => (
           <div key={grp.label} style={{ background: C.surface, borderRadius: 8, padding: 12, border: `1px solid ${C.border}` }}>
             <div style={{ fontSize: 8, color: grp.color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, letterSpacing: 2, marginBottom: 10 }}>
@@ -613,11 +669,16 @@ const SCENARIOS = {
 };
 
 function TabComparacion() {
-  const simA = useMemo(() => computeSystem(SCENARIOS.A.params), []);
-  const simB = useMemo(() => computeSystem(SCENARIOS.B.params), []);
+  const [paramsA, setParamsA] = useState(SCENARIOS.A.params);
+  const [paramsB, setParamsB] = useState(SCENARIOS.B.params);
+  const setA = (k, v) => setParamsA(p => ({ ...p, [k]: v }));
+  const setB = (k, v) => setParamsB(p => ({ ...p, [k]: v }));
+
+  const simA = useMemo(() => computeSystem(paramsA), [paramsA]);
+  const simB = useMemo(() => computeSystem(paramsB), [paramsB]);
 
   const Q_A = simA.Q_op_clean ? +(simA.Q_op_clean * STB_TO_M3).toFixed(0) : "—";
-  const Q_B = simB.Q_op_deg   ? +(simB.Q_op_deg   * STB_TO_M3).toFixed(0) : "Sin op.";
+  const Q_B = simB.Q_op_clean ? +(simB.Q_op_clean * STB_TO_M3).toFixed(0) : "Sin op.";
   const Q_A_eff = simA.Q_op_deg   ? +(simA.Q_op_deg   * STB_TO_M3).toFixed(0) : Q_A;
   const Q_B_eff = simB.Q_op_deg   ? +(simB.Q_op_deg   * STB_TO_M3).toFixed(0) : "Sin op.";
 
@@ -646,22 +707,33 @@ function TabComparacion() {
     return numB < numA;
   };
 
+  const ScenarioEditor = ({ label, color, params, set, onReset }) => (
+    <div style={{ background: color + "0A", border: `1px solid ${color}40`, borderRadius: 8, padding: "12px 16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 800, color, fontFamily: "JetBrains Mono, monospace" }}>{label}</div>
+        <button onClick={onReset} style={{ fontSize: 8, color: C.muted, background: "transparent", border: `1px solid ${C.border}`, borderRadius: 4, padding: "2px 7px", cursor: "pointer", fontFamily: "JetBrains Mono, monospace" }}>Reset</button>
+      </div>
+      <SliderParam label="Pr (psi)"     min={500}  max={7000}            step={50}  value={params.Pr}      onChange={v=>set("Pr",v)}      color={color} />
+      <SliderParam label="Pb (psi)"     min={100}  max={params.Pr-50}    step={50}  value={params.Pb}      onChange={v=>set("Pb",Math.min(v,params.Pr-50))} color={color} />
+      <SliderParam label="IP (STB/d/psi)" min={0.3} max={10}            step={0.1} value={params.IP}      onChange={v=>set("IP",v)}      color={color} fmt={v=>v.toFixed(1)} />
+      <SliderParam label="Prof. bomba (m)" min={500} max={4000}          step={50}  value={params.depth_m} onChange={v=>set("depth_m",v)} color={color} />
+      <SliderParam label="Frecuencia (Hz)" min={30}  max={70}            step={1}   value={params.freq}    onChange={v=>set("freq",v)}    color={color} />
+      <SliderParam label="GOR (scf/STB)"  min={10}  max={1500}          step={10}  value={params.GOR}     onChange={v=>set("GOR",v)}     color={color} />
+    </div>
+  );
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      {/* Scenario headers */}
+      {/* Editable scenario headers */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {Object.values(SCENARIOS).map(sc => (
-          <div key={sc.label} style={{ background: sc.color + "0C", border: `1px solid ${sc.color}40`, borderRadius: 8, padding: "14px 18px" }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: sc.color, fontFamily: "JetBrains Mono, monospace", marginBottom: 6 }}>{sc.label}</div>
-            <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace", lineHeight: 1.6 }}>{sc.desc}</div>
-          </div>
-        ))}
+        <ScenarioEditor label="Escenario A" color="#34D399" params={paramsA} set={setA} onReset={() => setParamsA(SCENARIOS.A.params)} />
+        <ScenarioEditor label="Escenario B" color="#EF4444" params={paramsB} set={setB} onReset={() => setParamsB(SCENARIOS.B.params)} />
       </div>
 
       {/* Tabla comparativa */}
       <div style={{ background: C.surface, borderRadius: 8, border: `1px solid ${C.border}`, overflow: "hidden" }}>
         <div style={{ display: "grid", gridTemplateColumns: "160px 60px 1fr 1fr", background: "#0D1424", padding: "8px 14px", borderBottom: `1px solid ${C.border}` }}>
-          {["Métrica", "Módulo", "Escenario A — Nominal", "Escenario B — Degradado"].map((h, i) => (
+          {["Métrica", "Módulo", "Escenario A", "Escenario B"].map((h, i) => (
             <div key={i} style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, textTransform: "uppercase" }}>{h}</div>
           ))}
         </div>
@@ -677,7 +749,7 @@ function TabComparacion() {
               <div style={{ fontSize: 9, color: C.muted, fontFamily: "JetBrains Mono, monospace" }}>{row.label}</div>
               <div style={{ fontSize: 8, color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>{row.module}</div>
               <div style={{ fontSize: 10, fontWeight: 700, color: "#34D399", fontFamily: "JetBrains Mono, monospace" }}>{row.a}</div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: worse ? C.danger : C.warn, fontFamily: "JetBrains Mono, monospace" }}>{row.b}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: worse ? C.danger : "#EF4444", fontFamily: "JetBrains Mono, monospace" }}>{row.b}</div>
             </div>
           );
         })}
@@ -685,9 +757,9 @@ function TabComparacion() {
 
       {/* Alertas comparativas */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {[{ sim: simA, sc: SCENARIOS.A }, { sim: simB, sc: SCENARIOS.B }].map(({ sim, sc }) => (
-          <div key={sc.label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <div style={{ fontSize: 9, color: sc.color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{sc.label}</div>
+        {[{ sim: simA, color: "#34D399", label: "Escenario A" }, { sim: simB, color: "#EF4444", label: "Escenario B" }].map(({ sim, color, label }) => (
+          <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontSize: 9, color, fontFamily: "JetBrains Mono, monospace", fontWeight: 700 }}>{label}</div>
             {sim.alerts.map((a, i) => <AlertRow key={i} {...a} />)}
           </div>
         ))}
@@ -701,7 +773,11 @@ function TabEvaluacion() {
   const [answers, setAnswers] = useState({});
   const [result,  setResult]  = useState(null);
   const select = (qId, optId) => { if (!result) setAnswers(p => ({ ...p, [qId]: optId })); };
-  const submit = () => setResult(gradeM8(M8_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }))));
+  const submit = () => {
+    const r = gradeM8(M8_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
+    try { localStorage.setItem('simbes_eval_m8', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
+    setResult(r);
+  };
   const reset  = () => { setAnswers({}); setResult(null); };
 
   return (
@@ -824,10 +900,10 @@ function TabPlan() {
         <div style={{ background: C.surface, borderRadius: 8, padding: 12, border: `1px solid #A78BFA44` }}>
           <div style={{ fontSize: 8, color: "#A78BFA", fontFamily: "JetBrains Mono, monospace", fontWeight: 700, letterSpacing: 2, marginBottom: 10 }}>CURVA DE ARPS</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <SliderParam label="q_i — Caudal inicial"  min={10}   max={500}  step={5}    value={arps.qi_m3d}    onChange={v=>setA("qi_m3d",v)}    color="#A78BFA" fmt={v=>`${v} m³/d`} />
-            <SliderParam label="Dᵢ — Decline (/mes)"   min={0.01} max={0.20} step={0.01} value={arps.Di_month}  onChange={v=>setA("Di_month",v)}  color="#A78BFA" fmt={v=>`${v.toFixed(2)}/mes`} />
-            <SliderParam label="b — Exponente"         min={0}    max={1}    step={0.05} value={arps.b}          onChange={v=>setA("b",v)}          color="#A78BFA" fmt={v=>`${v.toFixed(2)} ${v<0.05?"(Exp.)":v>0.95?"(Arm.)":"(Hip.)"}`} />
-            <SliderParam label="Horizonte"             min={6}    max={60}   step={6}    value={arps.N_months}  onChange={v=>setA("N_months",v)}  color="#A78BFA" fmt={v=>`${v} meses`} />
+            <SliderParam label="q_i — Caudal inicial"  min={10}   max={500}  step={5}    value={arps.qi_m3d}    onChange={v=>setA("qi_m3d",v)}    color="#A78BFA" fmt={v=>`${v} m³/d`} tooltip="Caudal al inicio del período de análisis (t=0 del decline). Se fija al caudal operativo actual." />
+            <SliderParam label="Dᵢ — Decline (/mes)"   min={0.01} max={0.20} step={0.01} value={arps.Di_month}  onChange={v=>setA("Di_month",v)}  color="#A78BFA" fmt={v=>`${v.toFixed(2)}/mes`} tooltip="Tasa de decline inicial mensual. Yacimiento maduro: 3–5%/mes. Yacimiento nuevo: 10–20%/mes." />
+            <SliderParam label="b — Exponente"         min={0}    max={1}    step={0.05} value={arps.b}          onChange={v=>setA("b",v)}          color="#A78BFA" fmt={v=>`${v.toFixed(2)} ${v<0.05?"(Exp.)":v>0.95?"(Arm.)":"(Hip.)"}`} tooltip="Exponente Arps: b=0 → exponencial (decline constante), 0<b<1 → hiperbólico (decline decreciente), b=1 → armónico." />
+            <SliderParam label="Horizonte"             min={6}    max={60}   step={6}    value={arps.N_months}  onChange={v=>setA("N_months",v)}  color="#A78BFA" fmt={v=>`${v} meses`} tooltip="Horizonte de proyección. Se visualiza como meses desde t=0 hasta fin del análisis de decline." />
           </div>
         </div>
 
@@ -835,11 +911,11 @@ function TabPlan() {
         <div style={{ background: C.surface, borderRadius: 8, padding: 12, border: `1px solid ${C.border}` }}>
           <div style={{ fontSize: 8, color: "#38BDF8", fontFamily: "JetBrains Mono, monospace", fontWeight: 700, letterSpacing: 2, marginBottom: 10 }}>SISTEMA BES</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <SliderParam label="Pb — Presión burbuja (psi)"  min={100}  max={4000} step={50}   value={sys.Pb}      onChange={v=>setS("Pb",v)}      color="#FBBF24" fmt={v=>`${v} psi`} />
-            <SliderParam label="IP — Índice productividad"   min={0.03} max={1.59} step={0.01} value={sys.IP}      onChange={v=>setS("IP",v)}      color="#38BDF8" fmt={v=>`${v.toFixed(2)} m³/d/psi`} />
-            <SliderParam label="Profundidad (m)"             min={500}  max={4500} step={50}   value={sys.depth_m} onChange={v=>setS("depth_m",v)} color="#34D399" fmt={v=>`${v} m`} />
-            <SliderParam label="Frecuencia VSD (Hz)"         min={35}   max={70}   step={1}    value={sys.freq}    onChange={v=>setS("freq",v)}    color="#F472B6" fmt={v=>`${v} Hz`} />
-            <SliderParam label="GOR (m³/m³)"                 min={0}    max={5000} step={25}   value={sys.GOR}     onChange={v=>setS("GOR",v)}     color="#A78BFA" fmt={v=>`${v} m³/m³`} />
+            <SliderParam label="Pb — Presión burbuja (psi)"  min={100}  max={4000} step={50}   value={sys.Pb}      onChange={v=>setS("Pb",v)}      color="#FBBF24" fmt={v=>`${v} psi`}              tooltip="Presión de burbuja del escenario B. Compara cómo cambia el punto de operación vs. escenario A." />
+            <SliderParam label="IP — Índice productividad"   min={0.03} max={1.59} step={0.01} value={sys.IP}      onChange={v=>setS("IP",v)}      color="#38BDF8" fmt={v=>`${v.toFixed(2)} m³/d/psi`} tooltip="IP del escenario B. Mayor IP = mayor caudal al mismo Pwf. Compara el impacto en la curva nodal." />
+            <SliderParam label="Profundidad (m)"             min={500}  max={4500} step={50}   value={sys.depth_m} onChange={v=>setS("depth_m",v)} color="#34D399" fmt={v=>`${v} m`}              tooltip="Profundidad del escenario B. Mayor profundidad → mayor TDH → puede requerir más etapas o frecuencia." />
+            <SliderParam label="Frecuencia VSD (Hz)"         min={35}   max={70}   step={1}    value={sys.freq}    onChange={v=>setS("freq",v)}    color="#F472B6" fmt={v=>`${v} Hz`}             tooltip="Frecuencia del escenario B. Permite comparar el mismo pozo en distintos puntos de operación del VSD." />
+            <SliderParam label="GOR (m³/m³)"                 min={0}    max={5000} step={25}   value={sys.GOR}     onChange={v=>setS("GOR",v)}     color="#A78BFA" fmt={v=>`${v} m³/m³`}         tooltip="GOR del escenario B. GOR alto → mayor GVF en bomba → posible degradación de curva H-Q." />
           </div>
         </div>
 
@@ -961,7 +1037,7 @@ const TABS = [
 export default function Module8({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px 32px 48px" }}>
+    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
         <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
         <div style={{ flex: 1 }}>
