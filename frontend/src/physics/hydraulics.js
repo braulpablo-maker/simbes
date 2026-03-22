@@ -85,20 +85,35 @@ export function pumpBEP(freq_hz, bep60 = 2100) {
  *
  * Pwf = Pwh + grad×depth − pumpPsi + frictionPsi
  *
- * [SIMPLIFIED: fricción = 1.4e-5 × Q² (Darcy-Weisbach simplificado
- *  válido para tubing 2.875"–3.5" en rangos típicos BES)]
+ * Fricción calculada con Darcy-Weisbach + Colebrook-White.
+ * [SIMPLIFIED: viscosidad = 1 cP (crude ligero), D_in = 2.992" (3.5" tubing)]
  *
+ * @ref Darcy-Weisbach (1845), Colebrook & White (1937)
  * @param {number} Q_stbd
  * @param {number} depth_ft
  * @param {number} Pwh_psi
  * @param {number} freq_hz
  * @param {number} grad_psi_ft
+ * @param {number} [D_in=2.992]  - Diámetro interno tubing (in), default 3.5" tubing
  * @returns {number} Pwf en psi
  */
-export function vlpPwf(Q_stbd, depth_ft, Pwh_psi, freq_hz, grad_psi_ft) {
-  const pumpPsi    = pumpHeadFt(Q_stbd, freq_hz) * grad_psi_ft;
-  const staticPsi  = grad_psi_ft * depth_ft;
-  const frictionPsi = 1.4e-5 * Q_stbd * Q_stbd; // [SIMPLIFIED]
+export function vlpPwf(Q_stbd, depth_ft, Pwh_psi, freq_hz, grad_psi_ft, D_in = 2.992) {
+  const pumpPsi   = pumpHeadFt(Q_stbd, freq_hz) * grad_psi_ft;
+  const staticPsi = grad_psi_ft * depth_ft;
+
+  // Fricción Darcy-Weisbach + Colebrook-White
+  const Q_m3d    = Q_stbd * 0.158987;
+  const depth_m  = depth_ft / 3.28084;
+  const rho_kgL  = grad_psi_ft / 0.4335;           // psi/ft → kg/L
+  const mu_cP    = 1.0;                             // [SIMPLIFIED: crude ligero]
+  const Re       = reynoldsNumber(Q_m3d, D_in, rho_kgL, mu_cP);
+  const D_m      = D_in * 0.0254;
+  const f        = colebrookWhite(Re, D_m);
+  const A_m2     = Math.PI * D_m * D_m / 4;
+  const v_ms     = Q_m3d > 0 ? (Q_m3d / 86400) / A_m2 : 0;
+  const h_f_m    = f * (depth_m / D_m) * (v_ms * v_ms) / (2 * 9.81);
+  const frictionPsi = (h_f_m * 3.28084) * grad_psi_ft;
+
   return Math.max(0, Pwh_psi + staticPsi - pumpPsi + frictionPsi);
 }
 

@@ -81,9 +81,9 @@
 - [x] `TabPlan` — Tab E en M8 con: controles Arps + Sistema BES + panel Eventos Clave + 5 gráficas (Q, Pwf, GVF, Corriente, Vibración proxy, R(t))
 - [x] README actualizado: todos los módulos ✅, 8 notebooks, tabla unidades completa
 
-### ⏳ Pendiente
-- [ ] **M4-bug**: `sim.nace.applicable_standards.join` → TypeError en Tab Simulador de M4
-- [ ] **Sprint E** — M1: contenido teoría VLP, ecuación BEP, detalle Leyes de Afinidad, caso 45 m³/d
+### ✅ Pendientes resueltos
+- [x] **M4-bug**: `sim.nace.applicable_standards.join` → TypeError → resuelto: `materialRecommendation()` ahora retorna `applicable_standards` array
+- [x] **Sprint E** — M1 teoría VLP, BEP, Leyes de Afinidad → ya implementado (ver Sprint E en mejoras.md)
 - [x] **Sprint G** — CERRADO: "cabeza/cabezal" es terminología técnica correcta para wellhead (Pwh). No hay reemplazo necesario.
 
 ---
@@ -188,6 +188,30 @@
 - Selector de tipo de impulsor por Ns
 - Número de etapas = TDH_requerida / head_por_etapa
 - Curva H-Q vs. curva de sistema graficada con Recharts
+
+---
+
+---
+
+## Sprint: Fase 1 — Mejoras v2.0 — 2026-03-22
+
+### ✅ Completado
+- [x] **Plan 3 fases** → agregado al final de `propuesta_mejoras_simbes_v2.md`
+- [x] **1.4 Code splitting** → `React.lazy()` + `Suspense` en `App.jsx`. Los 9 módulos se cargan bajo demanda.
+- [x] **1.3 Colebrook-White en M1** → `vlpPwf()` en `hydraulics.js` y `SIMBES_Modulo1.jsx` reemplaza `1.4e-5 × Q²` por Darcy-Weisbach completo. Importa `colebrookWhite` + `reynoldsNumber` de `hydraulics.js`.
+- [x] **1.2 localStorage M8 + M9** → M8: botones 💾/📂/↺ en panel de controles de `TabSimulador`. M9: botones en header del wizard + acción `LOAD_INPUTS` en reducer.
+- [x] **1.1 Responsive** → `clamp(16px, 3vw, 32px)` + `maxWidth: 1300` en M4–M8. `minWidth: 780, overflowX: auto` en flex containers de simuladores.
+- [x] **1.5 Componentes unificados** → `Metric` y `Alert` centralizados en `ui/index.jsx`. Eliminadas 8 declaraciones locales de `Metric` en steps de M9.
+- [x] **Hybrid font M5–M8** → `C.fontUI` (Outfit) en headers, tabs, botones. `C.font` (JetBrains Mono) en datos/métricas.
+- [x] **M4-bug `applicable_standards`** → resuelto en `electrical.js`.
+- [x] **README** → actualizado con M9 completo, mejoras UX, tipografía híbrida, Fase 1.
+
+### Revisión
+- Fase 1 completa sin cambios de arquitectura.
+- Bundle inicial reducido con code splitting.
+- M1 VLP más fiel al modelo Darcy-Weisbach real.
+- Los steps de M9 ahora consumen `Metric` centralizado (−5.4 KB de código duplicado).
+- Pendiente Fase 2: Módulo de Desafíos · Comparación de escenarios M8 · VLP multifásica educativa · Trazabilidad de evaluaciones.
 
 ---
 

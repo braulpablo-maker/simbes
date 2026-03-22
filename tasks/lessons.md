@@ -25,6 +25,10 @@ Después de cada corrección del usuario: registrar el patrón aquí para no rep
 **Confirmado**: Frontend usa physics/\*.js para todos los cálculos. Backend FastAPI no es llamado por el frontend.
 **Regla**: No modificar el backend pensando que afecta el frontend. Son capas independientes.
 
+## L07 — Actualizar README y tasks/ al cierre de cada sprint
+**Error**: Al completar la Fase 1 de mejoras, no se actualizaron README.md, tasks/todo.md (sección revisión) ni tasks/lessons.md sin que el usuario lo señalara explícitamente.
+**Regla**: Al terminar cualquier sprint o conjunto de tareas: (1) actualizar README con cambios visibles al usuario, (2) agregar sección "Revisión" en todo.md, (3) registrar lecciones nuevas en lessons.md. Esto es parte de la definición de "tarea terminada" según CLAUDE.md §4 y §Gestión de tareas punto 5-6.
+
 ## L06 — Generar notebook al completar cada módulo (regla permanente)
 **Instrucción del usuario**: Cada vez que se finalice un módulo completo, generar su notebook Jupyter en `notebooks/`.
 **Regla**: Al marcar un módulo como ✅ completado, la siguiente tarea inmediata es crear `notebooks/0N_nombre.ipynb` con: fórmulas en markdown + motor Python + ejemplos numéricos + gráficas matplotlib. Esto aplica a M1 (pendiente), M2, M3, M4, M5, M6, M7, M8.

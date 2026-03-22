@@ -11,26 +11,12 @@ import {
   CartesianGrid, Tooltip, ReferenceLine, ReferenceDot, Legend,
 } from 'recharts';
 import { buildIPRCurve, M3D_PER_STB } from '../../../../physics/ipr.js';
-import { AlertPanel } from '../../../ui/index.jsx';
+import { AlertPanel, Metric } from '../../../ui/index.jsx';
 
 import { C } from '../../../../theme';
 
 const IP_M3D_TO_STBD = 1 / 6.28981;
 
-function Metric({ label, value, unit, color = C.text, sub }) {
-  return (
-    <div style={{
-      background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
-      border: `1px solid ${C.border}`,
-    }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
-        {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
-      </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
-    </div>
-  );
-}
 
 export default function Step2_IPR({ inputs, step2, onAdvance, onBack }) {
   const { Q_m3d, AOF_m3d, drawdown_pct, zona, Q_relativo_aof, alerts, blocked } = step2;

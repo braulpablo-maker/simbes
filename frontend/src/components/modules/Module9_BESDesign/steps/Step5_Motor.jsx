@@ -6,24 +6,10 @@
  *
  * CICLO C: si T° ≥ T_nominal o v_anular < 0.30 m/s → agregar shroud.
  */
-import { AlertPanel } from '../../../ui/index.jsx';
+import { AlertPanel, Metric } from '../../../ui/index.jsx';
 
 import { C } from '../../../../theme';
 
-function Metric({ label, value, unit, color = C.text, sub }) {
-  return (
-    <div style={{
-      background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
-      border: `1px solid ${C.border}`,
-    }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
-        {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
-      </div>
-      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{sub}</div>}
-    </div>
-  );
-}
 
 function TempGauge({ T_op, T_rated }) {
   if (T_op == null || T_rated == null) return null;

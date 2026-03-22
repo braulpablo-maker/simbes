@@ -1,15 +1,68 @@
 /**
  * SIMBES — Átomos de UI reutilizables
  * =====================================
- * Param       → slider con etiqueta, valor y tooltip
+ * Slider      → slider estándar con ? hover tooltip (formato M2)
+ * Param       → wrapper genérico para controles no-slider
  * Metric      → métrica de solo lectura con valor calculado
  * AlertPanel  → panel de alertas OK / WARNING / DANGER
  * ControlGroup → agrupador de sliders por categoría
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { C } from '../../theme';
+
+// ─── Slider ──────────────────────────────────────────────────────
+
+/**
+ * Slider estándar con ? hover tooltip (mismo formato que M2).
+ *
+ * Props:
+ *   label       {string}   - Nombre de la variable
+ *   unit        {string}   - Unidad de la variable
+ *   value       {number}   - Valor actual
+ *   min         {number}
+ *   max         {number}
+ *   step        {number}
+ *   dec         {number}   - Decimales a mostrar (default 0)
+ *   onChange    {Function} - (value: number) => void
+ *   tooltip     {string}   - Texto explicativo (aparece al hover en ?)
+ *   accentColor {string}   - Color del valor y del acento del slider
+ */
+export function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip, accentColor = C.text, format }) {
+  const [showTip, setShowTip] = useState(false);
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ color: C.text, fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+          {tooltip && (
+            <span
+              style={{ cursor: 'pointer', color: C.muted, fontSize: 11, border: `1px solid ${C.border}`, borderRadius: 4, padding: '0 5px', lineHeight: '16px', userSelect: 'none' }}
+              onMouseEnter={() => setShowTip(true)}
+              onMouseLeave={() => setShowTip(false)}
+            >?</span>
+          )}
+        </div>
+        <span style={{ color: accentColor, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>
+          {format ? format(value) : <>{Number(value).toFixed(dec)} <span style={{ color: C.muted, fontWeight: 400, fontSize: 11 }}>{unit}</span></>}
+        </span>
+      </div>
+      {showTip && tooltip && (
+        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 6, padding: '8px 10px', marginBottom: 6, fontSize: 11, color: C.muted, lineHeight: 1.5, fontFamily: 'JetBrains Mono, monospace' }}>
+          {tooltip}
+        </div>
+      )}
+      <input type="range" min={min} max={max} step={step} value={value}
+        onChange={e => onChange(parseFloat(e.target.value))}
+        style={{ width: '100%', accentColor, cursor: 'pointer' }}
+      />
+      <div style={{ display: 'flex', justifyContent: 'space-between', color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }}>
+        <span>{min}</span><span>{max}</span>
+      </div>
+    </div>
+  );
+}
 
 // ─── Param ───────────────────────────────────────────────────────
 
@@ -63,17 +116,41 @@ export function Param({ label, value, min, max, step, unit, color = C.text,
  *   color   {string}
  *   tooltip {string}
  */
-export function Metric({ label, value, unit = '', color = C.text, tooltip }) {
+export function Metric({ label, value, unit = '', color = C.text, tooltip, sub, size = 20 }) {
   return (
     <div style={{
-      background: '#0D1424', borderRadius: 6, padding: '8px 12px',
-      border: `1px solid ${C.border}`, marginBottom: 8,
+      background: C.surfaceAlt, borderRadius: 6, padding: '10px 14px',
+      border: `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, color: C.muted, fontFamily: 'JetBrains Mono' }}
+      <div style={{ fontSize: 10, color: C.muted, fontFamily: C.font, marginBottom: 2 }}
         title={tooltip}>{label}</div>
-      <div style={{ fontSize: 20, color, fontFamily: 'JetBrains Mono', fontWeight: 700 }}>
-        {value} <span style={{ fontSize: 11, color: C.muted }}>{unit}</span>
+      <div style={{ fontSize: size, color, fontFamily: C.font, fontWeight: 700 }}>
+        {value} <span style={{ fontSize: 11, color: C.muted, fontWeight: 400 }}>{unit}</span>
       </div>
+      {sub && <div style={{ fontSize: 10, color: C.muted, fontFamily: C.font, marginTop: 2 }}>{sub}</div>}
+    </div>
+  );
+}
+
+// ─── Alert (ítem individual) ──────────────────────────────────────
+
+/**
+ * Alerta individual. Usar AlertPanel para listas de alertas.
+ *
+ * Props:
+ *   type  {'ok'|'warn'|'warning'|'danger'}
+ *   msg   {string}
+ */
+export function Alert({ type, msg }) {
+  const c = type === 'danger' ? C.danger : (type === 'warn' || type === 'warning') ? C.warning : C.ok;
+  const icon = type === 'danger' ? '🔴' : (type === 'warn' || type === 'warning') ? '🟡' : '🟢';
+  return (
+    <div style={{
+      background: c + '12', border: `1px solid ${c}40`,
+      borderRadius: 6, padding: '8px 12px',
+      fontSize: 10, color: c, fontFamily: C.font, lineHeight: 1.6,
+    }}>
+      {icon} {msg}
     </div>
   );
 }

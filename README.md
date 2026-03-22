@@ -142,7 +142,7 @@ jupyter lab
 | Capa | Tecnología |
 |---|---|
 | Frontend | React 18 · Vite · Recharts |
-| Tipografía | IBM Plex Mono (Google Fonts) |
+| Tipografía | Outfit (UI) + JetBrains Mono (datos/fórmulas) · Google Fonts |
 | Motor JS | Funciones puras en `src/physics/` (sin dependencias) |
 | Motor Python | Python 3.11+ · numpy · scipy |
 | API (opcional) | FastAPI · Pydantic · Uvicorn |
@@ -170,7 +170,7 @@ jupyter lab
 | M6 — Diagnóstico DIFA | ✅ Funcional | API RP 11S1 · árbol de diagnóstico · códigos 3700/4900/5400/5900 |
 | M7 — Confiabilidad / MTBF | ✅ Funcional | R(t) exponencial · MLE con censurados · intervalos Chi² |
 | M8 — Constructor de Escenarios | ✅ Funcional | Integración M1–M7 · Arps decline · análisis de plan temporal · comparación de escenarios |
-| M9 — Diseño BES (Wizard) | 🧪 Beta (pasos 0–7) | Candidatura 7 criterios · IPR inversa (Pwf estratégico) · PIP · volumen real bomba · TDH + selección serie · motor HP/corriente/T° · cable AWG + Arrhenius + THD · chequeo mecánico OD/dogleg |
+| M9 — Diseño BES (Wizard) | ✅ Funcional (pasos 0–11) | Candidatura 7 criterios · IPR inversa · PIP · volumen real bomba · TDH + selección serie · motor HP/corriente/T° · cable AWG + THD · mecánica OD/dogleg · evaluación de riesgos · set points operativos · validación económica · hoja de selección (export PDF/MD) |
 
 ### Mejoras de UX implementadas
 
@@ -178,3 +178,10 @@ jupyter lab
 - Tabs de módulo con `position: sticky` (no se pierden al hacer scroll)
 - Breadcrumb `SIMBES / M# · Nombre` en cada módulo
 - Unidades operativas en toda la UI (m³/d, m³/m³, m³/d/psi, °C)
+- **Estética Cyber Monitor**: tema oscuro Deep Navy + Electric Cyan (`theme.js` centralizado)
+- **Fuente híbrida**: Outfit para UI (headers, tabs, botones) · JetBrains Mono para datos/fórmulas/métricas
+- **Pestaña Teoría estandarizada**: `TheoryLayout` accordion en los 9 módulos
+- **Code splitting**: módulos cargados con `React.lazy()` (bundle inicial más liviano)
+- **Responsive básico**: `clamp()` en padding + `maxWidth: 1300` + scroll horizontal en simuladores
+- **Persistencia localStorage**: guardar/cargar escenario en M8 y M9
+- **Fricción VLP mejorada (M1)**: Darcy-Weisbach + Colebrook-White reemplaza simplificación `1.4e-5 × Q²`

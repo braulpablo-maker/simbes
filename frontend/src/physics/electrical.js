@@ -155,10 +155,14 @@ export function materialRecommendation(T_C, H2S_present, solvent_injection = fal
     warnings.push('H₂S presente: riesgo SSC. Requerido Lead Sheath (NACE MR0175).');
   }
 
+  const applicable_standards = ['API RP 11S6', 'NACE MR0175 / ISO 15156'];
+  if (H2S_present) applicable_standards.push('NACE MR0103');
+
   return {
     elastomer_recommendation: elastomer,
     cable_jacket,
     warnings,
     compliant: warnings.length === 0,
+    applicable_standards,
   };
 }
