@@ -204,9 +204,14 @@ function computeStep4(state, serie_id = null, f_manual = null) {
   const Q_total = s3.Q_total_m3d;
   const rho_kgL = (inp.API > 0 ? 141.5 / (inp.API + 131.5) : 0.85) * (1 - inp.BSW / 100) + 1.025 * (inp.BSW / 100);
 
-  // TDH corregido por PIP (H_static = D_bomba - PIP/gamma)
-  const tdhRaw = tdhComponents(Q_total, inp.D_bomba, inp.WHP, D_IN_TUBING, inp.visc * s3.H_factor, rho_kgL);
-  const H_static_corr = inp.D_bomba - (s3.PIP_psi / inp.gamma) * 0.3048;
+  // [SIMPLIFIED: GOR correction — free gas in tubing lightens the column → lower effective gamma]
+  const f_gas = Math.min(inp.GOR * 0.0004, 0.30);
+  const gamma_eff = inp.gamma * (1 - f_gas);
+  const rho_eff   = rho_kgL   * (1 - f_gas);
+
+  // TDH corregido por PIP (H_static = D_bomba - PIP/gamma_eff)
+  const tdhRaw = tdhComponents(Q_total, inp.D_bomba, inp.WHP, D_IN_TUBING, inp.visc * s3.H_factor, rho_eff);
+  const H_static_corr = inp.D_bomba - (s3.PIP_psi / gamma_eff) * 0.3048;
   const TDH_m  = Math.max(0, H_static_corr + tdhRaw.H_friction_m + tdhRaw.H_back_m);
   const TDH_components = { ...tdhRaw, H_static_m: +H_static_corr.toFixed(1), TDH_m: +TDH_m.toFixed(1) };
 
@@ -754,6 +759,45 @@ function reducer(state, action) {
       return { ...state, step8: s8, currentStep: 8, completedSteps: [...new Set([...state.completedSteps, 7])] };
     }
 
+    case 'CICLO_F': {
+      // Mapea el primer riesgo crítico al paso que puede corregirlo
+      const riesgosCriticos = (state.step8.riesgos ?? []).filter(r => r.estado === 'danger');
+      const primerNombre = riesgosCriticos[0]?.nombre ?? '';
+      const RISK_TO_STEP = {
+        'Gas lock': 3,
+        'Sobrecalentamiento motor': 5,
+        'Degradación de aislamiento': 6,
+        'Corrosión por H₂S': 6,
+        'Abrasión por sólidos': 4,
+      };
+      const targetStep = RISK_TO_STEP[primerNombre] ?? 3;
+      const log = {
+        ciclo: 'F', paso: 8,
+        condicion: `Riesgo crítico: ${primerNombre || 'múltiple'}`,
+        accion: `Ciclo F → regresar a PASO ${targetStep} para corrección`,
+        resultado: 'Pendiente',
+        idx: state.iterationLog.length,
+      };
+      // Desmarca el paso destino como completado y resetea todo lo posterior
+      const stepResets = {};
+      if (targetStep <= 3) stepResets.step3 = { ...state.step3, completado: false };
+      if (targetStep <= 4) stepResets.step4 = targetStep === 4 ? { ...state.step4, completado: false } : S4_INIT;
+      if (targetStep <= 5) stepResets.step5 = targetStep === 5 ? { ...state.step5, completado: false } : S5_INIT;
+      if (targetStep <= 6) stepResets.step6 = targetStep === 6 ? { ...state.step6, completado: false } : S6_INIT;
+      return {
+        ...state,
+        ...stepResets,
+        step7: S7_INIT,
+        step8: { ...S8_INIT, iteraciones_cicloF: (state.step8.iteraciones_cicloF || 0) + 1 },
+        step9: S9_INIT,
+        step10: S10_INIT,
+        step11: S11_INIT,
+        currentStep: targetStep,
+        completedSteps: state.completedSteps.filter(s => s < targetStep),
+        iterationLog: [...state.iterationLog, log],
+      };
+    }
+
     case 'COMPLETE_STEP_8': {
       return { ...state, step8: { ...state.step8, completado: true }, completedSteps: [...new Set([...state.completedSteps, 8])] };
     }
@@ -826,6 +870,7 @@ export function useBESDesign() {
     cicloE:              ()     => dispatch({ type: 'CICLO_E_REDUCE_OD' }),
     completeStep7:       ()     => dispatch({ type: 'COMPLETE_STEP_7' }),
     advanceStep8:        ()     => dispatch({ type: 'ADVANCE_TO_STEP_8' }),
+    cicloF:              ()     => dispatch({ type: 'CICLO_F' }),
     completeStep8:       ()     => dispatch({ type: 'COMPLETE_STEP_8' }),
     advanceStep9:        ()     => dispatch({ type: 'ADVANCE_TO_STEP_9' }),
     completeStep9:       ()     => dispatch({ type: 'COMPLETE_STEP_9' }),

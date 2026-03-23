@@ -329,6 +329,82 @@ function ChallengeSimulator({ ch, onBack, onSolve }) {
   );
 }
 
+// ── Directed Challenge View (M2–M4: no embedded simulator) ──────────────────
+function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved }) {
+  const [showExpl, setShowExpl] = useState(false);
+  const MODULE_LABELS = { M2: 'Diseño Hidráulico', M3: 'Gas y Multifásico', M4: 'Eléctrico / VSD' };
+
+  return (
+    <div style={{ maxWidth: 860, margin: '0 auto' }}>
+      {/* Back */}
+      <button onClick={onBack} style={{ background: 'transparent', border: `1px solid ${C.border}`, borderRadius: 6, color: C.muted, fontSize: 10, padding: '4px 12px', cursor: 'pointer', fontFamily: C.font, marginBottom: 20 }}>
+        ← Volver a desafíos
+      </button>
+
+      {/* Header */}
+      <div style={{ borderTop: `3px solid ${ch.color}`, background: ch.color + '08', border: `1px solid ${ch.color}30`, borderRadius: 10, padding: '18px 22px', marginBottom: 20 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+          <span style={{ fontSize: 9, color: ch.color, fontFamily: C.font, fontWeight: 700, letterSpacing: 2 }}>{ch.module} · {MODULE_LABELS[ch.module]}</span>
+          <span style={{ fontSize: 8, color: C.muted, fontFamily: C.fontUI, background: C.surface, padding: '2px 8px', borderRadius: 8 }}>{ch.difficulty}</span>
+        </div>
+        <h2 style={{ margin: '0 0 10px', fontSize: 18, fontWeight: 800, color: C.text, fontFamily: C.fontUI }}>{ch.title}</h2>
+        <p style={{ margin: 0, fontSize: 12, color: C.muted, fontFamily: C.fontUI, lineHeight: 1.8 }}>{ch.problem_description}</p>
+      </div>
+
+      {/* Datos iniciales */}
+      <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: '14px 18px', marginBottom: 16 }}>
+        <div style={{ fontSize: 9, color: C.muted, fontFamily: C.font, letterSpacing: 2, marginBottom: 10 }}>PARÁMETROS DE CONTEXTO</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {Object.entries(ch.initial_state).map(([k, v]) => (
+            <div key={k} style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 6, padding: '6px 10px', fontSize: 10, fontFamily: C.font }}>
+              <span style={{ color: C.muted }}>{k}: </span>
+              <span style={{ color: ch.color, fontWeight: 700 }}>{String(v)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Objetivo */}
+      <div style={{ background: C.surface, border: `1px solid ${ch.color}40`, borderRadius: 8, padding: '14px 18px', marginBottom: 16 }}>
+        <div style={{ fontSize: 9, color: ch.color, fontFamily: C.font, letterSpacing: 2, fontWeight: 700, marginBottom: 8 }}>OBJETIVO DEL DESAFÍO</div>
+        <p style={{ margin: 0, fontSize: 11, color: C.text, fontFamily: C.fontUI, lineHeight: 1.7 }}>{ch.success_criteria.description}</p>
+      </div>
+
+      {/* Hint */}
+      <div style={{ background: '#FBBF2408', border: '1px solid #FBBF2440', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 11, color: '#FCD34D', fontFamily: C.fontUI, lineHeight: 1.7 }}>
+        💡 <strong>Pista:</strong> {ch.hint}
+      </div>
+
+      {/* Botones */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>
+          Abre el <strong style={{ color: ch.color }}>{ch.module} · {MODULE_LABELS[ch.module]}</strong> en el Hub para resolver este desafío.
+        </div>
+        {!alreadySolved && (
+          <button onClick={() => { onSolve(ch.id); setShowExpl(true); }}
+            style={{ background: ch.color + '18', border: `1px solid ${ch.color}`, color: ch.color, fontFamily: C.font, fontSize: 11, padding: '8px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 700 }}>
+            ✓ Marcar como resuelto
+          </button>
+        )}
+        {alreadySolved && !showExpl && (
+          <button onClick={() => setShowExpl(true)}
+            style={{ background: C.ok + '18', border: `1px solid ${C.ok}`, color: C.ok, fontFamily: C.font, fontSize: 11, padding: '8px 18px', borderRadius: 6, cursor: 'pointer' }}>
+            Ver explicación
+          </button>
+        )}
+      </div>
+
+      {/* Explanation */}
+      {showExpl && (
+        <div style={{ marginTop: 20, background: ch.color + '0A', border: `1px solid ${ch.color}40`, borderRadius: 10, padding: '16px 20px' }}>
+          <div style={{ fontSize: 9, color: ch.color, fontFamily: C.font, fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>EXPLICACIÓN</div>
+          <p style={{ margin: 0, fontSize: 11, color: C.muted, lineHeight: 1.9, fontFamily: C.fontUI }}>{ch.explanation}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Component ───────────────────────────────────────────────────────────
 export default function ModuleChallenges({ onBack }) {
   const [selected,  setSelected]  = useState(null);
@@ -346,7 +422,10 @@ export default function ModuleChallenges({ onBack }) {
     const ch = CHALLENGES.find(c => c.id === selected);
     return (
       <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: '100vh', color: C.text, padding: '24px 28px' }}>
-        <ChallengeSimulator ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} />
+        {ch.simulator === 'directed'
+          ? <DirectedChallengeView ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} alreadySolved={completed.includes(ch.id)} />
+          : <ChallengeSimulator ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} />
+        }
       </div>
     );
   }

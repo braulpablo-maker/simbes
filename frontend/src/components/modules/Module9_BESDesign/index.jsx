@@ -102,7 +102,7 @@ export default function Module9_BESDesign() {
     advanceStep5, cicloC, completeStep5,
     advanceStep6, cicloD, completeStep6,
     advanceStep7, cicloE, completeStep7,
-    advanceStep8, completeStep8,
+    advanceStep8, cicloF, completeStep8,
     advanceStep9, completeStep9,
     advanceStep10, completeStep10,
     advanceStep11,
@@ -305,6 +305,7 @@ export default function Module9_BESDesign() {
           <Step8_Risks
             inputs={inputs}
             step8={step8}
+            onCicloF={cicloF}
             onComplete={completeStep8}
             onAdvance={advanceStep9}
             onBack={() => jumpToStep(7)}

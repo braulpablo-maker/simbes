@@ -193,6 +193,27 @@
 
 ---
 
+## Sprint: Mejoras v2.0 Fase 2 — 2026-03-23
+
+### Objetivo
+Convertir SimBES de simulador exploratorio a herramienta de formación continua.
+
+### ✅ Completado
+- [x] **M9 Ciclo F** → acción `CICLO_F` en reducer: mapea riesgo crítico → paso destino (3/4/5/6), resetea pasos posteriores, registra en `iterationLog`. `cicloF` exportado del hook. `onCicloF` conectado en `index.jsx`. Build limpio.
+
+### ✅ Completado
+- [x] **M9 Ciclo F** → acción `CICLO_F` en reducer: mapea riesgo crítico → paso destino (3/4/5/6), resetea pasos posteriores, registra en `iterationLog`. `cicloF` exportado del hook. `onCicloF` conectado en `index.jsx`.
+- [x] **VLP multifásica educativa (M1 y M9)** → slider GOR (0–500 m³/m³) en M1. `f_gas = min(GOR × 0.0004, 0.30)`. `grad_eff = grad × (1 - f_gas)` en `computeSim()`. M9: `gamma_eff` y `rho_eff` en `computeStep4()`. Marcado `[SIMPLIFIED]`. Build limpio.
+- [x] **Trazabilidad de evaluaciones en Hub** → ya implementada: evaluaciones escriben `simbes_eval_{id}` al localStorage; Hub los lee. IDs m1–m8 coinciden.
+- [x] **Desafíos PBL M2–M4** → 6 nuevos desafíos en `challenges.json` (ch5–ch10). `DirectedChallengeView` en `ModuleChallenges.jsx` para desafíos `simulator: "directed"`. Grilla actualizada (10 desafíos total).
+
+### Criterios de aceptación
+- VLP: la curva VLP cambia visiblemente al modificar BSW o GOR en M1.
+- Hub: el porcentaje de progreso de cada módulo refleja el score de su evaluación Tab D.
+- Desafíos: cada nuevo desafío tiene `initial_state`, `problem_description` y `success_criteria`.
+
+---
+
 ## Sprint: Fase 1 — Mejoras v2.0 — 2026-03-22
 
 ### ✅ Completado

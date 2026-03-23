@@ -75,5 +75,131 @@
     },
     "hint": "Aumenta la frecuencia gradualmente desde 50 Hz. Monitorea el drawdown y las alertas simultáneamente. Hay una ventana estrecha donde se cumplen ambas condiciones.",
     "explanation": "Este problema integra las restricciones operativas clave: el drawdown máximo (protección de la formación) y el rango BEP (protección de la bomba). La frecuencia óptima balancea ambas restricciones. En campo, este análisis se realiza periódicamente a medida que Pr declina por agotamiento del yacimiento, ajustando la frecuencia del VSD para mantener el punto de operación óptimo."
+  },
+  {
+    "id": "ch5",
+    "title": "TDH Insuficiente — Pozo Ibis-3",
+    "module": "M2",
+    "simulator": "directed",
+    "difficulty": "básico",
+    "color": "#34D399",
+    "problem_description": "El Pozo Ibis-3 fue recompletado a 3200 m. El informe de ingeniería indica un TDH requerido de 2100 m pero la bomba instalada (48 etapas × 35 m/etapa = 1680 m) no alcanza para sostener el punto de operación a 60 Hz. El pozo no produce. Tu tarea: en el Módulo 2, calcula el número de etapas necesarias para un TDH de 2100 m usando tubing 3.5\" (ID = 2.992\") con Q = 180 m³/d.",
+    "initial_state": {
+      "Q_m3d": 180, "D_bomba_m": 3200, "Pwh_psi": 150, "D_in_tubing": 2.992,
+      "visc_cP": 3, "rho_kgL": 0.876, "H_stage_m": 35, "freq": 60
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M2",
+      "target_value": "etapas ≥ 60",
+      "description": "Calcula que se necesitan al menos 60 etapas para alcanzar TDH ≥ 2100 m"
+    },
+    "hint": "En M2, ajusta Q = 180 m³/d, profundidad 3200 m. Observa el TDH total. Divide TDH_total / head_por_etapa para determinar el número mínimo de etapas.",
+    "explanation": "TDH = H_estática + H_fricción + H_contrapresión. A 3200 m de profundidad con fluido de 0.876 kg/L, la cabeza estática domina. La fricción Darcy-Weisbach aumenta con Q² — por eso es crítico seleccionar el número correcto de etapas. 48 etapas eran suficientes para 2400 m pero no para 3200 m. La recompletación cambió el requerimiento hidráulico."
+  },
+  {
+    "id": "ch6",
+    "title": "Degradación por Viscosidad — Pozo Heron-5",
+    "module": "M2",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#6EE7B7",
+    "problem_description": "El Pozo Heron-5 produce un crudo pesado de 18°API (viscosidad 85 cP). El diseño original fue calculado para 5 cP. Al medir el rendimiento real, la bomba entrega 30% menos cabeza de lo esperado. El jefe de campo sospecha de un problema mecánico. Tu tarea: en el Módulo 2, aplica la corrección de viscosidad Hydraulic Institute (HI) con 85 cP y determina si el problema es mecánico o hidráulico.",
+    "initial_state": {
+      "Q_m3d": 120, "D_bomba_m": 1800, "Pwh_psi": 100, "D_in_tubing": 2.992,
+      "visc_cP": 85, "rho_kgL": 0.946, "H_stage_m": 40, "freq": 60
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M2",
+      "target_value": "factor H < 0.85",
+      "description": "Verifica que el factor de corrección de cabeza CH < 0.85 — confirma causa hidráulica, no mecánica"
+    },
+    "hint": "En M2, ingresa viscosidad = 85 cP. Observa los factores CH, CQ y CE de la corrección HI. Si CH < 0.85, la degradación de la cabeza es normal para esa viscosidad.",
+    "explanation": "La corrección Hydraulic Institute (HI) es determinante para crudos pesados. A 85 cP, CH ≈ 0.72 — significa que la bomba entrega naturalmente 28% menos cabeza que a baja viscosidad. El 'problema' reportado es físicamente esperado y no hay falla mecánica. La solución correcta es agregar más etapas o cambiar a una bomba de menor Ns optimizada para fluidos viscosos."
+  },
+  {
+    "id": "ch7",
+    "title": "Gas Lock Inminente — Pozo Flamenco-2",
+    "module": "M3",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#A78BFA",
+    "problem_description": "El Pozo Flamenco-2 opera con GOR = 320 m³/m³ y la presión en la succión de la bomba (PIP) es de 890 psi. La presión de burbuja del fluido es Pb = 2100 psi. Después de 3 semanas de producción, la corriente del motor baja erráticamente y el pozo empieza a ciclar. El operador reporta que el VSD hace disparos por undercurrent. Identifica la causa y la solución en el Módulo 3.",
+    "initial_state": {
+      "GOR_scf": 1796, "Pb_psi": 2100, "PIP_psi": 890, "T_fond_F": 230,
+      "Q_m3d": 95, "BSW": 15, "separador_tipo": null
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M3",
+      "target_value": "GVF > 15% — seleccionar separador AGS",
+      "description": "Determina que GVF en succión > 15% y selecciona el separador adecuado (AGS rotativo o gas handler)"
+    },
+    "hint": "En M3, calcula el GVF con PIP = 890 psi y GOR = 320 m³/m³. Si GVF > 15%, hay riesgo de gas lock. Evalúa si un AGS rotativo o un gas handler resuelve el problema.",
+    "explanation": "Con PIP = 890 psi < Pb = 2100 psi, el 57% del GOR ya se encuentra en fase libre en la succión. El GVF supera el 30%, causando gas lock intermitente. Los disparos de undercurrent ocurren cuando la bomba pierde succión de líquido. Un AGS rotativo puede manejar hasta 50% GVF en succión; un gas handler, hasta 70%. La solución correcta aquí es AGS rotativo — el gas handler sería sobredimensionamiento costoso."
+  },
+  {
+    "id": "ch8",
+    "title": "Emulsión Severa — Pozo Cigüeña-1",
+    "module": "M3",
+    "simulator": "directed",
+    "difficulty": "avanzado",
+    "color": "#C084FC",
+    "problem_description": "El Pozo Cigüeña-1 produce con BSW = 55% y crudo de 22°API. El laboratorio reporta que la mezcla forma una emulsión estable con viscosidad aparente de 450 cP (muy superior a los 12 cP del crudo puro). La bomba actual fue diseñada para 12 cP. El caudal real es 65% menor al diseñado. Usa el Módulo 3 para evaluar el impacto de la corrección HI a 450 cP y determinar si se puede recuperar producción.",
+    "initial_state": {
+      "Q_m3d": 200, "BSW": 55, "visc_cP": 450, "API": 22,
+      "GVF_efectivo": 0.05, "separador_tipo": "ags_rotativo"
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M3",
+      "target_value": "CE < 0.55 — eficiencia reducida > 45%",
+      "description": "Verifica que CE < 0.55 y evalúa que la solución requiere rompe-emulsión o cambio de bomba"
+    },
+    "hint": "En M3, ingresa viscosidad = 450 cP. Observa CE (factor de eficiencia HI). Si CE < 0.55, la potencia consumida aumenta drásticamente. El operador debe elegir entre tratamiento químico (rompe-emulsión) o bomba especial para fluidos viscosos.",
+    "explanation": "A 450 cP, los factores HI son aproximadamente: CH ≈ 0.56, CQ ≈ 0.78, CE ≈ 0.44. Esto significa que la bomba consume 2.3× más potencia por barril producido y la cabeza disponible cae 44%. El caudal bajo observado es consecuencia directa. El rompe-emulsión químico en cabezal puede reducir la viscosidad efectiva a 30–60 cP, recuperando casi todo el rendimiento. Este es uno de los problemas más subestimados en campos maduros con alto corte de agua."
+  },
+  {
+    "id": "ch9",
+    "title": "Caída de Voltaje Crítica — Pozo Águila-8",
+    "module": "M4",
+    "simulator": "directed",
+    "difficulty": "básico",
+    "color": "#F472B6",
+    "problem_description": "El Pozo Águila-8 tiene una bomba BES a 2900 m de profundidad. El motor requiere 85 A y el cable instalado es AWG #6. La temperatura de fondo es 135°C. Al medir en superficie, el voltaje en el motor es 12% más bajo que el nominal (4160 V). La norma del operador permite máximo 8% de caída. El motor opera caliente y hay riesgo de disparo por subtensión. Identifica el calibre correcto en el Módulo 4.",
+    "initial_state": {
+      "AWG": 6, "I_A": 85, "depth_ft": 9514, "T_fond_C": 135, "T_sup_C": 25,
+      "V_motor": 4160, "VSD_tipo": "standard_6pulse"
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M4",
+      "target_value": "AWG ≤ 2 para caída < 8%",
+      "description": "Determina que se necesita AWG #2 o mayor para reducir la caída de voltaje a ≤ 8%"
+    },
+    "hint": "En M4, prueba diferentes calibres AWG (6, 4, 2, 1) con I = 85 A y profundidad 2900 m. La resistencia del cable aumenta con la temperatura (coeficiente α del cobre). Busca el calibre donde la caída de voltaje ≤ 8%.",
+    "explanation": "La caída de voltaje en cable BES es: V_drop = I × R_T × 2L (ida y vuelta). R_T = R_20°C × (1 + 0.00393 × (T - 20)). A 135°C, R aumenta un 45% respecto a 20°C. El AWG #6 tiene R_20°C ≈ 0.132 Ω/100m; a 135°C → 0.191 Ω/100m. Con 2×2900 m = 5800 m de cable, V_drop = 85 × 0.191 × 58 ≈ 940 V (22.6% de 4160 V). El AWG #2 reduce esto a ~6%, dentro de norma."
+  },
+  {
+    "id": "ch10",
+    "title": "THD Fuera de Norma IEEE 519 — Pozo Halcón-4",
+    "module": "M4",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#FB923C",
+    "problem_description": "El Pozo Halcón-4 usa un VSD estándar de 6 pulsos. La medición de calidad de energía en el Punto de Acoplamiento Común (PCC) arroja THDv = 28%. El límite de IEEE 519-2014 es 5% en el PCC. La compañía debe presentar un plan de corrección al operador de red antes de 60 días. Evalúa las opciones tecnológicas en el Módulo 4 y determina cuál cumple la norma.",
+    "initial_state": {
+      "VSD_tipo": "standard_6pulse", "THD_medido_pct": 28,
+      "limite_ieee519_pct": 5, "potencia_HP": 250
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M4",
+      "target_value": "AFE o 18 pulsos para THD < 5%",
+      "description": "Identifica que AFE (Active Front End) o VSD 18 pulsos son las únicas opciones que cumplen IEEE 519-2014"
+    },
+    "hint": "En M4, compara el THD estimado para cada topología VSD: 6 pulsos, 12 pulsos, 18 pulsos y AFE. El límite de IEEE 519 es 5% de THDv en el PCC. Solo dos topologías cumplen la norma — ¿cuáles son?",
+    "explanation": "THD por topología (referencia IEEE / fabricantes): 6 pulsos: 25–35% | 12 pulsos: 15–20% | 18 pulsos: <5% | AFE: <3%. El VSD 12 pulsos NO cumple IEEE 519. Las opciones válidas son: (1) VSD 18 pulsos — menor costo, solución pasiva, eficaz para instalaciones nuevas; (2) AFE — mayor costo pero también actúa como regenerativo (devuelve energía de frenado). Para instalaciones existentes, un filtro activo de armónicos en paralelo puede reducir el THD del 6 pulsos a < 5% sin reemplazar el VSD."
   }
 ]

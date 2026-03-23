@@ -104,10 +104,14 @@ function findOpPoint(Pr, Pb, IP, depth, Pwh, freq, grad) {
 function bepQ(freq) { return 2100 * (freq / 60); }
 
 // ── Compute simulation results for given inputs ──────────
-function computeSim(Pr, safePb, safeIP_m3dpsi, depth_m, Pwh, freq, densidad) {
+function computeSim(Pr, safePb, safeIP_m3dpsi, depth_m, Pwh, freq, densidad, GOR = 0) {
   const depth_ft = depth_m * FT_PER_M;
   const IP_stbd  = safeIP_m3dpsi / M3D_PER_STB;
-  const grad     = densidad * 0.4335;
+  // [SIMPLIFIED: gas correction to VLP gradient — avg GVF in tubing proportional to GOR]
+  // Lighter mixture (gas+liquid) in tubing → lower hydrostatic head → lower Pwf required → VLP shifts DOWN
+  // At GOR=250 m³/m³ → f_gas≈10% → grad reduces 10% → VLP curve drops, Q_op increases
+  const f_gas = Math.min(GOR * 0.0004, 0.30);
+  const grad  = densidad * 0.4335 * (1 - f_gas);
   const aof_stbd = calcAOF(Pr, safePb, IP_stbd);
   const aof      = aof_stbd * M3D_PER_STB;
   const qb       = IP_stbd * Math.max(Pr - safePb, 0) * M3D_PER_STB;
@@ -287,7 +291,7 @@ function TabTeoria() {
 // ═══════════════════════════════════════════════════════
 //  TAB B — SIMULADOR (with tooltips)
 // ═══════════════════════════════════════════════════════
-function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq, BSW, setBSW }) {
+function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq, BSW, setBSW, GOR, setGOR }) {
   const safePb = Math.min(Pb, Pr - 50);
   const safeIP = Math.max(0.02, IP);
 
@@ -297,8 +301,8 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
   const densidadEfectiva = (1 - BSW / 100) * densidad + (BSW / 100) * RHO_AGUA;
 
   const { chartData, aof, qb, opPoint, alerts, bep_m3d } = useMemo(
-    () => computeSim(Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva),
-    [Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva]
+    () => computeSim(Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva, GOR),
+    [Pr, safePb, safeIP, depth, Pwh, freq, densidadEfectiva, GOR]
   );
   const dd = opPoint ? Math.round((Pr - opPoint.Pwf) / Pr * 100) : null;
 
@@ -335,6 +339,10 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
             value={BSW} min={0} max={80} step={5} dec={0}
             onChange={setBSW} accentColor="#60A5FA"
             tooltip={`Basic Sediment & Water. ρ_mezcla = (1−BSW)·ρ_petróleo + BSW·1.074 kg/L → grad efectivo ≈ ${(densidadEfectiva * 0.4335).toFixed(3)} psi/ft. [SIMPLIFIED]`} />
+          <Slider label="GOR — Relación Gas-Petróleo" unit="m³/m³"
+            value={GOR} min={0} max={500} step={25} dec={0}
+            onChange={setGOR} accentColor="#34D399"
+            tooltip={`Gas-Oil Ratio en condiciones de superficie. Aligerana la columna de fluido en el tubing → VLP baja → Q_op sube. Reducción de gradiente: ${(Math.min(GOR * 0.0004, 0.30) * 100).toFixed(0)}%. [SIMPLIFIED — no modela gas lock ni degradación H-Q]`} />
         </ControlGroup>
 
         <ControlGroup title="■ VSD — Variador de Frecuencia" accent="#F472B6">
@@ -386,7 +394,7 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
           <span style={{ color: "#38BDF8", fontWeight: 700 }}>PUNTO DE OPERACIÓN · </span>
           Intersección de la curva <span style={{ color: "#38BDF8" }}>IPR</span> y la curva <span style={{ color: "#34D399" }}>VLP</span>.
           Modifica la <span style={{ color: "#F472B6" }}>frecuencia del VSD</span> para mover el punto de operación.
-          {` Petróleo: ${densidad.toFixed(3)} kg/L · BSW: ${BSW}% → ρ_mezcla: ${densidadEfectiva.toFixed(3)} kg/L → grad: ${(densidadEfectiva * 0.4335).toFixed(3)} psi/ft.`}
+          {` Petróleo: ${densidad.toFixed(3)} kg/L · BSW: ${BSW}% → ρ_mezcla: ${densidadEfectiva.toFixed(3)} kg/L · GOR: ${GOR} m³/m³ → grad_eff: ${(densidadEfectiva * 0.4335 * (1 - Math.min(GOR * 0.0004, 0.30))).toFixed(3)} psi/ft.`}
         </div>
       </div>
     </div>
@@ -653,6 +661,7 @@ export default function SIMBES_M1() {
   const [freq,     setFreq]     = useState(60);
   const [densidad, setDensidad] = useState(0.876);
   const [BSW,      setBSW]      = useState(0);
+  const [GOR,      setGOR]      = useState(0);
 
   return (
     <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", background: "#0F172A", minHeight: "100vh", color: "#F1F5F9", padding: "20px 24px" }}>
@@ -686,6 +695,7 @@ export default function SIMBES_M1() {
           Pwh={Pwh} setPwh={setPwh} densidad={densidad} setDensidad={setDensidad}
           freq={freq} setFreq={setFreq}
           BSW={BSW} setBSW={setBSW}
+          GOR={GOR} setGOR={setGOR}
         />
       )}
       {activeTab === "caso" && <TabCaso />}
