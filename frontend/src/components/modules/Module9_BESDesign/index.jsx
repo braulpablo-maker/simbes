@@ -52,6 +52,7 @@ function StepBar({ currentStep, completedSteps, onJump }) {
         const isCompleted = completedSteps.includes(s.id);
         const isCurrent   = currentStep === s.id;
         const isClickable = s.active && (isCompleted || isCurrent);
+        const isFuture    = s.active && !isCompleted && !isCurrent;
         const color = !s.active ? C.muted
                     : isCompleted ? C.ok
                     : isCurrent   ? C.indigo
@@ -62,21 +63,23 @@ function StepBar({ currentStep, completedSteps, onJump }) {
             <button
               onClick={() => isClickable ? onJump(s.id) : null}
               disabled={!isClickable}
-              title={!s.active ? 'Disponible en versión final' : s.title}
+              title={isFuture ? 'Completá los pasos anteriores para desbloquear' : !s.active ? 'Disponible en versión final' : s.title}
               style={{
                 background: isCurrent ? `${C.indigo}18` : 'transparent',
-                border: `1px solid ${isCurrent ? C.indigo : isCompleted ? C.ok : C.border}`,
+                border: `1px ${isFuture ? 'dashed' : 'solid'} ${isCurrent ? C.indigo : isCompleted ? C.ok : C.border}`,
                 borderRadius: 6, padding: '4px 10px',
                 color, fontFamily: C.fontUI, fontSize: 9,
                 cursor: isClickable ? 'pointer' : 'not-allowed',
-                opacity: !s.active ? 0.3 : 1,
+                opacity: !s.active ? 0.3 : isFuture ? 0.4 : 1,
                 whiteSpace: 'nowrap', letterSpacing: 0.5,
                 display: 'flex', gap: 4, alignItems: 'center',
+                transition: 'opacity 0.2s ease',
               }}>
               {isCompleted && <span style={{ fontSize: 9 }}>✓</span>}
               <span style={{ fontWeight: isCurrent ? 700 : 400 }}>{s.label}</span>
               <span style={{ opacity: 0.6 }}>{s.title}</span>
               {!s.active && <span style={{ fontSize: 8, opacity: 0.5 }}>🔒</span>}
+              {isFuture && <span style={{ fontSize: 8, opacity: 0.5 }}>🔒</span>}
             </button>
             {i < STEPS.length - 1 && (
               <span style={{ color: C.border, fontSize: 10 }}>›</span>

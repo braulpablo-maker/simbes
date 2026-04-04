@@ -358,7 +358,7 @@ export default function Hub({ onNavigate }) {
           <div>
             <div style={{ fontSize: 10, color: C.primary, fontFamily: C.fontUI, fontWeight: 700, letterSpacing: 2, marginBottom: 4 }}>MODO DESAFÍOS</div>
             <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: C.fontUI, marginBottom: 2 }}>Desafíos de Campo BES</div>
-            <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>4 escenarios · Aprendizaje Basado en Problemas · Identifica causas raíz con el simulador</div>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>10 escenarios · Aprendizaje Basado en Problemas · Identifica causas raíz con el simulador</div>
           </div>
           <div style={{
             background: C.primary + '22', border: `1px solid ${C.primary}55`,

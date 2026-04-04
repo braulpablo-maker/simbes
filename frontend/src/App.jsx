@@ -30,7 +30,7 @@ const BTN = {
   borderRadius: 4, cursor: "pointer", fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
 };
 
-function NavBar({ moduleId, onBack, onPrev, onNext }) {
+function NavBar({ moduleId, onBack, onPrev, onNext, prevLabel, nextLabel }) {
   return (
     <div style={{
       background: "#0B0F1A", borderBottom: "1px solid #1E293B",
@@ -46,10 +46,10 @@ function NavBar({ moduleId, onBack, onPrev, onNext }) {
       </span>
       <div style={{ flex: 1 }} />
       <button onClick={onPrev} disabled={!onPrev} style={{ ...BTN, opacity: onPrev ? 1 : 0.3, cursor: onPrev ? "pointer" : "default" }}>
-        ← anterior
+        {prevLabel ? `← ${prevLabel}` : "← anterior"}
       </button>
       <button onClick={onNext} disabled={!onNext} style={{ ...BTN, opacity: onNext ? 1 : 0.3, cursor: onNext ? "pointer" : "default" }}>
-        siguiente →
+        {nextLabel ? `${nextLabel} →` : "siguiente →"}
       </button>
     </div>
   );
@@ -69,7 +69,14 @@ export default function App() {
   const ModuleComponent = MODULES[activeModule];
   return (
     <div>
-      <NavBar moduleId={activeModule} onBack={() => setActiveModule(null)} onPrev={onPrev} onNext={onNext} />
+      <NavBar
+        moduleId={activeModule}
+        onBack={() => setActiveModule(null)}
+        onPrev={onPrev}
+        onNext={onNext}
+        prevLabel={idx > 0 ? MODULE_LABELS[MODULE_ORDER[idx - 1]] : null}
+        nextLabel={idx < MODULE_ORDER.length - 1 ? MODULE_LABELS[MODULE_ORDER[idx + 1]] : null}
+      />
       <Suspense fallback={
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "#64748B", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, letterSpacing: 2 }}>
           CARGANDO MÓDULO…

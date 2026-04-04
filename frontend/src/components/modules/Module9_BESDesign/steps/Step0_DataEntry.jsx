@@ -118,8 +118,47 @@ function SelectField({ label, field, value, options, onChange }) {
 
 // ── Componente principal ─────────────────────────────────────────
 export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, onValidate, onAdvance }) {
+  const [validated, setValidated] = useState(false);
+
+  const handleValidate = () => {
+    onValidate();
+    setValidated(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ padding: '24px 0' }}>
+
+      {/* Validation feedback banner (BUG-003 fix) */}
+      {validated && (
+        <div style={{
+          background: step0Valid ? `${C.ok}15` : `${C.danger}15`,
+          border: `1px solid ${step0Valid ? C.ok : C.danger}50`,
+          borderRadius: 8, padding: '12px 16px', marginBottom: 16,
+          fontFamily: 'JetBrains Mono, monospace', fontSize: 12,
+          color: step0Valid ? C.ok : C.danger,
+          display: 'flex', alignItems: 'center', gap: 10,
+          animation: 'fadeIn 0.3s ease',
+        }}>
+          {step0Valid ? (
+            <>
+              <span style={{ fontSize: 16 }}>✅</span>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 2 }}>Datos válidos — Continuá al Paso 1</div>
+                <div style={{ fontSize: 11, opacity: 0.8 }}>Todos los campos pasaron la validación. Hacé click en CONTINUAR para avanzar.</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <span style={{ fontSize: 16 }}>❌</span>
+              <div>
+                <div style={{ fontWeight: 700, marginBottom: 2 }}>{Object.keys(errors).length} campo(s) con error</div>
+                <div style={{ fontSize: 11, opacity: 0.8 }}>Corregí los campos marcados en rojo antes de continuar.</div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Instrucción */}
       <div style={{
@@ -233,7 +272,7 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
       {/* Botón Validar / Continuar */}
       <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
         <button
-          onClick={onValidate}
+          onClick={handleValidate}
           style={{
             background: C.surface, border: `1px solid ${C.border}`,
             color: C.muted, fontFamily: 'JetBrains Mono, monospace',
@@ -260,3 +299,4 @@ export default function Step0_DataEntry({ inputs, errors, step0Valid, onUpdate, 
     </div>
   );
 }
+
