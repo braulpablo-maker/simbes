@@ -23,6 +23,7 @@ const MODULES = [
     title: "Análisis Nodal · IPR",
     subtitle: "Darcy · Vogel · Leyes de Afinidad",
     status: "available",
+    difficulty: 1, prereqs: [],
     topics: [
       "IPR Darcy (zona lineal, Pwf ≥ Pb)",
       "IPR Vogel (zona bifásica, Pwf < Pb)",
@@ -39,6 +40,7 @@ const MODULES = [
     title: "Diseño Hidráulico",
     subtitle: "TDH · Colebrook-White · Ns",
     status: "available",
+    difficulty: 2, prereqs: ["M01"],
     topics: [
       "TDH: estática + fricción + contrapresión",
       "Factor de fricción Colebrook-White",
@@ -54,6 +56,7 @@ const MODULES = [
     title: "Gas y Multifásico",
     subtitle: "GVF · Gas Lock · AGS",
     status: "available",
+    difficulty: 2, prereqs: ["M01", "M02"],
     topics: [
       "GVF en succión de la bomba",
       "Umbral de gas lock (15% GVF)",
@@ -69,6 +72,7 @@ const MODULES = [
     title: "Eléctrico · VSD",
     subtitle: "Cable · THD · Arrhenius",
     status: "available",
+    difficulty: 2, prereqs: ["M01"],
     topics: [
       "Caída de voltaje en cable vs. temperatura",
       "Regla de Arrhenius: cada 10°C → vida ÷ 2",
@@ -84,6 +88,7 @@ const MODULES = [
     title: "Sensores y Monitoreo",
     subtitle: "Amperimétricas · P/T · Vibración",
     status: "available",
+    difficulty: 2, prereqs: ["M01", "M02"],
     topics: [
       "Interpretación de cartas amperimétricas",
       "Sensores downhole: presión y temperatura",
@@ -99,6 +104,7 @@ const MODULES = [
     title: "Diagnóstico DIFA",
     subtitle: "API RP 11S1 · Árbol de Fallas",
     status: "available",
+    difficulty: 3, prereqs: ["M01–M05"],
     topics: [
       "Metodología DIFA / API RP 11S1",
       "Árbol de diagnóstico causa-efecto",
@@ -114,6 +120,7 @@ const MODULES = [
     title: "Confiabilidad · MTBF",
     subtitle: "Exponencial · Censurados · Chi²",
     status: "available",
+    difficulty: 3, prereqs: ["Estadística básica"],
     topics: [
       "R(t) = e^(−t/MTBF) — distribución exponencial",
       "R(MTBF) = e⁻¹ ≈ 36.77%",
@@ -127,16 +134,17 @@ const MODULES = [
   {
     id: "m8", number: 8, color: "#E2E8F0",
     title: "Constructor de Escenarios",
-    subtitle: "Integración completa · Modo libre",
+    subtitle: "Integración completa · Modo libre · Decline Arps",
     status: "available",
+    difficulty: 2, prereqs: ["M01–M04"],
     topics: [
       "Configuración libre de todos los subsistemas",
       "Análisis integrado IPR + Hidráulica + Gas + Eléctrico",
       "Comparación de dos escenarios en pantalla dividida",
+      "E · Modo Plan · Arps — análisis de decline de producción",
       "Exportación de resultados a PDF",
-      "Diseño completo de un sistema BES",
     ],
-    badge: "✅ Disponible",
+    badge: "✅ Disponible · 5 pestañas (A–E)",
     badgeColor: "#22C55E",
   },
   {
@@ -144,6 +152,7 @@ const MODULES = [
     title: "Flujo de Diseño BES",
     subtitle: "Wizard secuencial · 12 pasos · Pwf estratégico",
     status: "available",
+    difficulty: 3, prereqs: ["M01–M08"],
     topics: [
       "Pwf como decisión estratégica de yacimientos (no resultado)",
       "Candidatura BES: 7 criterios ✅/⚠️/❌",
@@ -155,6 +164,9 @@ const MODULES = [
     badgeColor: "#22C55E",
   },
 ];
+
+const DIFF_LABEL = ['', '⭐ Básico', '⭐⭐ Intermedio', '⭐⭐⭐ Avanzado'];
+const DIFF_COLOR = ['', '#22C55E', '#F59E0B', '#EF4444'];
 
 function ModuleCard({ mod, onEnter, hovered, onHover, score }) {
   const available = mod.status === "available";
@@ -191,15 +203,30 @@ function ModuleCard({ mod, onEnter, hovered, onHover, score }) {
         }}>
           M{String(mod.number).padStart(2, "0")}
         </div>
-        <span style={{
-          fontSize: 9, color: mod.badgeColor, letterSpacing: 0.5,
-          fontFamily: C.fontUI, fontWeight: 600,
-          background: mod.badgeColor + "18",
-          padding: "2px 8px", borderRadius: 10,
-          border: `1px solid ${mod.badgeColor}30`,
-        }}>
-          {mod.badge}
-        </span>
+        {/* Badge + difficulty apilados a la derecha */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+          <span style={{
+            fontSize: 9, color: mod.badgeColor, letterSpacing: 0.5,
+            fontFamily: C.fontUI, fontWeight: 600,
+            background: mod.badgeColor + "18",
+            padding: "2px 8px", borderRadius: 10,
+            border: `1px solid ${mod.badgeColor}30`,
+          }}>
+            {mod.badge}
+          </span>
+          {mod.difficulty && (
+            <>
+              <span style={{ fontSize: 9, color: DIFF_COLOR[mod.difficulty], fontFamily: C.fontUI, fontWeight: 600, background: DIFF_COLOR[mod.difficulty] + "18", padding: "1px 7px", borderRadius: 8, border: `1px solid ${DIFF_COLOR[mod.difficulty]}30` }}>
+                {DIFF_LABEL[mod.difficulty]}
+              </span>
+              {mod.prereqs.length > 0 && (
+                <span style={{ fontSize: 9, color: C.muted, fontFamily: C.fontUI, textAlign: "right" }}>
+                  Req: {mod.prereqs.join(", ")}
+                </span>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Title */}
@@ -278,9 +305,140 @@ function ModuleCard({ mod, onEnter, hovered, onHover, score }) {
   );
 }
 
+// ── Progress Global ───────────────────────────────────────────────────────────
+function ProgressGlobal({ evalScores }) {
+  const passedModules = Object.values(evalScores).filter(s => s.passed).length;
+  const totalModules  = 9;
+  const completedChallenges = (() => {
+    try { return (JSON.parse(localStorage.getItem('simbes_challenges') || '[]')).length; } catch { return 0; }
+  })();
+  const totalChallenges = 10;
+  const pctMod  = Math.round(passedModules  / totalModules  * 100);
+  const pctChal = Math.round(completedChallenges / totalChallenges * 100);
+  const pctGlobal = Math.round((passedModules + completedChallenges) / (totalModules + totalChallenges) * 100);
+
+  return (
+    <div style={{ display: 'flex', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+      {[
+        { label: 'Módulos evaluados', value: passedModules, total: totalModules, pct: pctMod, color: C.ok },
+        { label: 'Desafíos resueltos', value: completedChallenges, total: totalChallenges, pct: pctChal, color: C.primary },
+        { label: 'Progreso general', value: `${pctGlobal}%`, total: null, pct: pctGlobal, color: '#A78BFA' },
+      ].map(({ label, value, total, pct, color }) => (
+        <div key={label} style={{ flex: 1, minWidth: 140, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: '12px 16px' }}>
+          <div style={{ fontSize: 9, color: C.muted, fontFamily: C.fontUI, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>{label}</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color, fontFamily: C.font, marginBottom: 6 }}>
+            {total !== null ? `${value}/${total}` : value}
+          </div>
+          <div style={{ height: 3, background: C.border, borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 2, transition: 'width 0.5s ease' }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Welcome Panel ────────────────────────────────────────────────────────────
+function WelcomePanel({ onDismiss }) {
+  const TABS = [
+    { label: 'A · Teoría', desc: 'Conceptos, fórmulas, glosario del módulo' },
+    { label: 'B · Simulador', desc: 'Controles interactivos + gráficas en tiempo real' },
+    { label: 'C · Caso Práctico', desc: 'Escenario de campo guiado — diagnóstico paso a paso' },
+    { label: 'D · Evaluación', desc: 'Preguntas + simulación calificada (mín. 70%)' },
+  ];
+  const RUTAS = [
+    { label: 'Ruta completa', path: 'M01 → M02 → M03 → M04 → M05 → M06 → M07 → M08 → M09' },
+    { label: 'Diseño BES', path: 'M01 → M02 → M09' },
+    { label: 'Gas y Fluidos', path: 'M01 → M03 → M08' },
+    { label: 'Diagnóstico', path: 'M05 → M06 → M07' },
+  ];
+  const PREREQS = [
+    'Hidráulica básica — presión, caudal, pérdida de carga',
+    'Producción de petróleo — yacimiento, pozo, cabezal',
+    'Álgebra básica — no se requiere cálculo diferencial',
+  ];
+
+  return (
+    <div style={{ background: '#0D1E33', border: '1px solid #1E3A5F', borderRadius: 14, padding: '22px 26px', marginBottom: 32 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+        <div>
+          <div style={{ fontSize: 9, color: C.primary, fontFamily: C.font, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', marginBottom: 4 }}>BIENVENIDO A SIMBES</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: C.text, fontFamily: C.fontUI }}>Guía de inicio rápido</div>
+        </div>
+        <button onClick={onDismiss} style={{ background: 'transparent', border: `1px solid ${C.border}`, borderRadius: 6, color: C.muted, fontSize: 10, padding: '4px 12px', cursor: 'pointer', fontFamily: C.font, whiteSpace: 'nowrap' }}>
+          × No mostrar de nuevo
+        </button>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        {/* Columna izquierda */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Estructura de pestañas */}
+          <div>
+            <div style={{ fontSize: 9, color: C.primary, fontFamily: C.font, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Cada módulo tiene 4 pestañas</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {TABS.map((t, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 10, color: C.primary, fontFamily: C.font, fontWeight: 700, flexShrink: 0, minWidth: 90 }}>{t.label}</span>
+                  <span style={{ fontSize: 10, color: C.muted, fontFamily: C.fontUI, lineHeight: 1.4 }}>{t.desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Modo Desafíos */}
+          <div>
+            <div style={{ fontSize: 9, color: '#38BDF8', fontFamily: C.font, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Modo Desafíos</div>
+            <p style={{ margin: 0, fontSize: 10, color: C.muted, fontFamily: C.fontUI, lineHeight: 1.6 }}>
+              10 escenarios de campo con criterios de éxito verificables. Ajustá parámetros en el simulador hasta alcanzar el objetivo. No hay una única respuesta — explorá las causas raíz.
+            </p>
+          </div>
+        </div>
+
+        {/* Columna derecha */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Rutas de aprendizaje */}
+          <div>
+            <div style={{ fontSize: 9, color: '#34D399', fontFamily: C.font, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Rutas de aprendizaje sugeridas</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {RUTAS.map((r, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 9, color: '#34D399', fontFamily: C.font, fontWeight: 700, flexShrink: 0, minWidth: 80 }}>{r.label}</span>
+                  <span style={{ fontSize: 10, color: C.muted, fontFamily: C.font }}>{r.path}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Prerrequisitos */}
+          <div>
+            <div style={{ fontSize: 9, color: C.warning, fontFamily: C.font, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Conocimientos previos sugeridos</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {PREREQS.map((p, i) => (
+                <div key={i} style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                  <span style={{ color: C.warning, fontSize: 8, marginTop: 3, flexShrink: 0 }}>▸</span>
+                  <span style={{ fontSize: 10, color: C.muted, fontFamily: C.fontUI, lineHeight: 1.5 }}>{p}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Hub({ onNavigate }) {
   const [hovered, setHovered] = useState(null);
   const [evalScores, setEvalScores] = useState(readEvalScores);
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try { return localStorage.getItem('simbes_welcome_dismissed') !== 'true'; } catch { return true; }
+  });
+
+  function dismissWelcome() {
+    try { localStorage.setItem('simbes_welcome_dismissed', 'true'); } catch {}
+    setShowWelcome(false);
+  }
 
   // Refresh scores when Hub becomes visible (user may have completed an eval)
   useEffect(() => {
@@ -324,6 +482,12 @@ export default function Hub({ onNavigate }) {
           9 módulos de simulación · Física trazable a fuentes publicadas · Unidades operativas
         </p>
       </div>
+
+      {/* ── WELCOME PANEL ── */}
+      {showWelcome && <WelcomePanel onDismiss={dismissWelcome} />}
+
+      {/* ── PROGRESS GLOBAL ── */}
+      <ProgressGlobal evalScores={evalScores} />
 
       {/* ── MODULE GRID ── */}
       <div style={{

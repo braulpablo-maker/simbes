@@ -59,7 +59,7 @@ export default function App() {
   const [activeModule, setActiveModule] = useState(null); // null = Hub
 
   if (!activeModule) return <Hub onNavigate={setActiveModule} />;
-  if (activeModule === 'challenges') return <ModuleChallenges onBack={() => setActiveModule(null)} />;
+  if (activeModule === 'challenges') return <ModuleChallenges onBack={() => setActiveModule(null)} onNavigate={setActiveModule} />;
 
   const idx = MODULE_ORDER.indexOf(activeModule);
   const goTo = (id) => setActiveModule(id);

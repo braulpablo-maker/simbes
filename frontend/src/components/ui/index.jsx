@@ -30,7 +30,18 @@ import { C } from '../../theme';
  *   accentColor {string}   - Color del valor y del acento del slider
  */
 export function Slider({ label, unit, value, min, max, step, dec = 0, onChange, tooltip, accentColor = C.text, format }) {
-  const [showTip, setShowTip] = useState(false);
+  const [showTip,  setShowTip]  = useState(false);
+  const [editing,  setEditing]  = useState(false);
+  const [inputVal, setInputVal] = useState('');
+
+  function commitInput() {
+    const parsed = parseFloat(inputVal.replace(',', '.'));
+    if (!isNaN(parsed)) onChange(Math.min(max, Math.max(min, parsed)));
+    setEditing(false);
+  }
+
+  const displayStr = Number(value).toFixed(dec);
+
   return (
     <div style={{ marginBottom: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
@@ -44,9 +55,30 @@ export function Slider({ label, unit, value, min, max, step, dec = 0, onChange, 
             >?</span>
           )}
         </div>
-        <span style={{ color: accentColor, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>
-          {format ? format(value) : <>{Number(value).toFixed(dec)} <span style={{ color: C.muted, fontWeight: 400, fontSize: 11 }}>{unit}</span></>}
-        </span>
+        {format ? (
+          <span style={{ color: accentColor, fontWeight: 700, fontSize: 13, fontFamily: 'JetBrains Mono, monospace' }}>{format(value)}</span>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <input
+              type="text" inputMode="decimal"
+              value={editing ? inputVal : displayStr}
+              onFocus={() => { setEditing(true); setInputVal(displayStr); }}
+              onChange={e => setInputVal(e.target.value)}
+              onBlur={commitInput}
+              onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur(); if (e.key === 'Escape') setEditing(false); }}
+              style={{
+                background: 'transparent',
+                border: editing ? `1px solid ${accentColor}70` : '1px solid transparent',
+                borderRadius: 4, outline: 'none',
+                color: accentColor, fontWeight: 700, fontSize: 13,
+                fontFamily: 'JetBrains Mono, monospace', textAlign: 'right',
+                width: `${Math.max(3, displayStr.length + 1)}ch`,
+                padding: '0 3px',
+              }}
+            />
+            <span style={{ color: C.muted, fontWeight: 400, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{unit}</span>
+          </div>
+        )}
       </div>
       {showTip && tooltip && (
         <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 6, padding: '8px 10px', marginBottom: 6, fontSize: 11, color: C.muted, lineHeight: 1.5, fontFamily: 'JetBrains Mono, monospace' }}>

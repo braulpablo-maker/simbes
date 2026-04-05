@@ -20,6 +20,7 @@ import { M2_QUESTIONS, gradeM2 } from '../../../pedagogy/evaluations/m2';
 
 // ─── Paleta ────────────────────────────────────────────────────────
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 
 // ─── Tamaños de tubing estándar (OD → ID) ─────────────────────────
 const TUBING_SIZES = [
@@ -182,14 +183,20 @@ function TabTeoria() {
 }
 
 // ─── Tab Simulador ────────────────────────────────────────────────
+const M2_DEFAULTS = { depth: 1800, Pwh: 150, densidad: 0.876, D_in: 2.441, mu: 3, freq: 60, H0stage: 45 };
+
 function TabSimulador() {
-  const [depth,    setDepth]    = useState(1800);   // m
-  const [Pwh,      setPwh]      = useState(150);    // psi
-  const [densidad, setDensidad] = useState(0.876);  // kg/L
-  const [D_in,     setDIn]      = useState(2.441);  // pulgadas
-  const [mu,       setMu]       = useState(3);      // cP
-  const [freq,     setFreq]     = useState(60);     // Hz
-  const [H0stage,  setH0stage]  = useState(45);     // ft/etapa
+  const [depth,    setDepth]    = useState(M2_DEFAULTS.depth);
+  const [Pwh,      setPwh]      = useState(M2_DEFAULTS.Pwh);
+  const [densidad, setDensidad] = useState(M2_DEFAULTS.densidad);
+  const [D_in,     setDIn]      = useState(M2_DEFAULTS.D_in);
+  const [mu,       setMu]       = useState(M2_DEFAULTS.mu);
+  const [freq,     setFreq]     = useState(M2_DEFAULTS.freq);
+  const [H0stage,  setH0stage]  = useState(M2_DEFAULTS.H0stage);
+  function resetSim() {
+    setDepth(M2_DEFAULTS.depth); setPwh(M2_DEFAULTS.Pwh); setDensidad(M2_DEFAULTS.densidad);
+    setDIn(M2_DEFAULTS.D_in); setMu(M2_DEFAULTS.mu); setFreq(M2_DEFAULTS.freq); setH0stage(M2_DEFAULTS.H0stage);
+  }
 
   const sim = useMemo(() => {
     const Q_bep_stbd = 2100 * (freq / 60);
@@ -240,7 +247,10 @@ function TabSimulador() {
     <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 20 }}>
       {/* ── Controles ── */}
       <div>
-        <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 1 }}>Parámetros del Pozo</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <div style={{ color: C.muted, fontSize: 10, fontFamily: 'JetBrains Mono, monospace', textTransform: 'uppercase', letterSpacing: 1 }}>Parámetros del Pozo</div>
+          <button onClick={resetSim} style={{ background: 'transparent', border: `1px solid ${C.border}`, borderRadius: 5, color: C.muted, fontSize: 9, padding: '3px 10px', cursor: 'pointer', fontFamily: 'JetBrains Mono, monospace', letterSpacing: 1 }}>↺ Restablecer</button>
+        </div>
         <Slider label="Profundidad de la bomba" unit="m"    value={depth}    min={300}  max={4300} step={50}  dec={0} onChange={setDepth}
           tooltip="Profundidad de asiento de la bomba. Determina H_estático = depth. BES típico: 600–3 500 m." />
         <Slider label="Presión de cabezal (Pwh)" unit="psi" value={Pwh}      min={50}   max={1000} step={10}  dec={0} onChange={setPwh}
@@ -570,38 +580,32 @@ function TabEvaluacion() {
 }
 
 // ─── Componente raíz Módulo 2 ─────────────────────────────────────
-const TABS = ['A. Teoría', 'B. Simulador', 'C. Caso Práctico', 'D. Evaluación'];
+const TABS = [
+  { id: 'teoria', label: 'A — Teoría' },
+  { id: 'sim',    label: 'B — Simulador' },
+  { id: 'caso',   label: 'C — Caso Práctico' },
+  { id: 'eval',   label: 'D — Evaluación' },
+];
 
-export default function Module2() {
-  const [activeTab, setActiveTab] = useState(0);
+export default function Module2({ onBack }) {
+  const [activeTab, setActiveTab] = useState('teoria');
 
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: C.font, padding: '0 0 60px' }}>
-      {/* Header */}
-      <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: '20px 32px', position: 'sticky', top: 40, zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 6 }}>
-          <div style={{ background: C.green, color: '#000', fontWeight: 800, borderRadius: 8, padding: '4px 12px', fontSize: 13, fontFamily: C.font }}>M2</div>
-          <div style={{ color: C.green, fontWeight: 800, fontSize: 24, fontFamily: C.fontUI }}>Diseño Hidráulico</div>
-          <div style={{ color: C.muted, fontSize: 12, fontFamily: C.fontUI }}>TDH · Colebrook-White · Ns · Etapas</div>
-        </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginTop: 12 }}>
-          {TABS.map((t, i) => (
-            <button key={t} onClick={() => setActiveTab(i)}
-              style={{ padding: '8px 18px', background: activeTab === i ? C.green : 'transparent', color: activeTab === i ? '#000' : C.muted, border: `1px solid ${activeTab === i ? C.green : C.border}`, borderRadius: 8, cursor: 'pointer', fontFamily: C.fontUI, fontSize: 12, fontWeight: activeTab === i ? 700 : 400 }}>
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Contenido */}
-      <div style={{ padding: '28px 32px' }}>
-        {activeTab === 0 && <TabTeoria />}
-        {activeTab === 1 && <TabSimulador />}
-        {activeTab === 2 && <TabCaso />}
-        {activeTab === 3 && <TabEvaluacion />}
-      </div>
-    </div>
+    <ModuleLayout
+      moduleId="M02"
+      title="Diseño Hidráulico"
+      subtitle="TDH · Colebrook-White · Ns · Etapas"
+      accentColor={C.green}
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onBack={onBack}
+    >
+      {activeTab === 'teoria' && <TabTeoria />}
+      {activeTab === 'sim'    && <TabSimulador />}
+      {activeTab === 'caso'   && <TabCaso />}
+      {activeTab === 'eval'   && <TabEvaluacion />}
+    </ModuleLayout>
   );
 }
+

@@ -174,7 +174,7 @@ jupyter lab
 
 ### Mejoras de UX implementadas
 
-- Navegación **← anterior / siguiente →** entre módulos desde la NavBar
+- Navegación **← anterior / siguiente →** entre módulos desde la NavBar con nombre del módulo destino
 - Tabs de módulo con `position: sticky` (no se pierden al hacer scroll)
 - Breadcrumb `SIMBES / M# · Nombre` en cada módulo
 - Unidades operativas en toda la UI (m³/d, m³/m³, m³/d/psi, °C)
@@ -182,6 +182,13 @@ jupyter lab
 - **Fuente híbrida**: Outfit para UI (headers, tabs, botones) · JetBrains Mono para datos/fórmulas/métricas
 - **Pestaña Teoría estandarizada**: `TheoryLayout` accordion en los 9 módulos
 - **Code splitting**: módulos cargados con `React.lazy()` (bundle inicial más liviano)
-- **Responsive básico**: `clamp()` en padding + `maxWidth: 1300` + scroll horizontal en simuladores
-- **Persistencia localStorage**: guardar/cargar escenario en M8 y M9
+- **Persistencia localStorage**: guardar/cargar escenario en M8 y M9; progreso de evaluaciones; desafíos resueltos
+- **Hub — Panel de bienvenida**: guía de inicio rápido colapsable (rutas, prerrequisitos, tabs, Modo Desafíos)
+- **Hub — Progreso global**: 3 indicadores (módulos evaluados · desafíos resueltos · progreso general %)
+- **Hub — Dificultad y prerrequisitos**: badge ⭐/⭐⭐/⭐⭐⭐ y prereqs en cada tarjeta de módulo
+- **Sliders — Input numérico editable**: clic en el valor para editar directamente (todos los módulos M01–M07)
+- **Sliders — Botón ↺ Restablecer**: valores por defecto en M01, M02, M03
+- **M01 Caso Práctico**: diagnóstico oculto detrás de "▶ Revelar análisis"; Paso 4 conclusión con acción correctiva; estado del paso persiste al cambiar de pestaña
+- **Modo Desafíos**: feedback visual "🎉 +1 en tu progreso" al resolver; botón directo "→ Ir al módulo"; persistencia localStorage
+- **M08 KPI**: semáforo de colores (rojo/amarillo/verde) en todos los indicadores del dashboard
 - **Fricción VLP mejorada (M1)**: Darcy-Weisbach + Colebrook-White reemplaza simplificación `1.4e-5 × Q²`

@@ -24,6 +24,7 @@ import { TEORIA_M4 } from './teoria-data';
 import { Slider } from '../../ui';
 
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 
 // ─── Constantes ─────────────────────────────────────────────────────────────
 const ACCENT   = "#F472B6";   // M4 rosa
@@ -645,56 +646,20 @@ export default function Module4({ onBack }) {
   const [tab, setTab] = useState("teoria");
 
   return (
-    <div style={{
-      fontFamily: C.font,
-      background: COLORS.bg,
-      minHeight: "100vh",
-      color: COLORS.text,
-      padding: "24px clamp(16px, 3vw, 32px) 48px",
-      maxWidth: 1300, margin: '0 auto',
-    }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{
-          background: "transparent", border: `1px solid ${COLORS.border}`,
-          borderRadius: 6, padding: "5px 12px", color: COLORS.muted,
-          cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
-        }}>← Hub</button>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M04</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Eléctrico y VSD</span>
-          </div>
-          <div style={{ fontSize: 9, color: COLORS.muted, letterSpacing: 1, fontFamily: C.fontUI }}>
-            Cable · THD · Arrhenius · NACE MR0175 / ISO 15156
-          </div>
-        </div>
-        <span style={{
-          fontSize: 9, color: COLORS.ok, background: COLORS.ok + "18",
-          padding: "2px 10px", borderRadius: 10, border: `1px solid ${COLORS.ok}30`,
-          fontFamily: C.fontUI,
-        }}>✅ Disponible</span>
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${COLORS.border}`, paddingBottom: 0, position: "sticky", top: 40, zIndex: 100, background: "#0B0F1A", paddingTop: 8 }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: "8px 18px", border: "none", borderRadius: "6px 6px 0 0",
-            background: tab === t.id ? ACCENT + "18" : "transparent",
-            borderBottom: tab === t.id ? `2px solid ${ACCENT}` : "2px solid transparent",
-            color: tab === t.id ? ACCENT : COLORS.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
-            fontWeight: tab === t.id ? 700 : 400, letterSpacing: 0.5,
-          }}>{t.label}</button>
-        ))}
-      </div>
-
-      {/* Content */}
+    <ModuleLayout
+      moduleId="M04"
+      title="Eléctrico y VSD"
+      subtitle="Cable · THD · Arrhenius · NACE MR0175 / ISO 15156"
+      accentColor={ACCENT}
+      tabs={TABS}
+      activeTab={tab}
+      onTabChange={setTab}
+      onBack={onBack}
+    >
       {tab === "teoria" && <TabTeoria />}
       {tab === "sim"    && <TabSimulador />}
       {tab === "caso"   && <TabCaso />}
       {tab === "eval"   && <TabEvaluacion />}
-    </div>
+    </ModuleLayout>
   );
 }

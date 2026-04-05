@@ -7,6 +7,7 @@ import { M1_EVALUATION, gradeM1 } from "../../../pedagogy/evaluations/m1.js";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M1 } from './teoria-data';
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 import { colebrookWhite, reynoldsNumber } from '../../../physics/hydraulics';
 import { Slider } from '../../ui';
 
@@ -204,30 +205,11 @@ const CustomTooltip = ({ active, payload, label }) => {
 //  TAB BAR
 // ═══════════════════════════════════════════════════════
 const TABS = [
-  { id: "teoria",    label: "A · Teoría",          color: "#60A5FA" },
-  { id: "simulador", label: "B · Simulador",        color: "#38BDF8" },
-  { id: "caso",      label: "C · Caso Práctico",    color: "#34D399" },
-  { id: "evaluacion",label: "D · Evaluación",       color: "#F472B6" },
+  { id: "teoria",    label: "A — Teoría" },
+  { id: "simulador", label: "B — Simulador" },
+  { id: "caso",      label: "C — Caso Práctico" },
+  { id: "evaluacion",label: "D — Evaluación" },
 ];
-
-function TabBar({ active, onChange }) {
-  return (
-    <div style={{ display: "flex", borderBottom: "1px solid #334155", marginBottom: 20, position: "sticky", top: 40, zIndex: 100, background: "#0F172A", paddingTop: 4 }}>
-      {TABS.map(t => (
-        <button key={t.id} onClick={() => onChange(t.id)} style={{
-          background: active === t.id ? "#334155" : "transparent",
-          border: "none",
-          borderBottom: active === t.id ? `2px solid ${t.color}` : "2px solid transparent",
-          color: active === t.id ? t.color : "#475569",
-          fontSize: 11, padding: "10px 20px",
-          cursor: "pointer", fontFamily: C.fontUI,
-          letterSpacing: 1, fontWeight: active === t.id ? 700 : 400,
-          transition: "all 0.15s",
-        }}>{t.label}</button>
-      ))}
-    </div>
-  );
-}
 
 // ═══════════════════════════════════════════════════════
 //  NODAL CHART (reusable)
@@ -291,7 +273,7 @@ function TabTeoria() {
 // ═══════════════════════════════════════════════════════
 //  TAB B — SIMULADOR (with tooltips)
 // ═══════════════════════════════════════════════════════
-function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq, BSW, setBSW, GOR, setGOR }) {
+function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, setPwh, densidad, setDensidad, freq, setFreq, BSW, setBSW, GOR, setGOR, onReset }) {
   const safePb = Math.min(Pb, Pr - 50);
   const safeIP = Math.max(0.02, IP);
 
@@ -310,6 +292,9 @@ function TabSimulador({ Pr, setPr, Pb, setPb, IP, setIP, depth, setDepth, Pwh, s
     <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 20 }}>
       {/* Controls */}
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <button onClick={onReset} style={{ background: "transparent", border: "1px solid #1E293B", borderRadius: 5, color: "#64748B", fontSize: 9, padding: "3px 10px", cursor: "pointer", fontFamily: "inherit", letterSpacing: 1 }}>↺ Restablecer</button>
+        </div>
         <ControlGroup title="■ Yacimiento" accent="#60A5FA">
           <Slider label="Pr — Presión Reservorio" unit="psi"
             value={Pr} min={500} max={7000} step={50} onChange={setPr} accentColor="#60A5FA"
@@ -412,26 +397,37 @@ const CASO_STEPS = [
     freq: 60,
     context: "El Pozo Colibrí-3 opera a 60 Hz desde hace 6 meses. La producción objetivo del campo es 450 m³/d. El supervisor reporta que el amperímetro muestra consumo estable pero las alarmas de vibración son frecuentes.",
     question: "Con los parámetros del pozo, ¿el sistema opera dentro del rango óptimo del BEP (68%–132%)? ¿Qué explica las alarmas de vibración?",
-    hint: "Observa el diagnóstico operativo debajo de la gráfica. Identifica el % del BEP y el tipo de alerta.",
+    hint: "Identifica el % del BEP en las métricas de la gráfica y clasifica el tipo de alerta operativa.",
   },
   {
     title: "Paso 2 · Ajuste de frecuencia a 55 Hz",
     freq: 55,
     context: "El jefe de ingeniería sugiere bajar a 55 Hz para proteger la bomba. El contratista teme que la producción caiga demasiado. Se decide hacer una prueba.",
     question: "Al reducir a 55 Hz, ¿el punto de operación mejora o empeora respecto al BEP? ¿Cuánto cambia el drawdown?",
-    hint: "Compara el Q operativo y el % del BEP entre 60 Hz y 55 Hz.",
+    hint: "Compara el Q operativo y el % del BEP entre 60 Hz y 55 Hz usando los valores de las métricas.",
   },
   {
     title: "Paso 3 · Optimización a 65 Hz",
     freq: 65,
     context: "Con nuevas mediciones, el equipo determina que Pr es mayor de lo estimado. Se propone subir a 65 Hz para maximizar producción sin superar el 130% del BEP.",
     question: "A 65 Hz, ¿se alcanza el objetivo de 450 m³/d? ¿El riesgo de surging aumenta o disminuye respecto a 60 Hz?",
-    hint: "Compara Q operativo con el objetivo (45 m³/d) y observa las alertas de diagnóstico.",
+    hint: "Compara el Q operativo con el objetivo y evalúa el % del BEP a 65 Hz.",
+  },
+  {
+    title: "Paso 4 · Conclusión y acción correctiva",
+    freq: 60,
+    isConclusionStep: true,
+    context: "Después de probar 60, 55 y 65 Hz, el equipo concluye que la bomba opera consistentemente por encima del 130% del BEP en todos los escenarios. El surging no es un problema de frecuencia, sino de dimensionamiento.",
+    question: "¿Cuál es la acción correctiva? ¿Qué módulo usarías para calcular el nuevo equipo?",
+    hint: "Piensa en la causa raíz: ¿es el BEP de la bomba actual compatible con el caudal del pozo?",
+    conclusion: {
+      diagnostico: "La bomba instalada tiene un BEP nominal de ~420 m³/d a 60 Hz. El pozo Colibrí-3 entrega ~514 m³/d — siempre por encima del 130% del BEP (surging). Cambiar la frecuencia no resuelve el problema de raíz.",
+      accion: "Se requiere reemplazar la bomba por una con BEP ≥ 460 m³/d. Usa M02 · Diseño Hidráulico para calcular el nuevo TDH y número de etapas, y M09 · Flujo de Diseño BES para seleccionar el equipo correcto.",
+    },
   },
 ];
 
-function TabCaso() {
-  const [step, setStep]   = useState(0);
+function TabCaso({ step, showDiagnosis, goToStep, setShowDiagnosis }) {
   const s = CASO_STEPS[step];
   const safePb = Math.min(COLIBRI.Pb, COLIBRI.Pr - 50);
   const { chartData, opPoint, alerts, bep_m3d } = useMemo(
@@ -456,7 +452,7 @@ function TabCaso() {
           </div>
           <div style={{ display: "flex", gap: 6 }}>
             {CASO_STEPS.map((_, i) => (
-              <button key={i} onClick={() => setStep(i)} style={{
+              <button key={i} onClick={() => goToStep(i)} style={{
                 background: step === i ? "#34D399" : "#334155",
                 border: `1px solid ${step === i ? "#34D399" : "#334155"}`,
                 borderRadius: 6, color: step === i ? "#0F172A" : "#94A3B8",
@@ -468,32 +464,72 @@ function TabCaso() {
         </div>
       </div>
 
-      {/* Step context */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+      {/* Paso 4 — Conclusión (sin gráfica, layout especial) */}
+      {s.isConclusionStep ? (
         <div>
           <div style={{ fontSize: 11, color: "#34D399", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{s.title}</div>
           <p style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.8, margin: "0 0 14px" }}>{s.context}</p>
-          <div style={{ background: "#0F172A", border: "1px solid #34D39933", borderLeft: "3px solid #34D399", borderRadius: "0 6px 6px 0", padding: "10px 12px" }}>
+          <div style={{ background: "#0F172A", border: "1px solid #34D39933", borderLeft: "3px solid #34D399", borderRadius: "0 6px 6px 0", padding: "10px 12px", marginBottom: 16 }}>
             <div style={{ fontSize: 9, color: "#34D399", letterSpacing: 2, textTransform: "uppercase", marginBottom: 6 }}>PREGUNTA GUIADA</div>
             <p style={{ fontSize: 11, color: "#F1F5F9", lineHeight: 1.7, margin: "0 0 8px" }}>{s.question}</p>
             <p style={{ fontSize: 10, color: "#475569", margin: 0, fontStyle: "italic" }}>Pista: {s.hint}</p>
           </div>
 
-          {/* Key metrics for this step */}
-          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-            <Metric label="Frecuencia" unit="Hz" value={s.freq} color="#F472B6" />
-            <Metric label="Q Operativo" unit="m³/d" value={opPoint ? opPoint.Q.toFixed(1) : "—"} color="#38BDF8" glow />
-            <Metric label="Drawdown" unit="%" value={dd !== null ? `${dd}%` : "—"} color={dd > 80 ? "#EF4444" : dd > 60 ? "#F59E0B" : "#34D399"} />
-          </div>
-
-          {/* Alerts */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
-            {alerts.map((a, i) => <Alert key={i} {...a} />)}
-          </div>
+          {!showDiagnosis ? (
+            <button onClick={() => setShowDiagnosis(true)} style={{
+              background: "transparent", border: "1px solid #34D399", borderRadius: 6,
+              color: "#34D399", fontSize: 10, padding: "8px 18px", cursor: "pointer",
+              fontFamily: "inherit", letterSpacing: 1,
+            }}>▶ Revelar conclusión</button>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ background: "#EF444415", border: "1px solid #EF444455", borderRadius: 8, padding: "12px 16px" }}>
+                <div style={{ fontSize: 9, color: "#EF4444", letterSpacing: 2, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>🔴 DIAGNÓSTICO</div>
+                <p style={{ fontSize: 11, color: "#F1F5F9", lineHeight: 1.7, margin: 0 }}>{s.conclusion.diagnostico}</p>
+              </div>
+              <div style={{ background: "#34D39915", border: "1px solid #34D39955", borderRadius: 8, padding: "12px 16px" }}>
+                <div style={{ fontSize: 9, color: "#34D399", letterSpacing: 2, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>✅ ACCIÓN CORRECTIVA</div>
+                <p style={{ fontSize: 11, color: "#F1F5F9", lineHeight: 1.7, margin: 0 }}>{s.conclusion.accion}</p>
+              </div>
+            </div>
+          )}
         </div>
+      ) : (
+        /* Pasos 1–3 — layout con gráfica */
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+          <div>
+            <div style={{ fontSize: 11, color: "#34D399", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{s.title}</div>
+            <p style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.8, margin: "0 0 14px" }}>{s.context}</p>
+            <div style={{ background: "#0F172A", border: "1px solid #34D39933", borderLeft: "3px solid #34D399", borderRadius: "0 6px 6px 0", padding: "10px 12px" }}>
+              <div style={{ fontSize: 9, color: "#34D399", letterSpacing: 2, textTransform: "uppercase", marginBottom: 6 }}>PREGUNTA GUIADA</div>
+              <p style={{ fontSize: 11, color: "#F1F5F9", lineHeight: 1.7, margin: "0 0 8px" }}>{s.question}</p>
+              <p style={{ fontSize: 10, color: "#475569", margin: 0, fontStyle: "italic" }}>Pista: {s.hint}</p>
+            </div>
 
-        <NodalChart chartData={chartData} opPoint={opPoint} safePb={safePb} bep_m3d={bep_m3d} Pr={COLIBRI.Pr} />
-      </div>
+            {/* Key metrics for this step */}
+            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+              <Metric label="Frecuencia" unit="Hz" value={s.freq} color="#F472B6" />
+              <Metric label="Q Operativo" unit="m³/d" value={opPoint ? opPoint.Q.toFixed(1) : "—"} color="#38BDF8" glow />
+              <Metric label="Drawdown" unit="%" value={dd !== null ? `${dd}%` : "—"} color={dd > 80 ? "#EF4444" : dd > 60 ? "#F59E0B" : "#34D399"} />
+            </div>
+
+            {/* Reveal diagnosis button */}
+            {!showDiagnosis ? (
+              <button onClick={() => setShowDiagnosis(true)} style={{
+                marginTop: 14, background: "transparent", border: "1px solid #34D399",
+                borderRadius: 6, color: "#34D399", fontSize: 10, padding: "8px 18px",
+                cursor: "pointer", fontFamily: "inherit", letterSpacing: 1,
+              }}>▶ Revelar análisis</button>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 14 }}>
+                {alerts.map((a, i) => <Alert key={i} {...a} />)}
+              </div>
+            )}
+          </div>
+
+          <NodalChart chartData={chartData} opPoint={opPoint} safePb={safePb} bep_m3d={bep_m3d} Pr={COLIBRI.Pr} />
+        </div>
+      )}
     </div>
   );
 }
@@ -647,44 +683,44 @@ function TabEvaluacion() {
 // ═══════════════════════════════════════════════════════
 //  MAIN COMPONENT
 // ═══════════════════════════════════════════════════════
-export default function SIMBES_M1() {
+export default function SIMBES_M1({ onBack }) {
   // Tab navigation
   const [activeTab,     setActiveTab]     = useState("simulador");
   const [teoriaSection, setTeoriaSection] = useState(0);
 
+  // Caso Práctico state — lifted so switching tabs doesn't reset progress
+  const [casoStep,     setCasoStep]     = useState(0);
+  const [casoShowDiag, setCasoShowDiag] = useState(false);
+  function casoGoToStep(i) { setCasoStep(i); setCasoShowDiag(false); }
+
   // Simulator state (shared between tabs B and C uses fixed COLIBRI params)
-  const [Pr,       setPr]       = useState(3500);
-  const [Pb,       setPb]       = useState(1800);
-  const [IP,       setIP]       = useState(0.24);
-  const [depth,    setDepth]    = useState(2100);
-  const [Pwh,      setPwh]      = useState(150);
-  const [freq,     setFreq]     = useState(60);
-  const [densidad, setDensidad] = useState(0.876);
-  const [BSW,      setBSW]      = useState(0);
-  const [GOR,      setGOR]      = useState(0);
+  const SIM_DEFAULTS = { Pr: 3500, Pb: 1800, IP: 0.24, depth: 2100, Pwh: 150, freq: 60, densidad: 0.876, BSW: 0, GOR: 0 };
+  const [Pr,       setPr]       = useState(SIM_DEFAULTS.Pr);
+  const [Pb,       setPb]       = useState(SIM_DEFAULTS.Pb);
+  const [IP,       setIP]       = useState(SIM_DEFAULTS.IP);
+  const [depth,    setDepth]    = useState(SIM_DEFAULTS.depth);
+  const [Pwh,      setPwh]      = useState(SIM_DEFAULTS.Pwh);
+  const [freq,     setFreq]     = useState(SIM_DEFAULTS.freq);
+  const [densidad, setDensidad] = useState(SIM_DEFAULTS.densidad);
+  const [BSW,      setBSW]      = useState(SIM_DEFAULTS.BSW);
+  const [GOR,      setGOR]      = useState(SIM_DEFAULTS.GOR);
+  function resetSim() {
+    setPr(SIM_DEFAULTS.Pr); setPb(SIM_DEFAULTS.Pb); setIP(SIM_DEFAULTS.IP);
+    setDepth(SIM_DEFAULTS.depth); setPwh(SIM_DEFAULTS.Pwh); setFreq(SIM_DEFAULTS.freq);
+    setDensidad(SIM_DEFAULTS.densidad); setBSW(SIM_DEFAULTS.BSW); setGOR(SIM_DEFAULTS.GOR);
+  }
 
   return (
-    <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", background: "#0F172A", minHeight: "100vh", color: "#F1F5F9", padding: "20px 24px" }}>
-
-      {/* Header */}
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-          <div style={{ background: "#0EA5E9", borderRadius: 4, padding: "2px 8px", fontSize: 9, letterSpacing: 2, color: "#0F172A", fontWeight: 800, textTransform: "uppercase", fontFamily: C.fontUI }}>SIMBES · M1</div>
-          <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 8px #22C55E" }} />
-          <span style={{ fontSize: 10, color: "#475569", letterSpacing: 1, fontFamily: C.fontUI }}>SIMULACIÓN ACTIVA</span>
-        </div>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#F1F5F9", letterSpacing: 0.5, fontFamily: C.fontUI }}>
-          Análisis Nodal — IPR · VLP
-        </h1>
-        <p style={{ margin: "4px 0 0", fontSize: 11, color: "#94A3B8", fontFamily: C.fontUI }}>
-          Curva de Afluencia (Darcy / Vogel) · Levantamiento BES · Punto de Operación
-        </p>
-      </div>
-
-      {/* Tab bar */}
-      <TabBar active={activeTab} onChange={setActiveTab} />
-
-      {/* Tab content */}
+    <ModuleLayout
+      moduleId="M01"
+      title="Análisis Nodal — IPR · VLP"
+      subtitle="Curva de Afluencia (Darcy / Vogel) · Levantamiento BES · Punto de Operación"
+      accentColor="#0EA5E9"
+      tabs={TABS}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onBack={onBack}
+    >
       {activeTab === "teoria" && (
         <TabTeoria section={teoriaSection} setSection={setTeoriaSection} />
       )}
@@ -696,10 +732,11 @@ export default function SIMBES_M1() {
           freq={freq} setFreq={setFreq}
           BSW={BSW} setBSW={setBSW}
           GOR={GOR} setGOR={setGOR}
+          onReset={resetSim}
         />
       )}
-      {activeTab === "caso" && <TabCaso />}
+      {activeTab === "caso" && <TabCaso step={casoStep} showDiagnosis={casoShowDiag} goToStep={casoGoToStep} setShowDiagnosis={setCasoShowDiag} />}
       {activeTab === "evaluacion" && <TabEvaluacion />}
-    </div>
+    </ModuleLayout>
   );
 }

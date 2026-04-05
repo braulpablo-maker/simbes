@@ -21,6 +21,7 @@ import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M5 } from './teoria-data';
 import { Slider } from '../../ui';
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
 const ACCENT = "#FB923C";
@@ -604,36 +605,20 @@ const TABS = [
 export default function Module5({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M05</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Sensores y Monitoreo</span>
-          </div>
-          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1 }}>Cartas Amperimétricas · P/T Downhole · Vibración · Diagnóstico</div>
-        </div>
-        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: C.fontUI }}>✅ Disponible</span>
-      </div>
-
-      <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 40, zIndex: 100, background: C.bg, paddingTop: 8 }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: "8px 18px", border: "none", borderRadius: "6px 6px 0 0",
-            background: tab === t.id ? ACCENT + "18" : "transparent",
-            borderBottom: tab === t.id ? `2px solid ${ACCENT}` : "2px solid transparent",
-            color: tab === t.id ? ACCENT : C.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
-            fontWeight: tab === t.id ? 700 : 400,
-          }}>{t.label}</button>
-        ))}
-      </div>
-
+    <ModuleLayout
+      moduleId="M05"
+      title="Sensores y Monitoreo"
+      subtitle="Cartas Amperimétricas · P/T Downhole · Vibración · Diagnóstico"
+      accentColor={ACCENT}
+      tabs={TABS}
+      activeTab={tab}
+      onTabChange={setTab}
+      onBack={onBack}
+    >
       {tab === "teoria" && <TabTeoria />}
       {tab === "sim"    && <TabSimulador />}
       {tab === "caso"   && <TabCaso />}
       {tab === "eval"   && <TabEvaluacion />}
-    </div>
+    </ModuleLayout>
   );
 }

@@ -21,6 +21,7 @@ import { M8_QUESTIONS, gradeM8 }                        from "../../../pedagogy/
 const ACCENT   = "#E2E8F0";
 const ACCENT_B = "#38BDF8";
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 
 const STB_TO_M3  = 0.158987;
 const M_TO_FT    = 3.28084;
@@ -290,14 +291,19 @@ function Param({ label, hint, accentColor = C.muted, children }) {
 }
 
 function KPI({ label, value, unit, color, sub }) {
+  const isAlert = color === C.danger || color === C.warn;
   return (
-    <div style={{ background: C.surface, border: `1px solid ${color}28`, borderRadius: 8, padding: "10px 12px" }}>
+    <div style={{
+      background: isAlert ? color + "15" : C.surface,
+      border: `1px solid ${color}${isAlert ? "55" : "28"}`,
+      borderRadius: 8, padding: "10px 12px"
+    }}>
       <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", textTransform: "uppercase", marginBottom: 3 }}>{label}</div>
       <div style={{ fontSize: 18, fontWeight: 800, color, fontFamily: "JetBrains Mono, monospace", lineHeight: 1 }}>
         {value !== null && value !== undefined ? value : "—"}
         <span style={{ fontSize: 9, fontWeight: 400, marginLeft: 2 }}>{unit}</span>
       </div>
-      {sub && <div style={{ fontSize: 8, color: C.muted, fontFamily: "JetBrains Mono, monospace", marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 8, color: isAlert ? color : C.muted, fontFamily: "JetBrains Mono, monospace", marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -598,7 +604,8 @@ function TabSimulador() {
           <KPI label="TDH requerido"    value={sim.TDH_m}         unit="m"    color="#34D399" />
           <KPI label="Etapas"           value={sim.N_stages}       unit=""     color="#34D399" sub="N° etapas bomba" />
           <KPI label="GVF bomba"        value={(sim.GVF_pump*100).toFixed(1)} unit="%" color={sim.GVF_pump>0.15?C.danger:sim.GVF_pump>0.10?C.warn:C.ok} />
-          <KPI label="V_drop cable"     value={sim.cable?.pct_drop} unit="%"  color={sim.cable?.danger_10pct?C.danger:sim.cable?.warning_5pct?C.warn:C.ok} />
+          <KPI label="V_drop cable"     value={sim.cable?.pct_drop} unit="%"  color={sim.cable?.danger_10pct?C.danger:sim.cable?.warning_5pct?C.warn:C.ok}
+            sub={sim.cable?.danger_10pct ? "⚠️ CRÍTICO — límite: 10%" : sim.cable?.warning_5pct ? "▲ ADVERTENCIA — límite: 5%" : "✓ dentro del límite"} />
         </div>
 
         {/* KPI row: eléctrico + confiabilidad */}
@@ -654,16 +661,18 @@ const SCENARIOS = {
     label: "Escenario A — Nominal",
     color: "#34D399",
     desc: "Pozo en condiciones ideales. Fluido limpio, baja temperatura, cable correcto, VSD AFE.",
-    params: { Pr:3500, Pb:1600, IP:2.0, depth_m:1800, Pwh:150, freq:60, rho_kgL:0.876,
-              GOR:80, T_F:160, separator:"none", mu:3, AWG:2, I_amps:75, T_rated:180,
+    // Unidades SI: IP en m³/d/psi, GOR en m³/m³, T_F en °C
+    params: { Pr:3500, Pb:1600, IP:0.318, depth_m:1800, Pwh:150, freq:60, rho_kgL:0.876,
+              GOR:14, T_F:71, separator:"none", mu:3, AWG:2, I_amps:75, T_rated:180,
               vsd_topo:"afe", bench_env:"env_moderate" },
   },
   B: {
     label: "Escenario B — Degradado",
     color: "#EF4444",
     desc: "Pozo con alto GOR, temperatura elevada, cable delgado, VSD estándar.",
-    params: { Pr:3200, Pb:2000, IP:1.5, depth_m:2200, Pwh:180, freq:62, rho_kgL:0.890,
-              GOR:800, T_F:210, separator:"ags_passive", mu:25, AWG:8, I_amps:95, T_rated:180,
+    // Unidades SI: IP en m³/d/psi, GOR en m³/m³, T_F en °C
+    params: { Pr:3200, Pb:2000, IP:0.238, depth_m:2200, Pwh:180, freq:62, rho_kgL:0.890,
+              GOR:142, T_F:99, separator:"ags_passive", mu:25, AWG:8, I_amps:95, T_rated:180,
               vsd_topo:"standard_6pulse", bench_env:"env_severe" },
   },
 };
@@ -674,8 +683,14 @@ function TabComparacion() {
   const setA = (k, v) => setParamsA(p => ({ ...p, [k]: v }));
   const setB = (k, v) => setParamsB(p => ({ ...p, [k]: v }));
 
-  const simA = useMemo(() => computeSystem(paramsA), [paramsA]);
-  const simB = useMemo(() => computeSystem(paramsB), [paramsB]);
+  const toPhysics = p => ({
+    ...p,
+    GOR: p.GOR * 5.6146,        // m³/m³ → scf/STB
+    T_F: p.T_F * 9 / 5 + 32,   // °C → °F
+    IP:  p.IP / STB_TO_M3,      // m³/d/psi → STB/d/psi
+  });
+  const simA = useMemo(() => computeSystem(toPhysics(paramsA)), [paramsA]);
+  const simB = useMemo(() => computeSystem(toPhysics(paramsB)), [paramsB]);
 
   const Q_A = simA.Q_op_clean ? +(simA.Q_op_clean * STB_TO_M3).toFixed(0) : "—";
   const Q_B = simB.Q_op_clean ? +(simB.Q_op_clean * STB_TO_M3).toFixed(0) : "Sin op.";
@@ -713,12 +728,12 @@ function TabComparacion() {
         <div style={{ fontSize: 10, fontWeight: 800, color, fontFamily: "JetBrains Mono, monospace" }}>{label}</div>
         <button onClick={onReset} style={{ fontSize: 8, color: C.muted, background: "transparent", border: `1px solid ${C.border}`, borderRadius: 4, padding: "2px 7px", cursor: "pointer", fontFamily: "JetBrains Mono, monospace" }}>Reset</button>
       </div>
-      <SliderParam label="Pr (psi)"     min={500}  max={7000}            step={50}  value={params.Pr}      onChange={v=>set("Pr",v)}      color={color} />
-      <SliderParam label="Pb (psi)"     min={100}  max={params.Pr-50}    step={50}  value={params.Pb}      onChange={v=>set("Pb",Math.min(v,params.Pr-50))} color={color} />
-      <SliderParam label="IP (STB/d/psi)" min={0.3} max={10}            step={0.1} value={params.IP}      onChange={v=>set("IP",v)}      color={color} fmt={v=>v.toFixed(1)} />
-      <SliderParam label="Prof. bomba (m)" min={500} max={4000}          step={50}  value={params.depth_m} onChange={v=>set("depth_m",v)} color={color} />
-      <SliderParam label="Frecuencia (Hz)" min={30}  max={70}            step={1}   value={params.freq}    onChange={v=>set("freq",v)}    color={color} />
-      <SliderParam label="GOR (scf/STB)"  min={10}  max={1500}          step={10}  value={params.GOR}     onChange={v=>set("GOR",v)}     color={color} />
+      <SliderParam label="Pr (psi)"          min={500}  max={7000}            step={50}  value={params.Pr}      onChange={v=>set("Pr",v)}      color={color} />
+      <SliderParam label="Pb (psi)"          min={100}  max={params.Pr-50}    step={50}  value={params.Pb}      onChange={v=>set("Pb",Math.min(v,params.Pr-50))} color={color} />
+      <SliderParam label="IP (m³/d/psi)"    min={0.05} max={1.59}            step={0.01} value={params.IP}      onChange={v=>set("IP",v)}      color={color} fmt={v=>v.toFixed(2)} />
+      <SliderParam label="Prof. bomba (m)"  min={500}  max={4000}            step={50}  value={params.depth_m} onChange={v=>set("depth_m",v)} color={color} />
+      <SliderParam label="Frecuencia (Hz)"  min={30}   max={70}              step={1}   value={params.freq}    onChange={v=>set("freq",v)}    color={color} />
+      <SliderParam label="GOR (m³/m³)"      min={0}    max={356}             step={5}   value={params.GOR}     onChange={v=>set("GOR",v)}     color={color} />
     </div>
   );
 
@@ -1037,37 +1052,21 @@ const TABS = [
 export default function Module8({ onBack }) {
   const [tab, setTab] = useState("teoria");
   return (
-    <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: "100vh", color: C.text, padding: "24px clamp(16px, 3vw, 32px) 48px", maxWidth: 1300, margin: '0 auto' }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
-        <button onClick={onBack} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 6, padding: "5px 12px", color: C.muted, cursor: "pointer", fontSize: 10, fontFamily: C.fontUI }}>← Hub</button>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 9, letterSpacing: 3, color: ACCENT, fontWeight: 800, fontFamily: C.font }}>M08</span>
-            <span style={{ fontSize: 21, fontWeight: 800, color: "#F1F5F9", fontFamily: C.fontUI }}>Constructor de Escenarios</span>
-          </div>
-          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 1 }}>Integración M1–M7 · Modo Libre · Análisis Cruzado</div>
-        </div>
-        <span style={{ fontSize: 9, color: C.ok, background: C.ok + "18", padding: "2px 10px", borderRadius: 10, border: `1px solid ${C.ok}30`, fontFamily: C.fontUI }}>✅ Disponible</span>
-      </div>
-
-      <div style={{ display: "flex", gap: 4, marginBottom: 24, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 40, zIndex: 100, background: C.bg, paddingTop: 8 }}>
-        {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)} style={{
-            padding: "8px 18px", border: "none", borderRadius: "6px 6px 0 0",
-            background: tab === t.id ? ACCENT_B + "18" : "transparent",
-            borderBottom: tab === t.id ? `2px solid ${ACCENT_B}` : "2px solid transparent",
-            color: tab === t.id ? ACCENT_B : C.muted,
-            cursor: "pointer", fontSize: 10, fontFamily: C.fontUI,
-            fontWeight: tab === t.id ? 700 : 400,
-          }}>{t.label}</button>
-        ))}
-      </div>
-
+    <ModuleLayout
+      moduleId="M08"
+      title="Constructor de Escenarios"
+      subtitle="Integración M1–M7 · Modo Libre · Análisis Cruzado"
+      accentColor={ACCENT_B}
+      tabs={TABS}
+      activeTab={tab}
+      onTabChange={setTab}
+      onBack={onBack}
+    >
       {tab === "teoria"   && <TabTeoria />}
       {tab === "sim"      && <TabSimulador />}
       {tab === "comparar" && <TabComparacion />}
       {tab === "eval"     && <TabEvaluacion />}
       {tab === "plan"     && <TabPlan />}
-    </div>
+    </ModuleLayout>
   );
 }

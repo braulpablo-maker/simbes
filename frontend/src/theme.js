@@ -31,6 +31,8 @@ export const C = {
   // ── Aliases usados en algunos componentes ───────────────────────
   green:      '#22C55E',
   yellow:     '#FBBF24',
+  purple:     '#A78BFA',   // Violet — M3 accent
+  warn:       '#F59E0B',   // Alias for warning
 
   // ── Tipografía ──────────────────────────────────────────────────
   font:       "'JetBrains Mono', 'Courier New', monospace",  // datos numéricos, métricas, charts

@@ -23,6 +23,7 @@ import { TEORIA_M3 } from './teoria-data';
 
 // ─── Paleta ────────────────────────────────────────────────────────
 import { C } from '../../../theme';
+import ModuleLayout from '../../ui/ModuleLayout';
 
 const SYS = { depth: 1800, Pwh: 150, densidad: 0.876, D_in: 2.441, H0_stage: 45, freq: 60 };
 
@@ -100,14 +101,20 @@ function TabTeoria() {
 }
 
 // ─── Tab Simulador ────────────────────────────────────────────────
+const M3_DEFAULTS = { GOR: 27, Pb: 2000, Ps: 900, T_F: 82, sep: 'none', mu: 5, freq: 60 };
+
 function TabSimulador() {
-  const [GOR,  setGOR]  = useState(27);   // m³/m³ (≈150 scf/STB)
-  const [Pb,   setPb]   = useState(2000);
-  const [Ps,   setPs]   = useState(900);
-  const [T_F,  setTF]   = useState(82);   // °C (≈180°F)
-  const [sep,  setSep]  = useState('none');
-  const [mu,   setMu]   = useState(5);
-  const [freq, setFreq] = useState(60);
+  const [GOR,  setGOR]  = useState(M3_DEFAULTS.GOR);
+  const [Pb,   setPb]   = useState(M3_DEFAULTS.Pb);
+  const [Ps,   setPs]   = useState(M3_DEFAULTS.Ps);
+  const [T_F,  setTF]   = useState(M3_DEFAULTS.T_F);
+  const [sep,  setSep]  = useState(M3_DEFAULTS.sep);
+  const [mu,   setMu]   = useState(M3_DEFAULTS.mu);
+  const [freq, setFreq] = useState(M3_DEFAULTS.freq);
+  function resetSim() {
+    setGOR(M3_DEFAULTS.GOR); setPb(M3_DEFAULTS.Pb); setPs(M3_DEFAULTS.Ps);
+    setTF(M3_DEFAULTS.T_F); setSep(M3_DEFAULTS.sep); setMu(M3_DEFAULTS.mu); setFreq(M3_DEFAULTS.freq);
+  }
 
   const sim = useMemo(() => {
     const GOR_scf    = GOR * 5.6146;                 // m³/m³ → scf/STB
@@ -168,7 +175,10 @@ function TabSimulador() {
   return (
     <div style={{display:'grid',gridTemplateColumns:'280px 1fr',gap:20}}>
       <div>
-        <div style={{color:C.muted,fontSize:10,fontFamily:'JetBrains Mono, monospace',marginBottom:10,textTransform:'uppercase',letterSpacing:1}}>Gas del Yacimiento</div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+          <div style={{color:C.muted,fontSize:10,fontFamily:'JetBrains Mono, monospace',textTransform:'uppercase',letterSpacing:1}}>Gas del Yacimiento</div>
+          <button onClick={resetSim} style={{background:'transparent',border:`1px solid ${C.border}`,borderRadius:5,color:C.muted,fontSize:9,padding:'3px 10px',cursor:'pointer',fontFamily:'JetBrains Mono, monospace',letterSpacing:1}}>↺ Restablecer</button>
+        </div>
         <Slider label="GOR superficial" unit="m³/m³" value={GOR}  min={0}   max={5000} step={25}  dec={0} onChange={setGOR}  tooltip="Gas-Oil Ratio superficial. Alto GOR + baja Ps = mayor GVF. Típico: 9–890 m³/m³ (50–5000 scf/STB)." />
         <Slider label="Presión de burbuja (Pb)" unit="psi" value={Pb} min={300} max={4000} step={50}  dec={0} onChange={setPb}  tooltip="Pb: presión a la que el gas empieza a liberarse. Si Ps > Pb, no hay gas libre." />
         <Slider label="Presión de succión (Ps)" unit="psi" value={Ps} min={50}  max={3000} step={25}  dec={0} onChange={setPs}  tooltip="Pump intake pressure. Si Ps < Pb hay gas libre. Mayor drawdown → menor Ps → mayor GVF." />
@@ -177,7 +187,7 @@ function TabSimulador() {
         <div style={{color:C.muted,fontSize:10,fontFamily:'JetBrains Mono, monospace',marginBottom:8,marginTop:12,textTransform:'uppercase',letterSpacing:1}}>Separador de Gas</div>
         <div style={{display:'flex',flexDirection:'column',gap:6,marginBottom:14}}>
           {SEP_OPTIONS.map(o=>(
-            <button key={o.id} onClick={()=>setSep(o.id)} style={{padding:'8px 12px',background:sep===o.id?C.purple:C.surfaceAlt,color:sep===o.id?'#000':C.muted,border:`1px solid ${sep===o.id?C.purple:C.border}`,borderRadius:6,cursor:'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:11,fontWeight:sep===o.id?700:400,textAlign:'left'}}>
+            <button key={o.id} onClick={()=>setSep(o.id)} style={{padding:'8px 12px',background:sep===o.id?`${C.purple}22`:C.surfaceAlt,color:sep===o.id?C.purple:C.muted,border:`1px solid ${sep===o.id?C.purple:C.border}`,borderRadius:6,cursor:'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:11,fontWeight:sep===o.id?700:400,textAlign:'left'}}>
               {o.label}
             </button>
           ))}
@@ -270,7 +280,7 @@ function TabCaso() {
       <div style={{color:C.purple,fontWeight:700,fontSize:14,fontFamily:'JetBrains Mono, monospace',marginBottom:12}}>CASO PRÁCTICO — POZO IBIS-12 · DIAGNÓSTICO DE GAS LOCK</div>
       <div style={{display:'flex',gap:8,marginBottom:20}}>
         {CASO_STEPS.map((cs,i)=>(
-          <button key={i} onClick={()=>setStep(i)} style={{flex:1,padding:'10px 12px',background:step===i?C.purple:C.surfaceAlt,color:step===i?'#000':C.muted,border:`1px solid ${step===i?C.purple:C.border}`,borderRadius:8,cursor:'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:11,fontWeight:step===i?700:400}}>Paso {i+1}</button>
+          <button key={i} onClick={()=>setStep(i)} style={{flex:1,padding:'10px 12px',background:step===i?`${C.purple}22`:C.surfaceAlt,color:step===i?C.purple:C.muted,border:`1px solid ${step===i?C.purple:C.border}`,borderRadius:8,cursor:'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:11,fontWeight:step===i?700:400}}>Paso {i+1}</button>
         ))}
       </div>
       <div style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:10,padding:'16px 20px',marginBottom:14}}>
@@ -309,7 +319,7 @@ function TabCaso() {
       </div>
       <div style={{display:'flex',gap:12,marginTop:20,justifyContent:'space-between'}}>
         <button onClick={()=>setStep(Math.max(0,step-1))} disabled={step===0} style={{padding:'10px 20px',background:step===0?C.surface:C.surfaceAlt,color:step===0?C.muted:C.text,border:`1px solid ${C.border}`,borderRadius:8,cursor:step===0?'not-allowed':'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:12}}>← Paso anterior</button>
-        <button onClick={()=>setStep(Math.min(CASO_STEPS.length-1,step+1))} disabled={step===CASO_STEPS.length-1} style={{padding:'10px 20px',background:step===CASO_STEPS.length-1?C.surface:C.purple,color:step===CASO_STEPS.length-1?C.muted:'#000',border:'none',borderRadius:8,cursor:step===CASO_STEPS.length-1?'not-allowed':'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:12,fontWeight:700}}>Siguiente paso →</button>
+        <button onClick={()=>setStep(Math.min(CASO_STEPS.length-1,step+1))} disabled={step===CASO_STEPS.length-1} style={{padding:'10px 20px',background:step===CASO_STEPS.length-1?C.surface:`${C.purple}22`,color:step===CASO_STEPS.length-1?C.muted:C.purple,border:`1px solid ${step===CASO_STEPS.length-1?C.border:C.purple}`,borderRadius:8,cursor:step===CASO_STEPS.length-1?'not-allowed':'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:12,fontWeight:700}}>Siguiente paso →</button>
       </div>
     </div>
   );
@@ -351,38 +361,36 @@ function TabEvaluacion() {
       })}
       <div style={{display:'flex',gap:12,justifyContent:'flex-end',marginTop:8}}>
         {submitted&&<button onClick={handleReset} style={{padding:'10px 24px',background:C.surfaceAlt,color:C.text,border:`1px solid ${C.border}`,borderRadius:8,cursor:'pointer',fontFamily:'JetBrains Mono, monospace',fontSize:12}}>Reintentar</button>}
-        {!submitted&&<button onClick={handleSubmit} disabled={!allAnswered} style={{padding:'10px 28px',background:allAnswered?C.purple:C.surface,color:allAnswered?'#000':C.muted,border:'none',borderRadius:8,cursor:allAnswered?'pointer':'not-allowed',fontFamily:'JetBrains Mono, monospace',fontSize:13,fontWeight:700}}>Calificar →</button>}
+        {!submitted&&<button onClick={handleSubmit} disabled={!allAnswered} style={{padding:'10px 28px',background:allAnswered?`${C.purple}22`:C.surface,color:allAnswered?C.purple:C.muted,border:`1px solid ${allAnswered?C.purple:C.border}`,borderRadius:8,cursor:allAnswered?'pointer':'not-allowed',fontFamily:'JetBrains Mono, monospace',fontSize:13,fontWeight:700}}>Calificar →</button>}
       </div>
     </div>
   );
 }
 
 // ─── Raíz ─────────────────────────────────────────────────────────
-const TABS = ['A. Teoría', 'B. Simulador', 'C. Caso Práctico', 'D. Evaluación'];
-export default function Module3() {
-  const [activeTab, setActiveTab] = useState(0);
+const TABS = [
+  { id: 'teoria', label: 'A — Teoría' },
+  { id: 'sim',    label: 'B — Simulador' },
+  { id: 'caso',   label: 'C — Caso Práctico' },
+  { id: 'eval',   label: 'D — Evaluación' },
+];
+export default function Module3({ onBack }) {
+  const [tab, setTab] = useState('teoria');
   return (
-    <div style={{minHeight:'100vh',background:C.bg,fontFamily:C.font,padding:'0 0 60px'}}>
-      <div style={{background:C.surface,borderBottom:`1px solid ${C.border}`,padding:'20px 32px',position:'sticky',top:40,zIndex:100}}>
-        <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:6}}>
-          <div style={{background:C.purple,color:'#000',fontWeight:800,borderRadius:8,padding:'4px 12px',fontSize:13,fontFamily:C.font}}>M3</div>
-          <div style={{color:C.purple,fontWeight:800,fontSize:24,fontFamily:C.fontUI}}>Gas y Flujo Multifásico</div>
-          <div style={{color:C.muted,fontSize:12,fontFamily:C.fontUI}}>GVF · Gas Lock · AGS · Corrección HI de Viscosidad</div>
-        </div>
-        <div style={{display:'flex',gap:4,marginTop:12}}>
-          {TABS.map((t,i)=>(
-            <button key={t} onClick={()=>setActiveTab(i)} style={{padding:'8px 18px',background:activeTab===i?C.purple:'transparent',color:activeTab===i?'#000':C.muted,border:`1px solid ${activeTab===i?C.purple:C.border}`,borderRadius:8,cursor:'pointer',fontFamily:C.fontUI,fontSize:12,fontWeight:activeTab===i?700:400}}>
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div style={{padding:'28px 32px'}}>
-        {activeTab===0&&<TabTeoria />}
-        {activeTab===1&&<TabSimulador />}
-        {activeTab===2&&<TabCaso />}
-        {activeTab===3&&<TabEvaluacion />}
-      </div>
-    </div>
+    <ModuleLayout
+      moduleId="M03"
+      title="Gas y Flujo Multifásico"
+      subtitle="GVF · Gas Lock · AGS · Corrección HI de Viscosidad"
+      accentColor="#A78BFA"
+      tabs={TABS}
+      activeTab={tab}
+      onTabChange={setTab}
+      onBack={onBack}
+    >
+      {tab === 'teoria' && <TabTeoria />}
+      {tab === 'sim'    && <TabSimulador />}
+      {tab === 'caso'   && <TabCaso />}
+      {tab === 'eval'   && <TabEvaluacion />}
+    </ModuleLayout>
   );
 }

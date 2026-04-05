@@ -13,15 +13,15 @@ export const TEORIA_M3 = [
 `GVF = Q_gas / (Q_gas + Q_líquido)
 
 GOR_libre = GOR × (1 − Ps/Pb)       [Standing simplificado]
-Bg = 0.02829 × z × T_R / Ps         [ft³/scf — gas ideal]
-Q_gas     = GOR_libre × Bg
-Q_líquido = 5.615 ft³/STB`,
+Bg = 0.02829 × z × T_R / Ps         [m³/m³ a condiciones de fondo]
+Q_gas     = Q_líquido × GOR_libre × Bg
+1 STB = 0.158987 m³                  [factor de conversión volumétrico]`,
     variables: [
-      { sym: 'GOR',      unit: 'scf/STB', desc: 'Gas-Oil Ratio superficial (condiciones estándar)' },
-      { sym: 'Ps',       unit: 'psi',     desc: 'Presión de succión de la bomba (pump intake pressure)' },
-      { sym: 'Pb',       unit: 'psi',     desc: 'Presión de burbuja — por debajo el gas se libera' },
-      { sym: 'Bg',       unit: 'ft³/scf', desc: 'Factor volumétrico del gas a condiciones de fondo' },
-      { sym: 'T_R',      unit: '°R',      desc: 'Temperatura de fondo en Rankine (°F + 460)' },
+      { sym: 'GOR',      unit: 'm³/m³',  desc: 'Gas-Oil Ratio superficial (condiciones estándar)' },
+      { sym: 'Ps',       unit: 'psi',    desc: 'Presión de succión de la bomba (pump intake pressure)' },
+      { sym: 'Pb',       unit: 'psi',    desc: 'Presión de burbuja — por debajo el gas se libera' },
+      { sym: 'Bg',       unit: 'm³/m³',  desc: 'Factor volumétrico del gas a condiciones de fondo' },
+      { sym: 'T_R',      unit: '°R',     desc: 'Temperatura de fondo en Rankine (°F + 460)' },
     ],
     regla: 'Para Ps ≥ Pb → GVF = 0 (todo el gas permanece disuelto). El GVF crece a medida que Ps cae por debajo de Pb.',
     tipo_regla: 'indigo',

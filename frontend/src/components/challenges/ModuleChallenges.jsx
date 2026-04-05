@@ -330,9 +330,12 @@ function ChallengeSimulator({ ch, onBack, onSolve }) {
 }
 
 // ── Directed Challenge View (M2–M4: no embedded simulator) ──────────────────
-function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved }) {
-  const [showExpl, setShowExpl] = useState(false);
-  const MODULE_LABELS = { M2: 'Diseño Hidráulico', M3: 'Gas y Multifásico', M4: 'Eléctrico / VSD' };
+const MODULE_ID_MAP = { M2: 'm2', M3: 'm3', M4: 'm4', M5: 'm5', M6: 'm6', M7: 'm7' };
+
+function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved, onNavigate }) {
+  const [showExpl,    setShowExpl]    = useState(false);
+  const [justSolved,  setJustSolved]  = useState(false);
+  const MODULE_LABELS = { M2: 'Diseño Hidráulico', M3: 'Gas y Multifásico', M4: 'Eléctrico / VSD', M5: 'Sensores', M6: 'Diagnóstico DIFA', M7: 'Confiabilidad' };
 
   return (
     <div style={{ maxWidth: 860, margin: '0 auto' }}>
@@ -377,22 +380,37 @@ function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved }) {
 
       {/* Botones */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>
-          Abre el <strong style={{ color: ch.color }}>{ch.module} · {MODULE_LABELS[ch.module]}</strong> en el Hub para resolver este desafío.
-        </div>
-        {!alreadySolved && (
-          <button onClick={() => { onSolve(ch.id); setShowExpl(true); }}
+        {onNavigate && MODULE_ID_MAP[ch.module] && (
+          <button
+            onClick={() => onNavigate(MODULE_ID_MAP[ch.module])}
+            style={{ background: ch.color + '18', border: `1px solid ${ch.color}40`, color: ch.color, fontFamily: C.font, fontSize: 11, padding: '8px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 700 }}>
+            → Ir al {ch.module} · {MODULE_LABELS[ch.module]}
+          </button>
+        )}
+        {!alreadySolved && !justSolved && (
+          <button onClick={() => { onSolve(ch.id); setJustSolved(true); setShowExpl(true); }}
             style={{ background: ch.color + '18', border: `1px solid ${ch.color}`, color: ch.color, fontFamily: C.font, fontSize: 11, padding: '8px 18px', borderRadius: 6, cursor: 'pointer', fontWeight: 700 }}>
             ✓ Marcar como resuelto
           </button>
         )}
-        {alreadySolved && !showExpl && (
+        {(alreadySolved || justSolved) && !showExpl && (
           <button onClick={() => setShowExpl(true)}
             style={{ background: C.ok + '18', border: `1px solid ${C.ok}`, color: C.ok, fontFamily: C.font, fontSize: 11, padding: '8px 18px', borderRadius: 6, cursor: 'pointer' }}>
             Ver explicación
           </button>
         )}
       </div>
+
+      {/* UX-009 — Toast de confirmación al marcar como resuelto */}
+      {justSolved && (
+        <div style={{ background: C.ok + '15', border: `1px solid ${C.ok}50`, borderRadius: 8, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 14 }}>🎉</span>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: C.ok, fontFamily: C.fontUI }}>¡Desafío completado! +1 en tu progreso</div>
+            <div style={{ fontSize: 10, color: C.muted, fontFamily: C.fontUI, marginTop: 2 }}>El avance quedó guardado. Podés ver la explicación a continuación.</div>
+          </div>
+        </div>
+      )}
 
       {/* Explanation */}
       {showExpl && (
@@ -406,7 +424,7 @@ function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved }) {
 }
 
 // ── Main Component ───────────────────────────────────────────────────────────
-export default function ModuleChallenges({ onBack }) {
+export default function ModuleChallenges({ onBack, onNavigate }) {
   const [selected,  setSelected]  = useState(null);
   const [completed, setCompleted] = useState(() => {
     try { return JSON.parse(localStorage.getItem('simbes_challenges') || '[]'); } catch { return []; }
@@ -423,7 +441,7 @@ export default function ModuleChallenges({ onBack }) {
     return (
       <div style={{ fontFamily: C.fontUI, background: C.bg, minHeight: '100vh', color: C.text, padding: '24px 28px' }}>
         {ch.simulator === 'directed'
-          ? <DirectedChallengeView ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} alreadySolved={completed.includes(ch.id)} />
+          ? <DirectedChallengeView ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} alreadySolved={completed.includes(ch.id)} onNavigate={onNavigate} />
           : <ChallengeSimulator ch={ch} onBack={() => setSelected(null)} onSolve={markSolved} />
         }
       </div>
