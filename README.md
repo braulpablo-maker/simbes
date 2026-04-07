@@ -192,3 +192,5 @@ jupyter lab
 - **Modo Desafíos**: feedback visual "🎉 +1 en tu progreso" al resolver; botón directo "→ Ir al módulo"; persistencia localStorage
 - **M08 KPI**: semáforo de colores (rojo/amarillo/verde) en todos los indicadores del dashboard
 - **Fricción VLP mejorada (M1)**: Darcy-Weisbach + Colebrook-White reemplaza simplificación `1.4e-5 × Q²`
+- **Modo Desafíos — Guías de resolución**: sección expandible "🗺️ Guía de resolución" en los 16 desafíos PBL con 3 pasos guiados (sin spoilers)
+- **Evaluaciones — Banco ampliado**: 10 preguntas por módulo con sampling aleatorio de 5; feedback diferenciado por opción incorrecta

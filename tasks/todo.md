@@ -193,6 +193,15 @@
 
 ---
 
+## Sprint O — Guías de resolución PBL + fix evaluaciones (07/04/2026) ✅ COMPLETADO
+
+- [x] **PED-007**: `resolution_guide` (3 pasos) en los 16 desafíos de `challenges.json`
+- [x] **PED-007 UI**: sección expandible "🗺️ Guía de resolución" en `DirectedChallengeView` y `ChallengeSimulator`
+- [x] **Fix eval bug**: `res.explanation` / `res.incorrect_feedback` en M2, M3, M4, M5, M6, M8
+- [x] Build verificado limpio
+
+---
+
 ## Sprint: Mejoras v2.0 Fase 2 — 2026-03-23
 
 ### Objetivo
