@@ -312,7 +312,7 @@ function ProgressGlobal({ evalScores }) {
   const completedChallenges = (() => {
     try { return (JSON.parse(localStorage.getItem('simbes_challenges') || '[]')).length; } catch { return 0; }
   })();
-  const totalChallenges = 10;
+  const totalChallenges = 16;
   const pctMod  = Math.round(passedModules  / totalModules  * 100);
   const pctChal = Math.round(completedChallenges / totalChallenges * 100);
   const pctGlobal = Math.round((passedModules + completedChallenges) / (totalModules + totalChallenges) * 100);
@@ -390,7 +390,7 @@ function WelcomePanel({ onDismiss }) {
           <div>
             <div style={{ fontSize: 9, color: '#38BDF8', fontFamily: C.font, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Modo Desafíos</div>
             <p style={{ margin: 0, fontSize: 10, color: C.muted, fontFamily: C.fontUI, lineHeight: 1.6 }}>
-              10 escenarios de campo con criterios de éxito verificables. Ajustá parámetros en el simulador hasta alcanzar el objetivo. No hay una única respuesta — explorá las causas raíz.
+              16 escenarios de campo con criterios de éxito verificables. Ajustá parámetros en el simulador hasta alcanzar el objetivo. No hay una única respuesta — explorá las causas raíz.
             </p>
           </div>
         </div>
@@ -522,7 +522,7 @@ export default function Hub({ onNavigate }) {
           <div>
             <div style={{ fontSize: 10, color: C.primary, fontFamily: C.fontUI, fontWeight: 700, letterSpacing: 2, marginBottom: 4 }}>MODO DESAFÍOS</div>
             <div style={{ fontSize: 15, fontWeight: 700, color: C.text, fontFamily: C.fontUI, marginBottom: 2 }}>Desafíos de Campo BES</div>
-            <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>10 escenarios · Aprendizaje Basado en Problemas · Identifica causas raíz con el simulador</div>
+            <div style={{ fontSize: 11, color: C.muted, fontFamily: C.fontUI }}>16 escenarios · Aprendizaje Basado en Problemas · Identifica causas raíz con el simulador</div>
           </div>
           <div style={{
             background: C.primary + '22', border: `1px solid ${C.primary}55`,

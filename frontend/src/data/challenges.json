@@ -16,6 +16,11 @@
       "description": "Identifica que el drawdown supera el 70% — la bomba opera demasiado cerca del AOF"
     },
     "hint": "Observa el drawdown en las métricas y compara Pwf con Pb. ¿Qué alerta aparece?",
+    "resolution_guide": [
+      "En M1 Simulador, cargá Pr=2200, Pb=1800, IP=0.18, prof=2400m, Pwh=130 y freq=60 Hz.",
+      "Observá el drawdown en las métricas. ¿Supera el 70%? ¿Pwf está cerca de Pb?",
+      "Probá reducir la frecuencia a 50-55 Hz y observá cómo baja el drawdown sin perder demasiado caudal."
+    ],
     "explanation": "Con Pr = 2200 psi y Pb = 1800 psi, el margen de presión es mínimo (zona Darcy muy pequeña). El IP bajo (0.18 m³/d/psi) limita severamente el caudal. El sistema opera con drawdown crítico cercano al AOF — cualquier variación en Pr acelera el decline. La solución es optimizar la frecuencia del VSD para reducir el drawdown y operar más cerca del BEP."
   },
   {
@@ -35,6 +40,11 @@
       "description": "Identifica al menos una alerta de WARNING en el diagnóstico operativo"
     },
     "hint": "Observa la relación entre Pwf y Pb en las métricas. Si Pwf < Pb, hay gas libre en succión. Prueba distintas frecuencias para aliviar el problema.",
+    "resolution_guide": [
+      "En M1 Simulador, cargá los parámetros del pozo y observá si Pwf < Pb en las métricas.",
+      "Activá BSW=40% en el slider y observá cómo cambia la densidad efectiva y el punto de operación.",
+      "Probá subir la frecuencia a 65-70 Hz para elevar la presión de succión y reducir el gas libre."
+    ],
     "explanation": "Con Pb = 2800 psi y el punto de operación resultando en Pwf < Pb, la bomba succiona gas libre (zona Vogel). El BSW del 40% aumenta la densidad efectiva de la mezcla, incrementando el gradiente y el TDH requerido. La solución es subir la frecuencia del VSD para elevar la presión de succión, o evaluar un separador AGS (Módulo 3)."
   },
   {
@@ -54,6 +64,11 @@
       "description": "Ajusta la frecuencia a un rango donde el sistema opere dentro del BEP (68%–132%) sin alertas de surging"
     },
     "hint": "A 65 Hz el punto de operación está muy lejos del BEP. Reduce la frecuencia gradualmente hasta que desaparezcan las alertas. El objetivo es operar entre 68% y 132% del BEP.",
+    "resolution_guide": [
+      "En M1 Simulador, cargá los parámetros y observá el % del BEP en las métricas a 65 Hz.",
+      "Si el % BEP supera 132%, estás en zona de surging. Reducí la frecuencia gradualmente.",
+      "Buscá la frecuencia donde el % BEP quede entre 68% y 132% — esa es la ventana segura."
+    ],
     "explanation": "A 65 Hz la bomba entrega más cabeza de la necesaria para este yacimiento, operando al 150%+ del BEP → surging (cavitación por exceso de caudal). La reducción de frecuencia baja el punto de operación hacia el BEP, elimina la cavitación y reduce el consumo eléctrico cúbicamente (Ley de Afinidad: P ∝ f³)."
   },
   {
@@ -74,6 +89,11 @@
       "description": "Encuentra la frecuencia donde el sistema opera sin alertas y con drawdown ≤ 65%"
     },
     "hint": "Aumenta la frecuencia gradualmente desde 50 Hz. Monitorea el drawdown y las alertas simultáneamente. Hay una ventana estrecha donde se cumplen ambas condiciones.",
+    "resolution_guide": [
+      "Empezá en 50 Hz y subí la frecuencia de a 1 Hz. En cada paso, anotá drawdown y % BEP.",
+      "Detenete cuando el drawdown se acerque al 65% o cuando aparezca una alerta de warning/danger.",
+      "La frecuencia óptima es la más alta donde drawdown ≤ 65% y BEP entre 68%–132% sin alertas."
+    ],
     "explanation": "Este problema integra las restricciones operativas clave: el drawdown máximo (protección de la formación) y el rango BEP (protección de la bomba). La frecuencia óptima balancea ambas restricciones. En campo, este análisis se realiza periódicamente a medida que Pr declina por agotamiento del yacimiento, ajustando la frecuencia del VSD para mantener el punto de operación óptimo."
   },
   {
@@ -95,6 +115,11 @@
       "description": "Calcula que se necesitan al menos 60 etapas para alcanzar TDH ≥ 2100 m"
     },
     "hint": "En M2, ajusta Q = 180 m³/d, profundidad 3200 m. Observa el TDH total. Divide TDH_total / head_por_etapa para determinar el número mínimo de etapas.",
+    "resolution_guide": [
+      "Abrí M2 Simulador. Cargá Q=180 m³/d, profundidad=3200m, Pwh=150 psi, tubing 2.992\".",
+      "Observá el TDH total calculado en las métricas del simulador.",
+      "Dividí TDH_total / H_etapa (35 m) para obtener el número mínimo de etapas. ¿Supera 48?"
+    ],
     "explanation": "TDH = H_estática + H_fricción + H_contrapresión. A 3200 m de profundidad con fluido de 0.876 kg/L, la cabeza estática domina. La fricción Darcy-Weisbach aumenta con Q² — por eso es crítico seleccionar el número correcto de etapas. 48 etapas eran suficientes para 2400 m pero no para 3200 m. La recompletación cambió el requerimiento hidráulico."
   },
   {
@@ -116,6 +141,11 @@
       "description": "Verifica que el factor de corrección de cabeza CH < 0.85 — confirma causa hidráulica, no mecánica"
     },
     "hint": "En M2, ingresa viscosidad = 85 cP. Observa los factores CH, CQ y CE de la corrección HI. Si CH < 0.85, la degradación de la cabeza es normal para esa viscosidad.",
+    "resolution_guide": [
+      "Abrí M2 Simulador. Ingresá viscosidad=85 cP y los demás parámetros del pozo.",
+      "Observá los factores de corrección HI: CH (altura), CQ (caudal) y CE (eficiencia).",
+      "Si CH < 0.85, la degradación del 30% es normal para esa viscosidad — no es falla mecánica."
+    ],
     "explanation": "La corrección Hydraulic Institute (HI) es determinante para crudos pesados. A 85 cP, CH ≈ 0.72 — significa que la bomba entrega naturalmente 28% menos cabeza que a baja viscosidad. El 'problema' reportado es físicamente esperado y no hay falla mecánica. La solución correcta es agregar más etapas o cambiar a una bomba de menor Ns optimizada para fluidos viscosos."
   },
   {
@@ -137,6 +167,11 @@
       "description": "Determina que GVF en succión > 15% y selecciona el separador adecuado (AGS rotativo o gas handler)"
     },
     "hint": "En M3, calcula el GVF con PIP = 890 psi y GOR = 320 m³/m³. Si GVF > 15%, hay riesgo de gas lock. Evalúa si un AGS rotativo o un gas handler resuelve el problema.",
+    "resolution_guide": [
+      "Abrí M3 Simulador. Cargá GOR=320 m³/m³, Pb=2100 psi y los parámetros del pozo.",
+      "Observá el GVF calculado en succión. ¿Supera el 15%? Ese es el umbral de gas lock.",
+      "Probá activar el separador AGS rotativo y verificá si el GVF efectivo baja a < 15%."
+    ],
     "explanation": "Con PIP = 890 psi < Pb = 2100 psi, el 57% del GOR ya se encuentra en fase libre en la succión. El GVF supera el 30%, causando gas lock intermitente. Los disparos de undercurrent ocurren cuando la bomba pierde succión de líquido. Un AGS rotativo puede manejar hasta 50% GVF en succión; un gas handler, hasta 70%. La solución correcta aquí es AGS rotativo — el gas handler sería sobredimensionamiento costoso."
   },
   {
@@ -158,6 +193,11 @@
       "description": "Verifica que CE < 0.55 y evalúa que la solución requiere rompe-emulsión o cambio de bomba"
     },
     "hint": "En M3, ingresa viscosidad = 450 cP. Observa CE (factor de eficiencia HI). Si CE < 0.55, la potencia consumida aumenta drásticamente. El operador debe elegir entre tratamiento químico (rompe-emulsión) o bomba especial para fluidos viscosos.",
+    "resolution_guide": [
+      "Abrí M3 Simulador. Ingresá viscosidad=450 cP (la emulsión, no el crudo puro).",
+      "Observá el factor CE (eficiencia HI). ¿Es menor a 0.55?",
+      "Con CE < 0.55 la bomba consume 2× más potencia por barril. Evaluá: rompe-emulsión o bomba especial."
+    ],
     "explanation": "A 450 cP, los factores HI son aproximadamente: CH ≈ 0.56, CQ ≈ 0.78, CE ≈ 0.44. Esto significa que la bomba consume 2.3× más potencia por barril producido y la cabeza disponible cae 44%. El caudal bajo observado es consecuencia directa. El rompe-emulsión químico en cabezal puede reducir la viscosidad efectiva a 30–60 cP, recuperando casi todo el rendimiento. Este es uno de los problemas más subestimados en campos maduros con alto corte de agua."
   },
   {
@@ -179,6 +219,11 @@
       "description": "Determina que se necesita AWG #2 o mayor para reducir la caída de voltaje a ≤ 8%"
     },
     "hint": "En M4, prueba diferentes calibres AWG (6, 4, 2, 1) con I = 85 A y profundidad 2900 m. La resistencia del cable aumenta con la temperatura (coeficiente α del cobre). Busca el calibre donde la caída de voltaje ≤ 8%.",
+    "resolution_guide": [
+      "Abrí M4 Simulador. Cargá los datos del cable (longitud, calibre AWG, temperatura).",
+      "Observá la caída de voltaje en % respecto al voltaje del motor. ¿Supera el 5%?",
+      "Probá cambiar el calibre AWG a uno más grueso (número menor) hasta que V_drop ≤ 8%."
+    ],
     "explanation": "La caída de voltaje en cable BES es: V_drop = I × R_T × 2L (ida y vuelta). R_T = R_20°C × (1 + 0.00393 × (T - 20)). A 135°C, R aumenta un 45% respecto a 20°C. El AWG #6 tiene R_20°C ≈ 0.132 Ω/100m; a 135°C → 0.191 Ω/100m. Con 2×2900 m = 5800 m de cable, V_drop = 85 × 0.191 × 58 ≈ 940 V (22.6% de 4160 V). El AWG #2 reduce esto a ~6%, dentro de norma."
   },
   {
@@ -200,6 +245,161 @@
       "description": "Identifica que AFE (Active Front End) o VSD 18 pulsos son las únicas opciones que cumplen IEEE 519-2014"
     },
     "hint": "En M4, compara el THD estimado para cada topología VSD: 6 pulsos, 12 pulsos, 18 pulsos y AFE. El límite de IEEE 519 es 5% de THDv en el PCC. Solo dos topologías cumplen la norma — ¿cuáles son?",
+    "resolution_guide": [
+      "Abrí M4 Simulador. Revisá el THD de la topología VSD actual del pozo (6 pulsos).",
+      "Compará con el límite IEEE 519: THDv < 5% en el PCC. ¿Cuáles topologías cumplen?",
+      "Evaluá qué topología (18 pulsos, AFE) cumple la norma y comparalo con el costo relativo."
+    ],
     "explanation": "THD por topología (referencia IEEE / fabricantes): 6 pulsos: 25–35% | 12 pulsos: 15–20% | 18 pulsos: <5% | AFE: <3%. El VSD 12 pulsos NO cumple IEEE 519. Las opciones válidas son: (1) VSD 18 pulsos — menor costo, solución pasiva, eficaz para instalaciones nuevas; (2) AFE — mayor costo pero también actúa como regenerativo (devuelve energía de frenado). Para instalaciones existentes, un filtro activo de armónicos en paralelo puede reducir el THD del 6 pulsos a < 5% sin reemplazar el VSD."
+  },
+  {
+    "id": "ch11",
+    "title": "Carta Amperiométrica Anormal — Pozo Tucán-4",
+    "module": "M5",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#FBBF24",
+    "problem_description": "El Pozo Tucán-4 tiene una carta amperiométrica que oscila ±20% de forma cíclica rápida en un período corto (+/- 10 min por ciclo). El pozo produce 360 m³/d con un BSW del 55%. La alarma de 'Underload' estuvo a punto de disparar. Algunos operadores sospechan de un gas lock temporal, otros de un surging. Usa la teoría del Módulo 5 para identificar este patrón y la solución.",
+    "initial_state": {
+      "Q_m3d": 360, "BSW": 55, "fluctuacion_pct": 20, "tipo_carta": "oscilante"
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M5",
+      "target_value": "patrón identificado",
+      "description": "Debes leer e interpretar las cartas típicas de campo para discernir Gas Lock (caídas súbitas) vs Surging (oscilación rápida y regular)"
+    },
+    "hint": "Revisa la pestaña Teoría de M5 donde se comparan los patrones de carga del motor (Cartas de Carga).",
+    "resolution_guide": [
+      "Abrí M5 pestaña Teoría. Buscá la sección de cartas amperiométricas típicas.",
+      "Compará: surging = oscilación periódica y simétrica; gas lock = caída brusca asimétrica a cero.",
+      "Con oscilación ±20% cíclica, ¿el patrón se parece más a surging o a gas lock?"
+    ],
+    "explanation": "Una oscilación rápida y cíclica en la corriente suele indicar surging o un problema de emulsión extrema ('slugging'), mientras que un Gas Lock puro produce una caída asimétrica y errática de corriente que no se recupera tan rápidamente por su cuenta. La solución inicial requiere verificar la presión de fondo fluyente (Pwf) o ajustar la contrapresión del choke temporalmente para reestabilizar la entrada de fluido."
+  },
+  {
+    "id": "ch12",
+    "title": "Vibración Creciente — Pozo Ibis-7",
+    "module": "M5",
+    "simulator": "directed",
+    "difficulty": "básico",
+    "color": "#FBBF24",
+    "problem_description": "El sensor de fondo del Ibis-7 muestra una vibración que escaló a 5.8 mm/s RMS (ejes radiales X-Y) durante el último mes. El límite histórico era 2.1 mm/s RMS. ¿En qué estado (Alarma/Trip) operarías según tu análisis usando el Módulo 5 y qué acción procede?",
+    "initial_state": {
+      "vib_rms": 5.8, "Q_m3d": 210, "freq": 55
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M5",
+      "target_value": "Rango de alarma crítico",
+      "description": "Usa M5 para comprender los rangos aceptables de mm/s e identificar acción preventiva"
+    },
+    "hint": "Compara el valor 5.8 mm/s con las zonas típicas de operación continua y alarmas recomendadas.",
+    "resolution_guide": [
+      "Abrí M5 pestaña Teoría. Buscá los umbrales de vibración recomendados (mm/s RMS).",
+      "Compará 5.8 mm/s con el umbral de alerta (4 mm/s) y el de paro.",
+      "Identificá las causas mecánicas típicas de vibración alta: desbalanceo, rodamiento, cavitación."
+    ],
+    "explanation": "El valor de 5.8 mm/s supera los umbrales típicos de 'Alarma' pero puede estar rozando el límite de 'Trip' sugerido. La vibración excesiva (sobre 4.5 mm/s RMS) aísla un problema mecánico como desgaste de cojinetes de motor/bomba o desbalanceo progresivo. Hay que solicitar un registro visual y evaluar una ventana oportuna de pull del equipo, en base a un análisis integral y monitoreando si crece exponencialmente."
+  },
+  {
+    "id": "ch13",
+    "title": "Falla Prematura Código 4900 — Pozo Garza-2",
+    "module": "M6",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#EF4444",
+    "problem_description": "El Pozo Garza-2 reportó rotura severa. En el desarme DIFA se determinó el código 4900 por API RP 11S1 (Rodamientos de Sección Superior Fundidos / Sobrecalentamiento). Operó con alta temperatura y poco empuje axial compensado. Encuentra en el flujo DIFA del Módulo 6 la causa probable y recomienda cambios operacionales.",
+    "initial_state": {
+      "codigo_API": 4900, "teardown": "Rodamientos superiores fundidos"
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M6",
+      "target_value": "Determinar sobrecalentamiento local o low flow",
+      "description": "Identificar el flujo del árbol de fallas para código 4900 y plantear qué variable protegió insuficientemente al equipo"
+    },
+    "hint": "En el Módulo 6 (DIFA), busca el árbol o la información ligada a código 4900. Revisa si implica exceso de calor.",
+    "resolution_guide": [
+      "Abrí M6 pestaña Teoría o Simulador. Buscá el código 4900 en la tabla de códigos API RP 11S1.",
+      "Trazá la cadena causal: T° motor (178°C) > T° límite (150°C) → degradación de sello → invasión.",
+      "¿Qué variable operativa debió tener un set point más estricto para prevenir la falla?"
+    ],
+    "explanation": "El código 4900 indica falla relacionada al motor o sección de sello fundida, a menudo generada por falta de refrigeración (Poco flujo, 'low flow', circulando por encima del motor debido a bomba operando cerca de downthrust o recirculación). La falla indica que el set point de la alarma de 'Motor Temperature' debió haber estado más estricto."
+  },
+  {
+    "id": "ch14",
+    "title": "Reincidencia de Falla (3 veces en 6 meses) — Campo Norte",
+    "module": "M6",
+    "simulator": "directed",
+    "difficulty": "avanzado",
+    "color": "#EF4444",
+    "problem_description": "Tres pozos en Campo Norte arrojaron la misma falla API sobre daño en el eje (eje torsional quebrado) en el mismo año. Las bombas instaladas estaban operando en rango BEP aceptable. Se sospecha arrastre de sólidos o arranques agresivos. Verifica el Módulo 6 donde se evalúen este tipo de recurrencias.",
+    "initial_state": {
+      "falla_frecuente": "Rotura torsional de eje"
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M6",
+      "target_value": "Causa raíz: sólidos o soft start omitido",
+      "description": "Mapear la falla de eje partido en serie a problemas de torque estático excedido e instruir arranque VSD mitigativo"
+    },
+    "hint": "La rotura de eje (twisted off) es un problema enteramente torsional. ¿Tu VSD está usando un perfil de aceleración 'rocking' o es directo?",
+    "resolution_guide": [
+      "Abrí M6 y revisá qué tipo de falla produce rotura torsional de eje repetida.",
+      "Evaluá dos hipótesis: (1) sólidos bloqueando el eje, (2) arranque directo sin soft-start.",
+      "¿El VSD tiene perfil de aceleración gradual (ramp-up)? ¿El diámetro de eje es suficiente?"
+    ],
+    "explanation": "Las roturas asiduas en ejes indican exceso de requerimiento de torque en el arranque o bloqueo parcial transitorio (arena). Implementar tiempos de 'ramp up' más largos (soft start) en el VSD y validar si el diámetro del eje seleccionado tiene la resistencia en HP y materiales requerida (como Inconel/Monel si las solicitaciones dinámicas y torsionales son muy altas)."
+  },
+  {
+    "id": "ch15",
+    "title": "MTBF Insuficiente — Pozo Colibrí-8",
+    "module": "M7",
+    "simulator": "directed",
+    "difficulty": "intermedio",
+    "color": "#8B5CF6",
+    "problem_description": "Se ha hecho un reemplazo de bomba casi cada 200 días. Si la empresa desea asegurar que en los próximos 365 días la máquina sobreviva con un R(t) = 85%, ¿qué MTBF base mínimo (en días) le exigirías a las mejoras de Confiabilidad usando el Módulo 7 y asumiendo distribución exponencial?",
+    "initial_state": {
+      "historial_dias_promedio": 200, "supervivencia_requerida_1_ano_pct": 85
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M7",
+      "target_value": "MTBF > 2200 días aprox.",
+      "description": "Utilizar la fórmula y los conceptos de MTBF para revertir el requerimiento del R(t)"
+    },
+    "hint": "Ve al Módulo 7. El modelo matemático de supervivencia es R(t) = exp(-λt) donde λ = 1/MTBF. Despeja el MTBF sabiendo R = 0.85 y t = 365.",
+    "resolution_guide": [
+      "Abrí M7 Simulador. Usá la fórmula R(t) = e^(-t/MTBF) con R=0.85 y t=365 días.",
+      "Despejá: MTBF = -t / ln(R) = -365 / ln(0.85).",
+      "Compará el MTBF requerido con el promedio histórico de 200 días. ¿Es alcanzable?"
+    ],
+    "explanation": "Calculando exp(-t/MTBF) = 0.85 → -t/MTBF = ln(0.85) = -0.1625 → MTBF = 365 / 0.1625 = 2246 días (aprox. 6.1 años). El MTBF exigido a diseño o cambio de paradigma deberá superar radicalmente las medias pasadas para permitir esa tranquilidad en el próximo lapso anual ininterrumpido."
+  },
+  {
+    "id": "ch16",
+    "title": "Datos Censurados a Derecha — Campo Sur",
+    "module": "M7",
+    "simulator": "directed",
+    "difficulty": "avanzado",
+    "color": "#8B5CF6",
+    "problem_description": "Tienes 5 bombas instaladas recientemente en Campo Sur. Ninguna ha fallado pero ya acumulan entre 100 y 300 días cada una operando. Al reportar tu estadística anual asumiendo solo que no hay datos fallados, el MTBF real se subestima. Evalúa en M7 cómo el sesgo de supervivencia interviene en la confiabilidad real de poblaciones incompletas.",
+    "initial_state": {
+      "equipos": 5, "fallados": 0, "dias_acumulados_censores": [120, 150, 155, 230, 280]
+    },
+    "success_criteria": {
+      "type": "directed",
+      "target_module": "M7",
+      "target_value": "Identificar el uso de análisis censurado (MLE o Kaplan-Meier)",
+      "description": "Evidenciar que obviar variables no defectuosas sesga pesimistamente un MTBF global si solo cuentas roturas anteriores."
+    },
+    "hint": "En Teoría (M7) repasa qué es un 'dato censurado' (censorship) cuando un equipo llega al fin de la ventana de análisis sin haber fallado.",
+    "resolution_guide": [
+      "Abrí M7 pestaña Teoría. Revisá la sección de datos censurados y MLE.",
+      "Calculá el MTBF sin censurar (solo fallos) vs. con censura (sumando días de equipos vivos).",
+      "¿Cuánto cambia el MTBF al incluir los equipos que siguen operando?"
+    ],
+    "explanation": "El estimador de Máxima Verosimilitud (MLE) permite sumar los Días Operando (Run Life) de los equipos 'sobervivientes'. Cuando se obvia este cómputo, o no se usan diagramas adecuados de distribución (como el sesgo exponencial a derecha o Weibull), el campo parece mucho más costoso y prematuro en roturas, y se toman decisiones de sobredimensionamiento por puro miedo estocástico."
   }
 ]

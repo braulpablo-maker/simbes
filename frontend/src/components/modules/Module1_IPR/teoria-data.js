@@ -55,6 +55,16 @@ AOF = Qb + (IP × Pb) / 1.8        [compuesto]`,
     ],
     regla: 'El AOF no es alcanzable operativamente. Usar como referencia de techo del yacimiento.',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "Calcular el AOF de un pozo con Pr = 3000 psi, Pb = 2000 psi, IP = 0.5 m³/d/psi.",
+      pasos: [
+        "Paso 1: Calcular límite Darcy (Qb). El tramo lineal va desde Pr hasta Pb.",
+        "Qb = IP × (Pr - Pb) = 0.5 × (3000 - 2000) = 500 m³/d.",
+        "Paso 2: Calcular el AOF teórico usando la zona Vogel (compuesto max).",
+        "AOF = Qb + (IP × Pb) / 1.8 = 500 + (0.5 × 2000) / 1.8",
+        "AOF = 500 + 1000 / 1.8 = 500 + 555.5 = 1055.5 m³/d."
+      ]
+    }
   },
 
   {
@@ -95,6 +105,14 @@ Ejemplo 60 Hz → 50 Hz (ratio = 0.833):
     ],
     regla: 'La ley cúbica de potencia es clave: reducir la frecuencia 17% (60→50 Hz) recorta el consumo eléctrico ~42%.',
     tipo_regla: 'ok',
+    ejemplo_resuelto: {
+      contexto: "Una bomba produce 500 m³/d consumiendo 120 HP a 60 Hz. Estimar el desempeño a 50 Hz.",
+      pasos: [
+        "Paso 1: Relación de frecuencias = f₂/f₁ = 50/60 = 0.833.",
+        "Paso 2: Nuevo Caudal (Ley Lineal) → Q₂ = 500 × 0.833 = 416.5 m³/d.",
+        "Paso 3: Nuevo Consumo (Ley Cúbica) → P₂ = 120 × (0.833)³ = 120 × 0.578 = 69.4 HP."
+      ]
+    }
   },
 
   {

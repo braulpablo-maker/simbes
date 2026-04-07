@@ -26,6 +26,15 @@ Límites: < 5% → OK  |  5–10% → Advertencia  |  > 10% → Peligro`,
     ],
     regla: 'A menor número AWG → mayor diámetro → menor resistencia. AWG #1 (R ≈ 0.12 Ω/1000ft) vs AWG #14 (R ≈ 2.53 Ω/1000ft).',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Tenemos un motor que consume 60 A y un cable resistivo de R = 0.5 Ω de fondo a superficie.",
+      pasos: [
+        "Paso 1: Calcular la caída de voltaje en un sistema trifásico usando V_drop = I × R × √3 o asumiendo el factor x3 según la fórmula de este manual.",
+        "Paso 2: Si usamos V_drop = I × R_T × 3 → 60 A × 0.5 Ω × 3 = 90 V.",
+        "Paso 3: Si el voltaje nominal en superficie es 3000 V, 90 / 3000 = 3% de caída.",
+        "Paso 4: Esta caída es < 5%, por lo tanto, es un diseño operativo adecuado (OK)."
+      ]
+    }
   },
 
   {
@@ -45,6 +54,15 @@ Clase C → límite 220°C`,
     ],
     regla: 'Clase H a 190°C → vida = 50% nominal. A 200°C → 25%. A 220°C → 6.25%.',
     tipo_regla: 'danger',
+    ejemplo_resuelto: {
+      contexto: "Se opera un motor Clase H (límite 180°C) a una temperatura real de 205°C durante un periodo prolongado.",
+      pasos: [
+        "Paso 1: Excedente térmico = T_real - T_límite = 205°C - 180°C = 25°C.",
+        "Paso 2: Factores de reducción a la mitad (cada 10°C) = 25 / 10 = 2.5.",
+        "Paso 3: Vida útil relativa = 1 / (2^2.5) = 1 / 5.65 ≈ 17.6%.",
+        "Paso 4: El activo fallará teóricamente en el 17.6% del tiempo previsto por el fabricante."
+      ]
+    }
   },
 
   {
@@ -66,6 +84,14 @@ Límite IEEE 519-2014: THDv < 5% en PCC`,
     ],
     regla: 'THD alto → calentamiento de transformadores, errores en instrumentación SCADA e interferencia en comunicaciones.',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "El operador debe cumplir la norma IEEE 519-2014 (<5% THD) en la entrega al campo petrolero en su punto PCC.",
+      pasos: [
+        "Paso 1: Si instala VSD de 6 pulsos (THD ≈ 30%), NO cumple.",
+        "Paso 2: Si instala VSD de 12 pulsos (THD ≈ 17.5%), tamboco cumple el 5%.",
+        "Paso 3: Debe especificar VSD de 18 pulsos o con AFE (Active Front End). El AFE dará THD ≈ 2.5%, asegurando el cumplimiento y evitando multas."
+      ]
+    }
   },
 
   {
@@ -84,6 +110,14 @@ Inyección de solventes → PEEK mandatorio`,
     ],
     regla: 'El H₂S difunde por los elastómeros NBR a alta temperatura → descompresión explosiva al parar el pozo.',
     tipo_regla: 'danger',
+    ejemplo_resuelto: {
+      contexto: "Pozo profundo operando a 150°C, y fluidos que contienen H₂S. Hay que escoger cable de potencia.",
+      pasos: [
+        "Paso 1: Por la temperatura de 150°C, NBR ya no es apto (>140°C y H2S). Se necesita EPDM o PEEK.",
+        "Paso 2: Por presencia de H₂S, NACE MR0175 requiere barrera contra gas impermeable. EPDM aislado no basta.",
+        "Paso 3: Solución NACE: EPDM con cubierta exterior de plomo (Lead Sheath). Para contención mecánica agresiva y corrosión localizada, empacarlo encima con Monel 400."
+      ]
+    }
   },
 
   {

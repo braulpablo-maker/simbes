@@ -203,6 +203,7 @@ function ChallengeSimulator({ ch, onBack, onSolve }) {
   const [freq, setFreq] = useState(init.freq);
   const [BSW,  setBSW]  = useState(init.BSW || 0);
   const [showExpl, setShowExpl] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   const sim = useMemo(() => {
     const result = computeChallengeSim(init, freq, BSW);
@@ -231,6 +232,69 @@ function ChallengeSimulator({ ch, onBack, onSolve }) {
           <strong>Pista:</strong> {ch.hint}
         </div>
       </div>
+
+      {/* Resolution Guide (PED-007) */}
+      {ch.resolution_guide && ch.resolution_guide.length > 0 && (
+        <div>
+          <button
+            onClick={() => setShowGuide(g => !g)}
+            style={{
+              background: showGuide ? ch.color + '15' : 'transparent',
+              border: `1px solid ${ch.color}40`,
+              borderRadius: showGuide ? '8px 8px 0 0' : 8,
+              color: ch.color,
+              fontSize: 11,
+              fontFamily: C.fontUI,
+              fontWeight: 600,
+              padding: '8px 16px',
+              cursor: 'pointer',
+              width: '100%',
+              textAlign: 'left',
+            }}
+          >
+            {showGuide ? '▾' : '▸'} 🗺️ Guía de resolución (sin spoilers)
+          </button>
+          {showGuide && (
+            <div style={{
+              background: ch.color + '08',
+              border: `1px solid ${ch.color}30`,
+              borderTop: 'none',
+              borderRadius: '0 0 8px 8px',
+              padding: '14px 18px',
+            }}>
+              {ch.resolution_guide.map((step, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  marginBottom: i < ch.resolution_guide.length - 1 ? 10 : 0,
+                }}>
+                  <span style={{
+                    background: ch.color + '25',
+                    color: ch.color,
+                    fontFamily: C.font,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    width: 22,
+                    height: 22,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>{i + 1}</span>
+                  <span style={{
+                    fontSize: 11,
+                    color: C.text,
+                    fontFamily: C.fontUI,
+                    lineHeight: 1.7,
+                  }}>{step}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Fixed params banner */}
       <div style={{ background: C.surface, borderRadius: 8, padding: '10px 16px', border: `1px solid ${C.border}`, display: 'flex', gap: 20, flexWrap: 'wrap' }}>
@@ -335,6 +399,7 @@ const MODULE_ID_MAP = { M2: 'm2', M3: 'm3', M4: 'm4', M5: 'm5', M6: 'm6', M7: 'm
 function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved, onNavigate }) {
   const [showExpl,    setShowExpl]    = useState(false);
   const [justSolved,  setJustSolved]  = useState(false);
+  const [showGuide,   setShowGuide]   = useState(false);
   const MODULE_LABELS = { M2: 'Diseño Hidráulico', M3: 'Gas y Multifásico', M4: 'Eléctrico / VSD', M5: 'Sensores', M6: 'Diagnóstico DIFA', M7: 'Confiabilidad' };
 
   return (
@@ -374,9 +439,72 @@ function DirectedChallengeView({ ch, onBack, onSolve, alreadySolved, onNavigate 
       </div>
 
       {/* Hint */}
-      <div style={{ background: '#FBBF2408', border: '1px solid #FBBF2440', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 11, color: '#FCD34D', fontFamily: C.fontUI, lineHeight: 1.7 }}>
+      <div style={{ background: '#FBBF2408', border: '1px solid #FBBF2440', borderRadius: 8, padding: '12px 16px', marginBottom: 16, fontSize: 11, color: '#FCD34D', fontFamily: C.fontUI, lineHeight: 1.7 }}>
         💡 <strong>Pista:</strong> {ch.hint}
       </div>
+
+      {/* Resolution Guide (PED-007) */}
+      {ch.resolution_guide && ch.resolution_guide.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <button
+            onClick={() => setShowGuide(g => !g)}
+            style={{
+              background: showGuide ? ch.color + '15' : 'transparent',
+              border: `1px solid ${ch.color}40`,
+              borderRadius: showGuide ? '8px 8px 0 0' : 8,
+              color: ch.color,
+              fontSize: 11,
+              fontFamily: C.fontUI,
+              fontWeight: 600,
+              padding: '8px 16px',
+              cursor: 'pointer',
+              width: '100%',
+              textAlign: 'left',
+            }}
+          >
+            {showGuide ? '▾' : '▸'} 🗺️ Guía de resolución (sin spoilers)
+          </button>
+          {showGuide && (
+            <div style={{
+              background: ch.color + '08',
+              border: `1px solid ${ch.color}30`,
+              borderTop: 'none',
+              borderRadius: '0 0 8px 8px',
+              padding: '14px 18px',
+            }}>
+              {ch.resolution_guide.map((step, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                  marginBottom: i < ch.resolution_guide.length - 1 ? 10 : 0,
+                }}>
+                  <span style={{
+                    background: ch.color + '25',
+                    color: ch.color,
+                    fontFamily: C.font,
+                    fontSize: 10,
+                    fontWeight: 700,
+                    width: 22,
+                    height: 22,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>{i + 1}</span>
+                  <span style={{
+                    fontSize: 11,
+                    color: C.text,
+                    fontFamily: C.fontUI,
+                    lineHeight: 1.7,
+                  }}>{step}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Botones */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>

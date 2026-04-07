@@ -29,6 +29,14 @@ GAS LOCK:  Caída súbita < 20% nominal — la bomba gira en gas.
     ],
     regla: 'La carta amperimérica es el primer diagnóstico: revisar antes de cualquier intervención en el pozo.',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Se recibe una alerta de paro en un BES; la carta registró una caída repentina de 80 A a 14 A constante durante 3 minutos antes del trip de bajacarga.",
+      pasos: [
+        "Paso 1: Identificar el patrón: Caída súbita y sostenida < 20% (14A / 80A ≈ 17.5%).",
+        "Paso 2: Correlacionar patrón con diagnóstico: La bomba se ha quedado sin líquido para impulsar, típicamente por Gas Lock.",
+        "Paso 3: Plan de acción: No intentar pender de nuevo en las mismas condiciones; asegurar purga de gas para cebar el sistema."
+      ]
+    }
   },
 
   {
@@ -52,6 +60,15 @@ Datos clave:
     ],
     regla: 'Ps < Pb → gas libre en succión (→ M3). T_motor > T_rated → Arrhenius activo (→ M4).',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "Tenemos Pb=1200 psi. Sensor en succión marca Ps=1000 psi. El caudal ha caído 10%.",
+      pasos: [
+        "Paso 1: Evaluar la presión de succión vs el punto de burbujeo: Ps (1000) < Pb (1200).",
+        "Paso 2: Diagnóstico térmico/presión: Al romper la Pb, hay gas libre formándose desde el Intake.",
+        "Paso 3: Diagnóstico operativo: Ese gas interfiere con el bombeo de la etapa limitando el caudal en 10%.",
+        "Conclusión: Confirmado inicio de degradación por gas multifásico y requerimiento de reducir velocidad o instalar AGS."
+      ]
+    }
   },
 
   {
@@ -75,6 +92,15 @@ PATRONES → CAUSA:
     ],
     regla: 'Impactos periódicos a 4–6× f_rot = rodamiento defectuoso. Planificar extracción urgente.',
     tipo_regla: 'danger',
+    ejemplo_resuelto: {
+      contexto: "El sensor de fondo marca una vibración sostenida de 5.2 mm/s RMS en el eje radial Y con frecuencia principal 1x f_rot.",
+      pasos: [
+        "Paso 1: Comparar con la norma ISO/API (Zona B = 4.0 a 6.3 mm/s).",
+        "Paso 2: Como 5.2 está en la Zona B, el sistema está en ALERTA, pero no manda a TRIPE (paro > 6.3).",
+        "Paso 3: Observamos el espectro: muestra repetición a 1x f_rot.",
+        "Paso 4: Diagnóstico inicial: Desbalanceo probable de las etapas (masa excéntrica por sólidos o desgaste asimétrico)."
+      ]
+    }
   },
 
   {
@@ -99,6 +125,15 @@ Caída súbita de corriente a < 20%
     variables: null,
     regla: 'Combinar al menos 2 fuentes de datos antes de tomar decisión operativa. Un solo sensor engaña.',
     tipo_regla: 'ok',
+    ejemplo_resuelto: {
+      contexto: "El operador ve una Baja de Corriente (<70%) pero no está seguro si es bomba vacía (fluido liviano) o Gas Lock.",
+      pasos: [
+        "Paso 1: Verificar el DPTS para cruzar datos.",
+        "Paso 2: Si el DPTS indica Ps=2000 psi (>> Pb de 1200), entonces no hay gas.",
+        "Paso 3: Al no haber gas, la baja corriente debe provenir de rotura de eje (subcarga total) o desgaste masivo del impulsor que no está desplazando fluido.",
+        "Conclusión: La correlación descarta M3 (Gas) y dirige la investigación hacia falla mecánica catastrófica."
+      ]
+    }
   },
 
   {

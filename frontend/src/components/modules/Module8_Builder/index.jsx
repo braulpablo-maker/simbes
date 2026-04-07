@@ -15,7 +15,7 @@ import { gasVolumeFraction, hqGasDegradation, gasSeparatorEfficiency, hiViscosit
 import { cableVoltageDrop, arrheniusLifeFactor, thdEstimate } from "../../../physics/electrical";
 import { survivalProb }                                  from "../../../physics/reliability";
 import BENCH_DATA                                        from "../../../data/mtbf-benchmarks.json";
-import { M8_QUESTIONS, gradeM8 }                        from "../../../pedagogy/evaluations/m8";
+import { M8_QUESTIONS, gradeM8, sampleQuestions as sampleM8 } from "../../../pedagogy/evaluations/m8";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const ACCENT   = "#E2E8F0";
@@ -436,6 +436,34 @@ function TabTeoria() {
             Ningún módulo se puede optimizar de forma aislada. Aumentar la frecuencia (M1/M2) baja el Pwf → sube el GVF (M3). Más caudal → más corriente → más caída de cable (M4) → motor más caliente → menos vida (Arrhenius). Más fallas → MTBF real baja (M7). El Constructor permite ver todas estas interacciones simultáneamente.
           </div>
         </div>
+
+        {/* Ejemplo Resuelto PED-001 */}
+        <div style={{
+          marginTop: 16, background: '#0F172A',
+          border: `1px solid ${ACCENT}40`, borderLeft: `3px solid ${ACCENT}`,
+          borderRadius: 8, padding: '14px 18px',
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8,
+            fontFamily: C.fontUI, fontSize: 11, fontWeight: 800, color: ACCENT,
+            textTransform: 'uppercase', letterSpacing: 1.5,
+          }}>
+            <span>📐 EJEMPLO RESUELTO: OPTIMIZACIÓN INTEGRAL</span>
+          </div>
+          <p style={{ margin: '0 0 10px', fontFamily: C.fontUI, fontSize: 12, color: C.text, lineHeight: 1.6 }}>
+            Se desea aumentar la producción subiendo la frecuencia de 60 Hz a 65 Hz en un pozo con GOR alto.
+          </p>
+          <div style={{
+            background: '#1E293B', padding: '10px 14px', borderRadius: 6,
+            border: `1px dashed ${ACCENT}30`, fontFamily: "JetBrains Mono, monospace", fontSize: 11,
+            display: 'flex', flexDirection: 'column', gap: 6, lineHeight: 1.5
+          }}>
+            <div style={{ display: 'flex' }}><span style={{ color: ACCENT, marginRight: 8, fontWeight: 700 }}>{'>'}</span><span style={{ color: C.muted }}>Paso 1: M1/M2 - Al subir a 65 Hz, requerimos menor Pwf para mover más caudal.</span></div>
+            <div style={{ display: 'flex' }}><span style={{ color: ACCENT, marginRight: 8, fontWeight: 700 }}>{'>'}</span><span style={{ color: C.muted }}>Paso 2: M3 - Si la Pwf cae por debajo de Pb, el gas se libera. El GVF sube drásticamente, causando gas lock.</span></div>
+            <div style={{ display: 'flex' }}><span style={{ color: ACCENT, marginRight: 8, fontWeight: 700 }}>{'>'}</span><span style={{ color: C.muted }}>Paso 3: M4 - Si agregamos un separador para evitar gas lock, la corriente del motor sube (mayor volumen útil movido y eficiencia). Si usamos cable muy fino, el voltaje cae &gt;10%.</span></div>
+            <div style={{ display: 'flex' }}><span style={{ color: ACCENT, marginRight: 8, fontWeight: 700 }}>{'>'}</span><span style={{ color: C.muted }}>Paso 4: Decisión - Para operar a 65 Hz, el análisis integrado muestra que es indispensable añadir un separador de gas y verificar el calibre del cable.</span></div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -785,11 +813,12 @@ function TabComparacion() {
 
 // ─── Tab D: Evaluación ───────────────────────────────────────────────────────
 function TabEvaluacion() {
+  const [questions] = useState(() => sampleM8(5));
   const [answers, setAnswers] = useState({});
   const [result,  setResult]  = useState(null);
   const select = (qId, optId) => { if (!result) setAnswers(p => ({ ...p, [qId]: optId })); };
   const submit = () => {
-    const r = gradeM8(M8_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
+    const r = gradeM8(questions.map(q => ({ id: q.id, selected: answers[q.id] || "" })));
     try { localStorage.setItem('simbes_eval_m8', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
     setResult(r);
   };
@@ -820,7 +849,7 @@ function TabEvaluacion() {
         </div>
       )}
 
-      {M8_QUESTIONS.map((q, qi) => {
+      {questions.map((q, qi) => {
         const res = result?.results.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: C.surface, borderRadius: 8, padding: 18, border: `1px solid ${C.border}` }}>
@@ -831,7 +860,7 @@ function TabEvaluacion() {
               {q.options.map(opt => {
                 const selected  = answers[q.id] === opt.id;
                 const isCorrect = res && opt.id === q.correct;
-                const isWrong   = res && selected && !isCorrect;
+                const isWrong   = res && !isCorrect;
                 const color = isCorrect ? C.ok : isWrong ? C.danger : selected ? ACCENT_B : C.border;
                 return (
                   <button key={opt.id} onClick={() => select(q.id, opt.id)} style={{
@@ -849,7 +878,7 @@ function TabEvaluacion() {
             </div>
             {res && (
               <div style={{ marginTop: 10, background: C.ok + "08", border: `1px solid ${C.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
-                💡 {q.explanation}
+                💡 {res.isOk ? res.explanation : (res.incorrect_feedback?.[res.selected] || res.explanation)}
               </div>
             )}
           </div>
@@ -857,14 +886,14 @@ function TabEvaluacion() {
       })}
 
       {!result && (
-        <button onClick={submit} disabled={Object.keys(answers).length < M8_QUESTIONS.length} style={{
+        <button onClick={submit} disabled={Object.keys(answers).length < questions.length} style={{
           padding: "12px", borderRadius: 8, fontSize: 11, fontWeight: 700,
           border: `1px solid ${ACCENT_B}`, background: ACCENT_B + "22", color: ACCENT_B,
-          cursor: Object.keys(answers).length < M8_QUESTIONS.length ? "not-allowed" : "pointer",
-          opacity: Object.keys(answers).length < M8_QUESTIONS.length ? 0.5 : 1,
+          cursor: Object.keys(answers).length < questions.length ? "not-allowed" : "pointer",
+          opacity: Object.keys(answers).length < questions.length ? 0.5 : 1,
           fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
         }}>
-          CALIFICAR ({Object.keys(answers).length}/{M8_QUESTIONS.length} respondidas)
+          CALIFICAR ({Object.keys(answers).length}/{questions.length} respondidas)
         </button>
       )}
     </div>

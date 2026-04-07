@@ -18,6 +18,15 @@ export const TEORIA_M6 = [
     variables: null,
     regla: 'Sin DIFA, el equipo vuelve al pozo con el mismo problema.',
     tipo_regla: 'danger',
+    ejemplo_resuelto: {
+      contexto: "Un motor falla (quemado al aterrizarse a masa) a los 3 meses. El operador simplemente reemplaza el equipo sin desarmar.",
+      pasos: [
+        "Paso 1: Al no aplicar DIFA, no se averigua por qué se quemó dicho motor (ej. el sello dejó pasar agua porque se operaba a 160°C con sellos NBR de 120°C).",
+        "Paso 2: Se compra y baja un repuesto idéntico con sello NBR de 120°C.",
+        "Paso 3: El nuevo equipo volverá a fallar inexorablemente a los 3 meses porque la causa raíz (alta temperatura que destruye el elastómero secundario) sigue en pie.",
+        "Conclusión: El RCA documentado detiene fallas en serie."
+      ]
+    }
   },
 
   {
@@ -48,6 +57,14 @@ export const TEORIA_M6 = [
     variables: null,
     regla: 'Un campo con 50+ equipos instalados puede identificar patrones estadísticos con solo 12 meses de teardown codificado.',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Se observó que en el campo 'X' el 80% de los teardowns arrojaron el código 3730.",
+      pasos: [
+        "Paso 1: Entender el código: Serie 3700 = Corrosión. Especial 3730 = Ataque por Gases Acidos.",
+        "Paso 2: Como el 80% de pozos sufren esto, debe haber una base general compartida: H2S no mitigado o materiales estándar inadecuados en toda la flota.",
+        "Paso 3: Se cambia la especificación global de acero común a aleaciones especializadas para todos los futuros pozos, resolviendo en masa el problema top 1."
+      ]
+    }
   },
 
   {
@@ -72,6 +89,15 @@ Caudal reducido + I alta    → Incrustación escala → 3720`,
     ],
     regla: 'Buscar siempre el PRIMER daño. Todos los demás suelen ser consecuencias en cadena.',
     tipo_regla: 'ok',
+    ejemplo_resuelto: {
+      contexto: "Un equipo falla y se observa: Corriente baja + IR cae a cero en caliente. El Teardown presenta elastómero reventado.",
+      pasos: [
+        "Paso 1: Clasificar síntomas: Invasión de fluido al motor por el sello (Código 4930).",
+        "Paso 2: Verificar el historial: reportaba repetidamente T > 180°C, sobrepasando límite de O-rings estandar (ej. NBR).",
+        "Paso 3: Causa Raíz Probable: Sobrecalentamiento recurrente que degradó agresivamente los elastómeros permitiendo paso de fluido.",
+        "Paso 4: Prevención sugerida: Implementar O-rings de EPDM o PEEK y ajustar protección térmico-operativa."
+      ]
+    }
   },
 
   {
@@ -120,6 +146,15 @@ Caudal reducido + I alta    → Incrustación escala → 3720`,
     variables: null,
     regla: 'Cada acción de prevención debe quedar documentada y con responsable asignado. Sin cierre formal, la falla se repite.',
     tipo_regla: 'ok',
+    ejemplo_resuelto: {
+      contexto: "Falla eléctrica detectada: Código 5930 (Corrosión por H2S en cable).",
+      pasos: [
+        "Paso 1: El teardown muestra el aislamiento del cable cristalizado y negro por ataque de sulfuro de hidrógeno, generando falla cruzada.",
+        "Paso 2: Prevención M6: Se estipula usar 'Lead Sheath' (cable envuelto con funda protectora de plomo impenetrable a gases) al reacondicionar el pozo.",
+        "Paso 3: Se agenda a ingeniería asignar diseño con NACE al próximo cable a cotizar.",
+        "Conclusión: Prevención técnica ejecutada que cerrará la persistencia de fallas 5930."
+      ]
+    }
   },
 
   {

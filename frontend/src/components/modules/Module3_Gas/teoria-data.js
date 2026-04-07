@@ -25,6 +25,14 @@ Q_gas     = Q_líquido × GOR_libre × Bg
     ],
     regla: 'Para Ps ≥ Pb → GVF = 0 (todo el gas permanece disuelto). El GVF crece a medida que Ps cae por debajo de Pb.',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Un pozo tiene GOR = 300 scf/STB, Pb = 1500 psi. Si Ps = 1000 psi, determinar el GOR libre asumiendo el modelo Standing simplificado.",
+      pasos: [
+        "Paso 1: Identificar que Ps < Pb (1000 < 1500), por lo tanto hay gas libre.",
+        "Paso 2: Calcular la fracción liberada = (1 - Ps/Pb) = (1 - 1000/1500) = 1 - 0.667 = 0.333.",
+        "Paso 3: Calcular GOR libre = GOR_total × 0.333 = 300 × 0.333 = 100 scf/STB."
+      ]
+    }
   },
 
   {
@@ -61,6 +69,14 @@ GVF > 15%:  f_H < 0.70  (severa → gas lock)`,
     ],
     regla: '[SIMPLIFIED: factor uniforme sobre la curva. Valores reales varían por fabricante y geometría del impulsor.]',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "Calcular el impacto en la bomba si GVF=12%.",
+      pasos: [
+        "Paso 1: Para GVF = 12%, estamos cerca de gas lock y el factor f_H será de 0.70 a 0.90.",
+        "Paso 2: Al instalar un AGS rotativo (η=65%), el nuevo GVF en el impulsor bajará a 12% × (1 - 0.65) = 4.2%.",
+        "Paso 3: Con GVF=4.2%, la bomba no sufre degradación (f_H ≈ 1.00)."
+      ]
+    }
   },
 
   {
@@ -79,6 +95,15 @@ Gas Handler Activo:   η ≈ 82%  →  mayor rango de operación`,
     ],
     regla: 'El AGS agrega OD al string. Verificar holgura en casing antes de especificar.',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "El GVF en fondo calculado es de 25%. Se propone instalar un AGS con eficiencia del 65%.",
+      pasos: [
+        "Paso 1: Identificar que GVF=25% causará Gas Lock seguro sin equipo auxiliar.",
+        "Paso 2: Calcular GVF entrando a los impulsores: GVF_bomba = 25% × (1 - 0.65)",
+        "Paso 3: GVF_bomba = 25% × 0.35 = 8.75%.",
+        "Conclusión: El AGS deprime el gas libre a 8.75%, permitiendo operación continua."
+      ]
+    }
   },
 
   {
@@ -100,6 +125,14 @@ B < 10  → corrección severa (CQ, CH < 0.85)`,
     ],
     regla: 'Para crudos > 30 cP la reducción de eficiencia puede llegar al 25–40%. Sobredimensionar en caudal y altura.',
     tipo_regla: 'warning',
+    ejemplo_resuelto: {
+      contexto: "Se requiere un caudal de 500 m³/d para un crudo extrapesado donde la corrección HI arrojó CQ = 0.85.",
+      pasos: [
+        "Paso 1: La bomba bombeará el crudo viscoso, operando con su capacidad mermada al 85%.",
+        "Paso 2: Para compensar, dividimos el caudal requerido por el factor de corrección: Q_diseño = 500 / 0.85",
+        "Paso 3: Q_diseño = 588 m³/d. Seleccionar una bomba de catálogo cuyo BEP en agua dulce sea ~600 m³/d."
+      ]
+    }
   },
 
   {

@@ -23,6 +23,14 @@ H_contrapresión = (Pwh / gradiente) × 0.3048  [m]`,
     ],
     regla: 'La contrapresión suele representar 5–15% del TDH. Las pérdidas por fricción dominan en pozos profundos y/o con alto caudal.',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Se desea producir con bomba a 8500 ft de profundidad, fricción de 600 ft y Pwh=100 psi (grad. 0.40 psi/ft).",
+      pasos: [
+        "Paso 1: Convertir Pwh a cabeza (altura) → H_cabezal = Pwh / gradiente = 100 / 0.40 = 250 ft.",
+        "Paso 2: Sumar componentes al TDH = H_estática + H_fricción + H_cabezal",
+        "TDH = 8500 ft + 600 ft + 250 ft = 9350 ft."
+      ]
+    }
   },
 
   {
@@ -99,6 +107,15 @@ H_disponible = N_etapas × H_por_etapa`,
     ],
     regla: 'Rango típico BES: 50–200 etapas. A mayor Ns, menor H por etapa y más etapas necesarias.',
     tipo_regla: 'indigo',
+    ejemplo_resuelto: {
+      contexto: "Diseñar bomba para pozo de 2400 m con Q = 180 m³/d. Pwh = 100 psi, gradiente = 0.38 psi/ft. La bomba elegida entrega 35 m por etapa. Ignorar fricción.",
+      pasos: [
+        "Paso 1: H_estático = 2400 m.",
+        "Paso 2: H_contrapresión = (100 / 0.38) × 0.3048 = 263.15 × 0.3048 ≈ 80 m.",
+        "Paso 3: TDH = 2400 + 80 = 2480 m.",
+        "Paso 4: Número de etapas necesarias = 2480 / 35 = 70.8 → Redondear a 71 etapas."
+      ]
+    }
   },
 
   {

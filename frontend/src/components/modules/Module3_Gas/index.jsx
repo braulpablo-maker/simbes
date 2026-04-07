@@ -17,7 +17,7 @@ import {
   computeRequiredStages, findHydraulicOpPoint,
   STB_TO_M3,
 } from '../../../physics/hydraulics';
-import { M3_QUESTIONS, gradeM3 } from '../../../pedagogy/evaluations/m3';
+import { M3_QUESTIONS, gradeM3, sampleQuestions as sampleM3 } from '../../../pedagogy/evaluations/m3';
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M3 } from './teoria-data';
 
@@ -327,13 +327,14 @@ function TabCaso() {
 
 // ─── Tab Evaluación ───────────────────────────────────────────────
 function TabEvaluacion() {
+  const [questions] = useState(() => sampleM3(5));
   const [answers,   setAnswers]   = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [result,    setResult]    = useState(null);
   const handleSelect = (qid, opt) => { if (!submitted) setAnswers(p=>({...p,[qid]:opt})); };
-  const handleSubmit = () => { const ans=M3_QUESTIONS.map(q=>({id:q.id,selected:answers[q.id]||''}));const r=gradeM3(ans);try{localStorage.setItem('simbes_eval_m3',JSON.stringify({score_pct:r.pct,passed:r.pct>=70,ts:Date.now()}))}catch{}setResult(r);setSubmitted(true); };
+  const handleSubmit = () => { const ans=questions.map(q=>({id:q.id,selected:answers[q.id]||''}));const r=gradeM3(ans);try{localStorage.setItem('simbes_eval_m3',JSON.stringify({score_pct:r.pct,passed:r.pct>=70,ts:Date.now()}))}catch{}setResult(r);setSubmitted(true); };
   const handleReset  = () => { setAnswers({});setSubmitted(false);setResult(null); };
-  const allAnswered  = M3_QUESTIONS.every(q=>answers[q.id]);
+  const allAnswered  = questions.every(q=>answers[q.id]);
   return (
     <div>
       <div style={{color:C.purple,fontWeight:700,fontSize:14,fontFamily:'JetBrains Mono, monospace',marginBottom:16}}>EVALUACIÓN — GAS Y FLUJO MULTIFÁSICO</div>
@@ -343,7 +344,7 @@ function TabEvaluacion() {
           <div style={{color:C.muted,fontSize:12,marginTop:4}}>{result.pct>=80?'✅ Excelente. Puedes avanzar al Módulo 4.':result.pct>=60?'⚠️ Bien, repasa las respuestas incorrectas.':'🔴 Repasa la teoría antes de continuar.'}</div>
         </div>
       )}
-      {M3_QUESTIONS.map((q,qi)=>{
+      {questions.map((q,qi)=>{
         const sel=answers[q.id];const res=result?.results?.find(r=>r.id===q.id);
         return (
           <div key={q.id} style={{background:C.surface,border:`1px solid ${C.border}`,borderRadius:10,padding:'16px 20px',marginBottom:14}}>
@@ -352,10 +353,10 @@ function TabEvaluacion() {
               let bg=C.surfaceAlt,bd=C.border,col=C.muted;
               if(sel===opt.id&&!submitted){bg='#2e1065';bd=C.purple;col=C.purple;}
               if(submitted&&opt.id===q.correct){bg='#052e16';bd=C.ok;col=C.ok;}
-              if(submitted&&sel===opt.id&&sel!==q.correct){bg='#450a0a';bd=C.danger;col=C.danger;}
+              if(submitted&&opt.id!==q.correct){bg='#450a0a';bd=C.danger;col=C.danger;}
               return <button key={opt.id} onClick={()=>handleSelect(q.id,opt.id)} style={{display:'block',width:'100%',textAlign:'left',background:bg,border:`1px solid ${bd}`,borderRadius:7,padding:'10px 14px',marginBottom:6,cursor:submitted?'default':'pointer',color:col,fontFamily:'JetBrains Mono, monospace',fontSize:12,lineHeight:1.5}}><span style={{fontWeight:700,marginRight:8}}>{opt.id.toUpperCase()})</span>{opt.text}</button>;
             })}
-            {submitted&&res&&<div style={{background:C.surfaceAlt,border:`1px solid ${C.border}`,borderRadius:6,padding:'10px 14px',marginTop:8,fontSize:11,color:C.muted,fontFamily:'JetBrains Mono, monospace',lineHeight:1.6}}>💬 {res.explanation}</div>}
+            {submitted&&res&&<div style={{background:C.surfaceAlt,border:`1px solid ${C.border}`,borderRadius:6,padding:'10px 14px',marginTop:8,fontSize:11,color:C.muted,fontFamily:'JetBrains Mono, monospace',lineHeight:1.6}}>💬 {res.isOk ? res.explanation : (res.incorrect_feedback?.[res.selected] || res.explanation)}</div>}
           </div>
         );
       })}

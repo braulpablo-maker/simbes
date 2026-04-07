@@ -18,7 +18,7 @@ import {
   VSD_THD,
   IEEE519_LIMIT,
 } from "../../../physics/electrical";
-import { M4_QUESTIONS, gradeM4 } from "../../../pedagogy/evaluations/m4";
+import { M4_QUESTIONS, gradeM4, sampleQuestions as sampleM4 } from "../../../pedagogy/evaluations/m4";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M4 } from './teoria-data';
 import { Slider } from '../../ui';
@@ -538,6 +538,7 @@ function TabCaso({ onSetSim }) {
 
 // ─── Tab D: Evaluación ───────────────────────────────────────────────────────
 function TabEvaluacion() {
+  const [questions] = useState(() => sampleM4(5));
   const [answers,  setAnswers]  = useState({});
   const [result,   setResult]   = useState(null);
 
@@ -547,7 +548,7 @@ function TabEvaluacion() {
   };
 
   const submit = () => {
-    const arr = M4_QUESTIONS.map(q => ({ id: q.id, selected: answers[q.id] || "" }));
+    const arr = questions.map(q => ({ id: q.id, selected: answers[q.id] || "" }));
     const r = gradeM4(arr);
     try { localStorage.setItem('simbes_eval_m4', JSON.stringify({ score_pct: r.pct, passed: r.pct >= 70, ts: Date.now() })); } catch {}
     setResult(r);
@@ -579,7 +580,7 @@ function TabEvaluacion() {
         </div>
       )}
 
-      {M4_QUESTIONS.map((q, qi) => {
+      {questions.map((q, qi) => {
         const res = result?.results.find(r => r.id === q.id);
         return (
           <div key={q.id} style={{ background: COLORS.surface, borderRadius: 8, padding: 18, border: `1px solid ${COLORS.border}` }}>
@@ -590,7 +591,7 @@ function TabEvaluacion() {
               {q.options.map(opt => {
                 const selected = answers[q.id] === opt.id;
                 const isCorrect = res && opt.id === q.correct;
-                const isWrong   = res && selected && !isCorrect;
+                const isWrong   = res && !isCorrect;
                 const color = isCorrect ? COLORS.ok : isWrong ? COLORS.danger : selected ? ACCENT : COLORS.border;
                 return (
                   <button key={opt.id} onClick={() => select(q.id, opt.id)} style={{
@@ -608,7 +609,7 @@ function TabEvaluacion() {
             </div>
             {res && (
               <div style={{ marginTop: 10, background: COLORS.ok + "08", border: `1px solid ${COLORS.ok}25`, borderRadius: 6, padding: "10px 14px", fontSize: 10, color: "#94A3B8", fontFamily: "JetBrains Mono, monospace", lineHeight: 1.7 }}>
-                💡 {q.explanation}
+                💡 {res.isOk ? res.explanation : (res.incorrect_feedback?.[res.selected] || res.explanation)}
               </div>
             )}
           </div>
@@ -618,16 +619,16 @@ function TabEvaluacion() {
       {!result && (
         <button
           onClick={submit}
-          disabled={Object.keys(answers).length < M4_QUESTIONS.length}
+          disabled={Object.keys(answers).length < questions.length}
           style={{
             padding: "12px", borderRadius: 8, fontSize: 11, fontWeight: 700,
             border: `1px solid ${ACCENT}`, background: ACCENT + "22", color: ACCENT,
-            cursor: Object.keys(answers).length < M4_QUESTIONS.length ? "not-allowed" : "pointer",
-            opacity: Object.keys(answers).length < M4_QUESTIONS.length ? 0.5 : 1,
+            cursor: Object.keys(answers).length < questions.length ? "not-allowed" : "pointer",
+            opacity: Object.keys(answers).length < questions.length ? 0.5 : 1,
             fontFamily: "JetBrains Mono, monospace", letterSpacing: 1,
           }}
         >
-          CALIFICAR ({Object.keys(answers).length}/{M4_QUESTIONS.length} respondidas)
+          CALIFICAR ({Object.keys(answers).length}/{questions.length} respondidas)
         </button>
       )}
     </div>

@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ReferenceDot, ReferenceLine, ResponsiveContainer
 } from "recharts";
-import { M1_EVALUATION, gradeM1 } from "../../../pedagogy/evaluations/m1.js";
+import { M1_EVALUATION, gradeM1, sampleQuestions } from "../../../pedagogy/evaluations/m1.js";
 import TheoryLayout from '../../ui/TheoryLayout';
 import { TEORIA_M1 } from './teoria-data';
 import { C } from '../../../theme';
@@ -538,11 +538,11 @@ function TabCaso({ step, showDiagnosis, goToStep, setShowDiagnosis }) {
 //  TAB D — EVALUACIÓN
 // ═══════════════════════════════════════════════════════
 function TabEvaluacion() {
-  const questions = M1_EVALUATION.questions;
+  const [questions] = useState(() => sampleQuestions(5));
   const [answers,   setAnswers]   = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  const result = submitted ? gradeM1(answers) : null;
+  const result = submitted ? gradeM1(answers, questions) : null;
   const allAnswered = questions.every(q => answers[q.id]);
 
   function handleSelect(qId, optId) {
@@ -562,7 +562,7 @@ function TabEvaluacion() {
         <div>
           <div style={{ fontSize: 9, color: "#F472B6", letterSpacing: 3, textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>EVALUACIÓN · MÓDULO 1</div>
           <div style={{ fontSize: 14, fontWeight: 800, color: "#F1F5F9" }}>Análisis Nodal / IPR</div>
-          <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>5 preguntas · 100 puntos · Mínimo aprobatorio: 70%</div>
+          <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 2 }}>5 preguntas aleatorias · 100 puntos · Mínimo aprobatorio: 70%</div>
         </div>
         {submitted && (
           <button onClick={handleReset} style={{
@@ -622,7 +622,7 @@ function TabEvaluacion() {
                   if (selected && !submitted) { borderColor = "#F472B6"; bgColor = "#F472B618"; textColor = "#F9A8D4"; }
                   if (submitted) {
                     if (isCorrect) { borderColor = "#22C55E"; bgColor = "#22C55E18"; textColor = "#4ADE80"; }
-                    else if (selected && !isCorrect) { borderColor = "#EF4444"; bgColor = "#EF444418"; textColor = "#FCA5A5"; }
+                    else if (!isCorrect) { borderColor = "#EF4444"; bgColor = "#EF444418"; textColor = "#FCA5A5"; }
                   }
                   return (
                     <div key={opt.id} onClick={() => handleSelect(q.id, opt.id)} style={{
@@ -644,7 +644,9 @@ function TabEvaluacion() {
                   <div style={{ fontSize: 9, color: fb.correct ? "#22C55E" : "#EF4444", letterSpacing: 2, textTransform: "uppercase", fontWeight: 700, marginBottom: 5 }}>
                     {fb.correct ? `✓ Correcto — ${q.points} pts` : `✗ Incorrecto — 0 pts`}
                   </div>
-                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.7 }}>{q.explanation}</div>
+                  <div style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.7 }}>
+                    {fb.correct ? q.explanation : (q.incorrect_feedback?.[fb.selected] || q.explanation)}
+                  </div>
                 </div>
               )}
             </div>
@@ -658,7 +660,7 @@ function TabEvaluacion() {
           <button
             disabled={!allAnswered}
             onClick={() => {
-              const r = gradeM1(answers);
+              const r = gradeM1(answers, questions);
               try { localStorage.setItem('simbes_eval_m1', JSON.stringify({ score_pct: r.score_pct, passed: r.passed, ts: Date.now() })); } catch {}
               setSubmitted(true);
             }}

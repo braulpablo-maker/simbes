@@ -101,6 +101,34 @@ function GlosarioGrid({ items }) {
   );
 }
 
+function ReferenciasBlock({ items, accent }) {
+  return (
+    <div style={{
+      marginTop: 8, background: C.surfaceAlt,
+      border: `1px solid ${C.border}`,
+      borderRadius: C.radiusSm, padding: '14px 18px',
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10,
+        fontFamily: C.fontUI, fontSize: 11, fontWeight: 800, color: accent,
+        textTransform: 'uppercase', letterSpacing: 1.5,
+      }}>
+        <span>📚 REFERENCIAS BIBLIOGRÁFICAS</span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {items.map((ref, i) => (
+          <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            <span style={{ color: accent, fontSize: 12, marginTop: 1 }}>•</span>
+            <span style={{ fontFamily: C.fontUI, fontSize: 12, color: C.muted, lineHeight: 1.5 }}>
+              {ref}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Componente principal ──────────────────────────────────── */
 
 export default function TheoryLayout({ sections = [], accentColor }) {
@@ -171,6 +199,40 @@ export default function TheoryLayout({ sections = [], accentColor }) {
                 {/* Regla operativa */}
                 {sec.regla && (
                   <ReglaBadge texto={sec.regla} tipo={sec.tipo_regla} accent={accent} />
+                )}
+
+                {/* Ejemplo Resuelto PED-001 */}
+                {sec.ejemplo_resuelto && (
+                  <div style={{
+                    marginTop: 8, background: '#0F172A',
+                    border: `1px solid ${accent}40`, borderLeft: `3px solid ${accent}`,
+                    borderRadius: '0 6px 6px 0', padding: '14px 18px',
+                  }}>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8,
+                      fontFamily: C.fontUI, fontSize: 11, fontWeight: 800, color: accent,
+                      textTransform: 'uppercase', letterSpacing: 1.5,
+                    }}>
+                      <span>📐 EJEMPLO RESUELTO</span>
+                    </div>
+                    {sec.ejemplo_resuelto.contexto && (
+                      <p style={{ margin: '0 0 10px', fontFamily: C.fontUI, fontSize: 12, color: C.text, lineHeight: 1.6 }}>
+                        {sec.ejemplo_resuelto.contexto}
+                      </p>
+                    )}
+                    <div style={{
+                      background: '#1E293B', padding: '10px 14px', borderRadius: 6,
+                      border: `1px dashed ${accent}30`, fontFamily: C.font, fontSize: 12,
+                      display: 'flex', flexDirection: 'column', gap: 6, lineHeight: 1.5
+                    }}>
+                      {sec.ejemplo_resuelto.pasos.map((paso, i) => (
+                        <div key={i} style={{ display: 'flex' }}>
+                          <span style={{ color: accent, marginRight: 8, fontWeight: 700 }}>{'>'}</span>
+                          <span style={{ color: C.muted }}>{paso}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 {/* Contenido extra (gráficas, grids especiales) */}
